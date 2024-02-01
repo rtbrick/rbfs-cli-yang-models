@@ -1,0 +1,75 @@
+ module rtbrick-pim-types {
+    yang-version 1.1;
+    prefix rtb-pim-types;
+    namespace
+    "urn:config:rtbrick:pim:types";
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    organization "rtbrick";
+
+    contact
+    "anil@rtbrick.com";
+
+    description
+      "This module contains general data definitions for use in PIM YANG model";
+
+    revision "2020-09-09" {
+        description "First revision of PIM types configuration";
+        reference "None";
+    }
+
+    typedef ipv4-multicast-group-address {
+        type inet:ipv4-address {
+            pattern '(2((2[4-9])|(3[0-9]))\.).*';
+        }
+        description
+            "This type represents an IPv4 multicast group address,
+             which is in the range from 224.0.0.0 to 239.255.255.255";
+        reference
+            "RFC1112: host extensions for IP Multicasting";
+
+    }
+
+    typedef ipv4-multicast-source-address {
+        type inet:ipv4-address;
+        description
+            "Multicast source IPv4 address type";
+    }
+
+    typedef afi {
+        type enumeration {
+            enum ipv4 {
+                value "0";
+                description "IPv4 address";
+            }
+        }
+        description "Afi data type";
+    }
+
+    typedef safi {
+        type enumeration {
+            enum multicast {
+                value "1";
+                description "Multicast";
+            }
+        }
+        description "Safi data type";
+    }
+
+    typedef rib-source {
+        type enumeration {
+            enum static {
+                value "3";
+                description "Static routes";
+            }
+            enum bgp {
+                value "7";
+                description "BGP routes";
+            }
+        }
+        description "RIB source type";
+    }
+}  // module rtbrick-pim-types

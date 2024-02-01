@@ -1,0 +1,101 @@
+submodule rtbrick-resmon {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Rohit Kumar (rohit@rtbrick.com)";
+    description
+      "This module describes a YANG model for RESMON daemon configuration";
+    revision 2020-08-11 {
+        description "First revision";
+        reference "None";
+    }
+    grouping rtb-resmon-top {
+        description "Grouping RESMON configuration";
+        container resmon {
+            description "RESMON daemon configuration hierarchy";
+            container optics {
+                description "RESMON daemon optics configuration hierarchy";
+                list interface {
+                    key "interface-name";
+                    description "RESMON daemon optic's interface configuration hierarchy";
+                    reference
+                        '{
+                            "table-getter": {
+                                "library": "libresmon-common.so",
+                                "symbol": "resmon_optics_config_table_templ_get",
+                                "type" :  "resmon_optics_config_table"
+                            }
+                        }';
+                    leaf interface-name {
+                        type string;
+                        description "Interface name";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "port_name",
+                                    "expansion-getter" : {
+                                        "package":"resmon",
+                                        "method" : "resmon_physical_interface_name_expander"
+                                    }
+                                }
+                            }';
+                    }
+                    leaf high-power-class {
+                        type rtb-types:enable-disable-type;
+                        description "Enable/Disable high power class for optical module, default enable";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "high_power_class_enable"
+                                }
+                            }';
+                    }
+                    leaf tx {
+                        type rtb-types:enable-disable-type;
+                        description "Enable/Disable lasers for optical module, default enable";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "tx_enable"
+                                }
+                            }';
+                    }
+                }
+            }
+            container monitoring {
+                description "RESMON daemon resource monitoring configuration hierarchy";
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libresmon-common.so",
+                            "symbol": "resmon_config_table_templ_get",
+                            "type" :  "resmon_config_table",
+                            "default-attribute" : [ {"configuration_name" : "monitoring" } ]
+                        }
+                    }';
+                leaf poll-interval {
+                    type uint32 {
+                        range "3 .. 10000";
+                    }
+                    description "Poll-interval in seconds for resource to be monitored, default 10s";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "poll_interval"
+                            }
+                        }';
+                }
+            }
+        }
+    }
+    uses rtb-resmon-top;
+}
