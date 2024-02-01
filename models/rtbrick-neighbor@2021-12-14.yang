@@ -1,0 +1,99 @@
+submodule rtbrick-neighbor {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+       prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Bhishma Acharya (bhishma@rtbrick.com)";
+    description
+      "This sub-module contains the YANG structure for the Neighbor module";
+    revision 2021-12-14 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping neighbor-top {
+
+        container neighbor {
+            description "Neighbor global configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library" : "libcmdfib.so",
+                    "symbol"  : "fib_cmd_yang_get_neighbor_cfg_tbl_templ",
+                    "type"    : "neighbor_timer_cfg_table",
+                    "default-attribute" : [ { "mode" : "global" } ]
+                }
+            }';
+            leaf garp-interval {
+                type uint64 {
+                    range "1..1000";
+                }
+                units "seconds";
+                description "Gratuitous ARP interval in second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "garp_interval"
+                    }
+                }';
+            }
+            leaf probe-interval {
+                type uint64 {
+                    range "1..1000";
+                }
+                units "seconds";
+                description "Neighbor probe interval in second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "neighbor_probe_interval"
+                    }
+                }';
+            }
+            leaf scan-interval {
+                type uint64 {
+                    range "1..1000";
+                }
+                units "seconds";
+                description "Neighbor scan interval in second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "neighbor_scan_interval"
+                    }
+                }';
+            }
+            leaf throttle-interval {
+                type uint64 {
+                    range "1..1000";
+                }
+                units "seconds";
+                description "ARP throttle interval in second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "arp_throttle_interval"
+                    }
+                }';
+            }
+            leaf ra-interval {
+                type uint64 {
+                    range "4..1000";
+                }
+                units "seconds";
+                description "Router-Advertisement interval in second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ra_interval"
+                    }
+                }';
+            }
+        }
+    }
+}

@@ -1,0 +1,194 @@
+submodule rtbrick-redundancy{
+
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+        "Rtbrick";
+    contact
+        "Author : Deeksha Bhandary (deeksha@rtbrick.com)";
+
+    description
+        "This sub-module contains the YANG structure for redundancy configuration.";
+
+    revision 2022-09-01 {
+        description "First revision";
+        reference "None";
+    }
+
+    container redundancy {
+        description "Redundancy configuration";
+
+        list profile {
+            key "name";
+            description "Redundancy profile configuration";
+            reference
+                '{
+                    "table-getter": {
+                        "library": "libbds.so",
+                         "symbol": "rd_cfg_global_profile_tbl_get",
+                         "type" :  "rd_profile_config_table"
+                    }
+                }';
+
+            leaf name {
+                type string {
+                    length "1..128";
+                }
+                description "Profile name";
+
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile_name"
+                        }
+                    }';
+            }
+
+            leaf switchover-hold-timer {
+                type uint32 {
+                    range "0..600";
+                }
+                description "Minimum time interval between consecutive switchovers in seconds. Default is 60";
+
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "switchover_hold_timer"
+                        }
+                    }';
+            }
+
+            container peer {
+                description "Redundancy configuration";
+
+                container ipv4 {
+                    description "Redundancy ipv4 configuration";
+                    reference
+                        '{
+                            "table-getter": {
+                            "library": "libbds.so",
+                            "symbol": "rd_cfg_global_profile_tbl_get",
+                            "type" :  "rd_profile_config_table",
+                            "inherit-attribute": [ "profile_name"]
+                            }
+                        }';
+
+                    leaf remote-address {
+                        mandatory true;
+                        type rtb-types:non-reserved-ipv4-address;
+                        description "Redundancy peer ipv4 address";
+
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "ipv4_peer_address"
+                                }
+                            }';
+                    }
+                    leaf update-source {
+                        mandatory true;
+                        type rtb-types:non-reserved-ipv4-address;
+                        description "Redundancy source ipv4 address";
+
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "ipv4_update_source"
+                                }
+                            }';
+                    }
+
+                    leaf instance {
+                        mandatory true;
+                        type string;
+                        description "Peer instance name";
+
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "instance_name"
+                                }
+                            }';
+                    }
+
+                }
+
+            }
+            must 'count(peer) = 1' {
+                error-message "Profile peer and instance configurations are mandatory";
+            }
+        }
+
+        list session {
+            key "session-id";
+            description "Redundancy profile configuration";
+            reference
+                '{
+                    "table-getter": {
+                      "library": "libbds.so",
+                      "symbol": "rd_cfg_global_session_tbl_get",
+                      "type" :  "rd_session_config_table",
+                    }
+                }';
+
+            leaf session-id {
+                type uint16 {
+                    range "1..255";
+                }
+                description "Session Id";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "session_id"
+                        }
+                    }';
+            }
+
+            leaf priority {
+                mandatory true;
+                type uint16;
+                description "Session Priority";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "priority"
+                        }
+                    }';
+            }
+
+            leaf profile {
+                mandatory true;
+                type string;
+                description "Profile name";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile_name"
+                        }
+                    }';
+	    }
+
+            leaf keepalive-interval {
+                type uint32 {
+                    range "1..30";
+                }
+                description "Keepalive message transmission interval in seconds. Default is 3";
+
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "keepalive_interval"
+                        }
+                    }';
+            }
+
+        }
+    }
+}

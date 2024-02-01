@@ -1,0 +1,80 @@
+submodule rtbrick-access {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+       prefix config;
+    }
+
+    include rtbrick-access-aaa-profile;
+    include rtbrick-access-aaa-radius-profile;
+    include rtbrick-access-aaa-radius-server;
+    include rtbrick-access-access-profile;
+    include rtbrick-access-interface-profile;
+    include rtbrick-access-l2tp-pool;
+    include rtbrick-access-l2tp-profile;
+    include rtbrick-access-pool;
+    include rtbrick-access-service-profile;
+    include rtbrick-access-user-profile;
+    include rtbrick-access-dhcp-relay;
+    include rtbrick-access-dhcp-server;
+    include rtbrick-access-dhcpv6-server;
+    include rtbrick-access-l2bsa;
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains YANG structure for
+       access module.";
+    revision 2020-05-21 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping access-top {
+
+      container access {
+          description "Global access configuration";
+          reference
+          '{
+              "table-getter": {
+                  "library" : "libcmdsubsMgmt.so",
+                  "symbol"  : "subsMgmt_cfg_cmd_global_access_get",
+                  "type"    : "access_global_config_table",
+                  "default-attribute" : [ { "mode" : "global" } ]
+              }
+          }';
+          leaf chassis-id {
+              type uint8 { 
+                range "0..15";
+              }
+              description "Chassis id for this node <0-15>";
+              reference
+              '{
+                  "attribute-getter" : {
+                      "attribute" : "chassis_id"
+                  }
+              }';
+          }
+
+          uses access-aaa-profile;
+          uses access-aaa-radius-profile;
+          uses access-aaa-radius-server;
+          uses access-access-profile;
+          uses access-interface-profile;
+          uses access-l2tp-pool;
+          uses access-l2tp-profile;
+          uses access-pool;
+          uses access-user-profile;
+          uses access-service-profile;
+          uses access-dhcp-relay;
+          uses access-dhcp-server;
+          uses access-dhcpv6-server;
+          uses access-l2bsa;
+      }
+    }
+
+    uses access-top;
+}

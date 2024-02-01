@@ -1,0 +1,30 @@
+submodule rtbrick-bfd {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Sudhir C R (sudhir@rtbrick.com)";
+
+    description
+        "This module contains the YANG model for the BFD protocol configuration";
+
+    revision 2021-01-01 {
+        description
+          "Dummy bfd yang file";
+        reference "None";
+    }
+
+
+    grouping bfd-global-top  {
+        description "Dummy global top-level BFD configuration model";
+    }
+
+    grouping bfd-top {
+        description "Dummy global top-level BFD configuration model";
+    }
+}
+

@@ -1,0 +1,254 @@
+submodule rtbrick-access-service-profile {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains yang structure for
+       access service profile.";
+    revision 2020-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    typedef version {
+        type enumeration {
+            enum IGMPv1 {
+                value "0";
+            }
+            enum IGMPv2 {
+                value "1";
+            }
+            enum IGMPv3 {
+                value "2";
+            }
+        }
+        description "IGMP version";
+    }
+
+    grouping access-service-profile {
+        description "Global access service profile configuration";
+        
+        list service-profile {
+            key "profile-name";
+            description "Global service profile configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library" : "libcmdsubsMgmt.so",
+                    "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                    "type"    : "service_profile_config_table"
+                }
+            }';                                                      
+            leaf profile-name {
+                type string {
+                    length "1..64";
+                }
+                description "Name of the service profile";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "service_profile_name"
+                    }
+                }';
+            }
+            container qos {
+                description "QoS related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "type"    : "service_profile_config_table",
+                        "inherit-attribute": ["service_profile_name"]
+                    }
+                }';
+                leaf profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "QoS profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "qos_profile_name"
+                        }
+                    }';
+                } 
+                leaf parent-scheduler {
+                    type string {
+                        length "1..64";
+                    }
+                    description "QoS parent scheduler";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "qos_parent_scheduler_name"
+                        }
+                    }';
+                }
+                leaf multifield-classifier-name {
+                    type string {
+                        length "1..64";
+                    }
+                    description "QoS Ingress MFC";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "mf_classifier_name"
+                        }
+                    }';
+                }
+            }
+            container igmp {
+                description "IGMP related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "type"    : "service_profile_config_table",
+                        "inherit-attribute": ["service_profile_name"]
+                    }
+                }';
+                leaf enable {
+                    type rtb-types:boolean-type;
+                    description "Enable IGMP service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "igmp_enabled"
+                        }
+                    }';
+                }
+                leaf profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "IGMP profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "igmp_profile"
+                        }
+                    }';
+                }
+                leaf version {
+                    type version;
+                    description "IGMP version";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "igmp_version"
+                        }
+                    }';
+                }
+                leaf max-members {
+                    type uint32;
+                    description "Maximum IGMP membership per subscriber";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "igmp_max_members"
+                        }
+                    }';
+                }
+            }
+            container http-redirect {
+                description "HTTP redirect related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "type"    : "service_profile_config_table",
+                        "inherit-attribute": ["service_profile_name"]
+                    }
+                }';
+                leaf url {
+                    type string {
+                        length "1..256";
+                    }
+                    description "HTTP redirect url";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "http_redirect_url"
+                        }
+                    }';
+                }
+            }
+            container acl {
+                description "Subscriber ACL related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "type"    : "service_profile_config_table",
+                        "inherit-attribute": ["service_profile_name"]
+                    }
+                }';
+                leaf ipv4-acl-in {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Ingress IPv4 subscriber ACL name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_acl_in"
+                        }
+                    }';
+                }
+                leaf ipv4-acl-out {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Egress IPv4 subscriber ACL name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_acl_out"
+                        }
+                    }';
+                }
+                leaf ipv6-acl-in {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Ingress IPv6 subscriber ACL name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_acl_in"
+                        }
+                    }';
+                }
+                leaf ipv6-acl-out {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Egress IPv6 subscriber ACL name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_acl_out"
+                        }
+                    }';
+                }
+            }  
+        }
+    }
+}

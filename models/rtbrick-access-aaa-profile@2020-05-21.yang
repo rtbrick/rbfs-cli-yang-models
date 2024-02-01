@@ -1,0 +1,376 @@
+submodule rtbrick-access-aaa-profile {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains YANG structure for
+       access AAA profile.";
+    revision 2020-05-21 {
+        description "First revision";
+        reference "None";
+    }
+
+    typedef aaa-auth-order {
+        type enumeration {
+            enum NONE {
+                value "0";
+                description "Disabled";
+            }
+            enum LOCAL {
+                value "1";
+                description "Local authentication";
+            }
+            enum RADIUS {
+                value "2";
+                description "RADIUS authentication";
+            }
+            enum LOCAL_RADIUS {
+                value "3";
+                description "Local authentication with fallback to RADIUS";
+            }
+            enum RADIUS_LOCAL {
+                value "4";
+                description "RADIUS authentication with fallback to local";
+            }
+        }
+    }
+
+    typedef aaa-acct-order {
+        type enumeration {
+            enum NONE {
+                value "0";
+                description "Disabled";
+            }
+            enum RADIUS {
+                value "2";
+                description "RADIUS accounting";
+            }
+        }
+    }
+
+    typedef session-id-format {
+        type enumeration {
+            enum DEFAULT {
+                value "0";
+                description "Default session-id format";
+            }
+            enum BRIEF {
+                value "1";
+                description "Brief session-id format";
+            }
+            enum EXTENSIVE {
+                value "2";
+                description "Extensive session-id format";
+            }
+        }
+        description "Accounting-Session-Id format";
+    }
+
+    typedef accounting-source-ingress {
+        type enumeration {
+            enum LIF {
+                value "1";
+                description "Default LIF statistics";
+            }
+            enum POLICER {
+                value "3";
+                description "Policer level statistics";
+            }
+        }
+        description "Accounting source ingress";
+    }
+
+    typedef accounting-source-egress {
+        type enumeration {
+            enum LIF {
+                value "1";
+                description "Default LIF statistics";
+            }
+            enum CLASS {
+                value "2";
+                description "Class queue statistics";
+            }
+        }
+        description "Accounting source egress";
+    }
+
+    typedef byte-adjustment-factor {
+        type decimal64 {
+            range "0 .. 2";
+            fraction-digits 2;
+        }
+    }
+
+    grouping access-aaa-profile {
+        description "Global access AAA profile configuration";
+        
+        list aaa-profile {
+            key "profile-name";
+            description "Global AAA profile configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library" : "libcmdsubsMgmt.so",
+                    "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                    "type"    : "aaa_profile_config_table"
+                }
+            }';                                                      
+            leaf profile-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Name of the AAA profile";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "aaa_profile_name"
+                    }
+                }';
+            }
+            leaf session-timeout {
+                type uint32;
+                description "Session timeout in seconds (0 == infinity) <0-4294967295>";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "session_timeout"
+                    }
+                }';
+            }
+            leaf idle-timeout {
+                type uint32;
+                description "Idle timeout in seconds (0 == infinity) <0-4294967295>";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "idle_timeout"
+                    }
+                }';
+            }
+            leaf aaa-radius-profile {
+                type string {
+                    length "1 .. 64";
+                }
+                description "AAA RADIUS profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "aaa_radius_profile",
+                        "expansion-getter" : {
+                            "package":"subsMgmt",
+                            "method" :"access_aaa_radius_profile_name_expander"
+                        }
+                    }
+                }';
+            }
+            container authentication {
+                description "Authentication options";
+                reference
+                '{
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                        "type"    : "aaa_profile_config_table",
+                        "inherit-attribute": ["aaa_profile_name"]
+                    }
+                }';
+                leaf order {
+                    type aaa-auth-order;
+                    description "Authentication order";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_order"
+                        }
+                    }';
+                }
+                leaf delimiter {
+                    type string {
+                        length "0..1";
+                    }
+                    description "Delimiter string";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_domain_delimiter"
+                        }
+                    }';
+                }
+            }
+            container accounting {
+                description "Accounting options";
+                reference
+                '{                                                  
+                    "table-getter": {
+                        "library" : "libcmdsubsMgmt.so",
+                        "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                        "type"    : "aaa_profile_config_table",
+                        "inherit-attribute": ["aaa_profile_name"]
+                    }
+                }';
+                leaf order {
+                    type aaa-acct-order;
+                    description "Accounting order";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_order"
+                        }
+                    }';
+                }
+                leaf interim-interval {
+                    type uint32;
+                    description "Accounting interim interval in seconds (0 == disabled)";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_interim_interval"
+                        }
+                    }';
+                }
+                leaf session-id-format {
+                    type session-id-format;
+                    description "Accounting-Session-Id format";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_session_id_format"
+                        }
+                    }';
+                }
+                container ingress {
+                    description "Ingress volume accounting options";
+                    reference
+                    '{                                                  
+                        "table-getter": {
+                            "library" : "libcmdsubsMgmt.so",
+                            "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                            "type"    : "aaa_profile_config_table",
+                            "inherit-attribute": ["aaa_profile_name"]
+                        }
+                    }';
+                    leaf accounting-source {
+                        type accounting-source-ingress;
+                        description "Source of session ingress counter";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_ingress_source"
+                            }
+                        }';
+                    }
+                    leaf byte-adjustment-value {
+                        type int8;
+                        description "Adjust ingress LIF counters by N bytes per packet <-32 - +32>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_ingress_byte_adjustment_value"
+                            }
+                        }';
+                    }
+                    leaf byte-adjustment-factor {
+                        type byte-adjustment-factor;
+                        description "Adjust ingress LIF counters by factor (executed after adjustment value) <0.00-2.00>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_ingress_byte_adjustment_factor"
+                            }
+                        }';
+                    }
+                    leaf policer-byte-adjustment-value {
+                        type int8;
+                        description "Adjust ingress policer counters by N bytes per packet <-32 - +32>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_ingress_policer_byte_adjustment_value"
+                            }
+                        }';
+                    }
+                    leaf policer-byte-adjustment-factor {
+                        type byte-adjustment-factor;
+                        description "Adjust ingress policer counters by factor (executed after adjustment value) <0.00-2.00>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_ingress_policer_byte_adjustment_factor"
+                            }
+                        }';
+                    }
+                }
+                container egress {
+                    description "Egress volume accounting options";
+                    reference
+                    '{                                                  
+                        "table-getter": {
+                            "library" : "libcmdsubsMgmt.so",
+                            "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                            "type"    : "aaa_profile_config_table",
+                            "inherit-attribute": ["aaa_profile_name"]
+                        }
+                    }';
+                    leaf accounting-source {
+                        type accounting-source-egress;
+                        description "Source of session egress counter";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_egress_source"
+                            }
+                        }';
+                    }
+                    leaf byte-adjustment-value {
+                        type int8;
+                        description "Adjust egress LIF counters by N bytes per packet <-32 - +32>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_egress_byte_adjustment_value"
+                            }
+                        }';
+                    }
+                    leaf byte-adjustment-factor {
+                        type byte-adjustment-factor;
+                        description "Adjust egress LIF counters by factor (executed after adjustment value) <0.00-2.00>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_egress_byte_adjustment_factor"
+                            }
+                        }';
+                    }
+                    leaf class-byte-adjustment-value {
+                        type int8;
+                        description "Adjust egress class counters by N bytes per packet <-32 - +32>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_egress_class_byte_adjustment_value"
+                            }
+                        }';
+                    }
+                    leaf class-byte-adjustment-factor {
+                        type byte-adjustment-factor;
+                        description "Adjust egress class counters by factor (executed after adjustment value) <0.00-2.00>";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "accounting_egress_class_byte_adjustment_factor"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+    }
+}
