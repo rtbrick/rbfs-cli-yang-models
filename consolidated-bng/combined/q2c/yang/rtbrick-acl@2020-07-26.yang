@@ -451,7 +451,7 @@ submodule rtbrick-acl {
                 }';
             }
             leaf ip-protocol {
-                type rtb-types:type-ipproto-acl;
+                type rtb-types:type-ipproto;
                 description
                     "Configure acl ip protocol value match.";
                 reference
@@ -621,7 +621,7 @@ submodule rtbrick-acl {
                 }';
             }
             leaf ip-protocol {
-                type rtb-types:type-ipproto-acl;
+                type rtb-types:type-ipproto;
                 description
                     "Configure acl ip protocol value match.";
                 reference

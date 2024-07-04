@@ -175,6 +175,7 @@ submodule rtbrick-bgp {
     grouping bgp-redistribute {
         description "Redistribution related configuration";
         list redistribute {
+            when '../afi != "l2vpn"';
             key "source";
             description "Redistribution related configuration";
             reference 
@@ -239,6 +240,7 @@ submodule rtbrick-bgp {
     grouping bgp-srgb {
         description "Segment routing global block related configuration";
         container srgb {
+            when '../afi != "l2vpn"';
             description "Segment routing global block";
             reference
             '{
@@ -314,6 +316,16 @@ submodule rtbrick-bgp {
             leaf safi {
                 type rtb-bgp-types:safi;
                 description "Type safi";
+                must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
+                != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
+                (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
+                    error-message "l2vpn afi can only be configured with
+                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                }
+                must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
+                    error-message "evpn-vpws and vpls-vpws safi cannot be configured
+                    for default instance";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -322,6 +334,7 @@ submodule rtbrick-bgp {
                 }';
             }
             container default-information {
+                when '../afi != "l2vpn"';
                 description "Default route information";
                 reference
                 '{
@@ -344,6 +357,7 @@ submodule rtbrick-bgp {
                 }
             }
             leaf download-count {
+                when '../afi != "l2vpn"';
                 type uint16 {
                     range "0..255";
                 }
@@ -356,6 +370,7 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf multipath {
+                when '../afi != "l2vpn"';
                 type uint16 {
                     range "0..255";
                 }
@@ -378,6 +393,7 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf allow-missing-export-policy {
+                when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
                 description "Enable or disable advertisment when export policy is not configured";
                 reference
@@ -386,6 +402,153 @@ submodule rtbrick-bgp {
                         "attribute" : "allow_missing_export_policy"
                     }
                 }';
+            }
+            list interface {
+                when '../afi = "l2vpn"';
+                key "name";
+                unique "local-service-id";
+                unique "remote-service-id";
+                unique "local-site-id";
+                unique "local-site-id remote-site-id";
+                unique "remote-site-id";
+                description "Enabling VPWS/vpls-vpws on an interface";
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libbgpyang.so",
+                            "symbol": "bgp_yang_l2vpn_table_tmpl_get",
+                            "type" :  "bgp_l2vpn_intf_config_table"
+                        }
+                    }';
+                leaf name {
+                    type rtb-types:logical-interface-type;
+                    description "Interface name on which VPWS/vpls-vpws has to be enabled";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "interface_name",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" : "ifm_interface_layer2_name_expander_from_instance"
+                                }
+                            }
+                        }';
+                }
+                leaf local-service-id {
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Local service Id";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../remote-service-id' {
+                        error-message "Remote service ID must be configured";
+                    }
+                    must '../remote-service-id != .' {
+                        error-message "Local and Remote service ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[local-site-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[remote-service-id=current()]) = 0' {
+                        error-message "Local service ID is already used as remote service ID in another interface";
+                    }
+
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "local_service_id"
+                            }
+                        }';
+                }
+                leaf remote-service-id {
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Remote service Id";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../local-service-id' {
+                        error-message "Local service ID must be configured";
+                    }
+                    must '../local-service-id != .' {
+                        error-message "Local and Remote service ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[remote-site-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[local-service-id=current()]) = 0' {
+                        error-message "Remote service ID is already used as local service ID in another interface";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remote_service_id"
+                            }
+                        }';
+                }
+                leaf local-site-id {
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "Local site ID";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../remote-site-id' {
+                        error-message "Remote site ID must be configured";
+                    }
+                    must '../remote-site-id != .' {
+                        error-message "Local and Remote site ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[local-service-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[remote-site-id=current()]) = 0' {
+                        error-message "Local site ID is already used as remote site ID in another interface";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "local_site_id"
+                            }
+                        }';
+                }
+                leaf remote-site-id {
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "Remote site ID";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../local-site-id' {
+                        error-message "Local site ID must be configured";
+                    }
+                    must '../local-site-id != .' {
+                        error-message "Local and Remote site ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[remote-service-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[local-site-id=current()]) = 0' {
+                        error-message "Remote site ID is already used as local site ID in another interface";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remote_site_id"
+                            }
+                        }';
+                }
+                leaf label-base {
+                    mandatory true;
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "srgb base";
+                    type uint32 {
+                        range "100000..200000";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "srgb_base"
+                            }
+                        }';
+                }
             }
             uses bgp-resolve;
             uses bgp-srgb;
@@ -409,7 +572,9 @@ submodule rtbrick-bgp {
                     }
                 }';
                 leaf name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Interface name on which BGP has to be enabled";
                     reference
                     '{
@@ -537,6 +702,7 @@ submodule rtbrick-bgp {
     grouping bgp-pg-af-default-information {
         description "Default route information related configuration";
         container default-information {
+            when '../afi != "l2vpn"';
             description "Default route information";
             reference
             '{
@@ -563,6 +729,7 @@ submodule rtbrick-bgp {
     grouping bgp-max-prefix-limit {
         description "Max prefix limit related configuration";
         container prefix-limit {
+            when '../afi != "l2vpn"';
             description "Max prefix limit";
             reference
             '{
@@ -606,6 +773,7 @@ submodule rtbrick-bgp {
     grouping bgp-pg-af-policy {
         description "Policy related configuration";
         container policy {
+            when '../afi != "l2vpn"';
             description "Apply policy to the peer";
             reference
             '{
@@ -745,6 +913,12 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf safi {
+                must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
+                != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
+                (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
+                    error-message "l2vpn afi can only be configured with
+                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                }
                 type rtb-bgp-types:pg-safi;
                 description "Type safi";
                 reference
@@ -805,6 +979,7 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf send-label {
+                when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
                 description "Advertise labels for unicast address prefixes";
                 reference

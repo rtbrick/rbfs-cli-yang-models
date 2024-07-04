@@ -127,6 +127,10 @@ module rtbrick-types {
                 value "2";
                 description "MPLS";
             }
+            enum l2vpn {
+                value "3";
+                description "L2VPN address";
+            }
         }
         description "AFI data type";
     }
@@ -144,6 +148,22 @@ module rtbrick-types {
             enum unicast {
                 value "2";
                 description "Unicast";
+            }
+            enum evpn {
+                value "3";
+                description "Ethernet VPN";
+            }
+            enum evpn-vpws {
+                value "4";
+                description "Virtual private wire service";
+            }
+            enum vpls-vpws {
+                value "5";
+                description "VPLS VPWS VPN";
+            }
+            enum vpls {
+                value "6";
+                description "VPLS VPN";
             }
         }
         description "SAFI data type";
@@ -274,13 +294,13 @@ module rtbrick-types {
     typedef non-reserved-ipv6-prefix-for-match {
         type inet:ipv6-prefix {
             pattern '([^fF]{2}[0-9a-fA-F]{2}|[fF][^fF][0-9a-fA-F]{2}|[^fF][fF][0-9a-fA-F]{2}|[0-9a-fA-F]{0,3}|:):.+';
-            pattern '^(([^0fF].*|0[^0fF].*|0{2}[^0fF].*|0{3}[^fF].*|0{0,2}[fF][^:].+|'
+            pattern '(([^0fF].*|0[^0fF].*|0{2}[^0fF].*|0{3}[^fF].*|0{0,2}[fF][^:].+|'
                   + '(0{0,3}[fF]:(0{0,4}:){0,6}|0{0,3}[fF]:(0{0,4}:){0,6}'
                   + '([^0fF:].*|0[^0fF:].*|0{2}[^0fF:].*|0{3}[^fF:].*|0{0,2}[fF].+|0{1,4})))/(128)|'
-                  + '.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))$';
-            pattern '^(([^0].*|[0]{1,3}[^:0].*|(0{0,4}:){1,7}([^01:].*|0{1,3}[^01:].*|0{1,3}1[0-9a-fA-F]{0,2}:.*|1.+'
+                  + '.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))';
+            pattern '(([^0].*|[0]{1,3}[^:0].*|(0{0,4}:){1,7}([^01:].*|0{1,3}[^01:].*|0{1,3}1[0-9a-fA-F]{0,2}:.*|1.+'
                   + '|:(0{0,3}[^01]|[^01].*|0[^01].+|00[^0].+|01.+|1.+)))/128'
-                  + '|.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))$';
+                  + '|.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))';
         }
         description
             "An IPv6 prefix excluding all reserved prefix except 'fe80::xx'";
@@ -320,7 +340,7 @@ module rtbrick-types {
     typedef interface-type {
       type string {
           pattern
-              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
+              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
               + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
               + '|lag-([0-9]|[1-9][0-9])|all';
       }
@@ -340,7 +360,7 @@ module rtbrick-types {
     typedef lag-member-interface-type {
       type string {
           pattern
-              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])';
+              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])';
       }
       description
         "Link-aggregation Member Interface type";
@@ -349,7 +369,7 @@ module rtbrick-types {
     typedef logical-interface-type {
       type string {
           pattern
-              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
 	      + '|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
               + '|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
               + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
@@ -445,557 +465,557 @@ module rtbrick-types {
         description "Vlan encapsulation";
     }
 
-    typedef type-ipproto-acl {
+    typedef type-ipproto {
         type enumeration {
-            enum "HOPOPT" {
+            enum "hopopt" {
                 value 0;
                 description "HOPOPT";
             }
-            enum "ICMP" {
+            enum "icmp" {
                 value 1;
                 description "ICMP";
             }
-            enum "IGMP" {
+            enum "igmp" {
                 value 2;
                 description "IGMP";
             }
-            enum "GGP" {
+            enum "ggp" {
                 value 3;
                 description "GGP";
             }
-            enum "IP_in_IP" {
+            enum "ip_in_ip" {
                 value 4;
                 description "IP_in_IP";
             }
-            enum "ST" {
+            enum "st" {
                 value 5;
                 description "ST";
             }
-            enum "TCP" {
+            enum "tcp" {
                 value 6;
                 description "TCP";
             }
-            enum "CBT" {
+            enum "cbt" {
                 value 7;
                 description "CBT";
             }
-            enum "EGP" {
+            enum "egp" {
                 value 8;
                 description "EGP";
             }
-            enum "IGP" {
+            enum "igp" {
                 value 9;
                 description "IGP";
             }
-            enum "BBN_RCC_MON" {
+            enum "bbn_rcc_mon" {
                 value 10;
                 description "BBN_RCC_MON";
             }
-            enum "NVP_II" {
+            enum "nvp_ii" {
                 value 11;
                 description "NVP_II";
             }
-            enum "PUP" {
+            enum "pup" {
                 value 12;
                 description "PUP";
             }
-            enum "ARGUS" {
+            enum "argus" {
                 value 13;
                 description "ARGUS";
             }
-            enum "EMCON" {
+            enum "emcon" {
                 value 14;
                 description "EMCON";
             }
-            enum "XNET"{
+            enum "xnet"{
                 value 15;
                 description "XNET";
             }
-            enum "CHAOS" {
+            enum "chaos" {
                 value 16;
                 description "CHAOS";
             }
-            enum "UDP" {
+            enum "udp" {
                 value 17;
                 description "UDP";
             }
-            enum "MUX" {
+            enum "mux" {
                 value 18;
                 description "MUX";
             }
-            enum "DCN_MEAS" {
+            enum "dcn_meas" {
                 value 19;
                 description "DCN_MEAS";
             }
-            enum "HMP" {
+            enum "hmp" {
                 value 20;
                 description "HMP";
             }
-            enum "PRM" {
+            enum "prm" {
                 value 21;
                 description "PRM";
             }
-            enum "XNS_IDP" {
+            enum "xns_idp" {
                 value 22;
                 description "XNS_IDP";
             }
-            enum "TRUNK_1" {
+            enum "trunk_1" {
                 value 23;
                 description "TRUNK_1";
             }
-            enum "TRUNK_2" {
+            enum "trunk_2" {
                 value 24;
                 description "TRUNK_2";
             }
-            enum "LEAF_1" {
+            enum "leaf_1" {
                 value 25;
                 description "LEAF_1";
             }
-            enum "LEAF_2" {
+            enum "leaf_2" {
                 value 26;
                 description "LEAF_2";
             }
-            enum "RDP" {
+            enum "rdp" {
                 value 27;
                 description "RDP";
             }
-            enum "IRTP" {
+            enum "irtp" {
                 value 28;
                 description "IRTP";
             }
-            enum "ISO_TP4" {
+            enum "iso_tp4" {
                 value 29;
                 description "ISO_TP4";
             }
-            enum "NETBLT" {
+            enum "netblt" {
                 value 30;
                 description "NETBLT";
             }
-            enum "MFE_NSP" {
+            enum "mfe_nsp" {
                 value 31;
                 description "MFE_NSP";
             }
-            enum "MERIT_INP" {
+            enum "merit_inp" {
                 value 32;
                 description "MERIT_INP";
             }
-            enum "DCCP" {
+            enum "dccp" {
                 value 33;
                 description "DCCP";
             }
-            enum "3PC" {
+            enum "3pc" {
                 value 34;
                 description "3PC";
             }
-            enum "IDPR" {
+            enum "idpr" {
                 value 35;
                 description "IDPR";
             }
-            enum "XTP" {
+            enum "xtp" {
                 value 36;
                 description "XTP";
             }
-            enum "DDP" {
+            enum "ddp" {
                 value 37;
                 description "DDP";
             }
-            enum "IDPR_CMTP" {
+            enum "idpr_cmtp" {
                 value 38;
                 description "IDPR_CMTP";
             }
-            enum "TP_PLUS_PLUS" {
+            enum "tp_plus_plus" {
                 value 39;
                 description "TP_PLUS_PLUS";
             }
-            enum "IL" {
+            enum "il" {
                 value 40;
                 description "IL";
             }
-            enum "IPv6" {
+            enum "ipv6" {
                 value 41;
                 description "IPv6";
             }
-            enum "SDRP" {
+            enum "sdrp" {
                 value 42;
                 description "SDRP";
             }
-            enum "IPv6_Route" {
+            enum "ipv6_route" {
                 value 43;
                 description "IPv6_Route";
             }
-            enum "IPv6_Frag" {
+            enum "ipv6_frag" {
                 value 44;
                 description "IPv6_Frag";
             }
-            enum "IDRP" {
+            enum "idrp" {
                 value 45;
                 description "IDRP";
             }
-            enum "RSVP" {
+            enum "rsvp" {
                 value 46;
                 description "RSVP";
             }
-            enum "GREs" {
+            enum "gres" {
                 value 47;
                 description "GREs";
             }
-            enum "DSR" {
+            enum "dsr" {
                 value 48;
                 description "DSR";
             }
-            enum "BNA" {
+            enum "bna" {
                 value 49;
                 description "BNA";
             }
-            enum "ESP" {
+            enum "esp" {
                 value 50;
                 description "ESP";
             }
-            enum "AH" {
+            enum "ah" {
                 value 51;
                 description "AH";
             }
-            enum "I_NLSP" {
+            enum "i_nlsp" {
                 value 52;
                 description "I_NLSP";
             }
-            enum "SWIPE" {
+            enum "swipe" {
                 value 53;
                 description "SWIPE";
             }
-            enum "NARP" {
+            enum "narp" {
                 value 54;
                 description "NARP";
             }
-            enum "MOBILE IP" {
+            enum "mobile ip" {
                 value 55;
                 description "MOBILE IP";
             }
-            enum "TLSP" {
+            enum "tlsp" {
                 value 56;
                 description "TLSP";
             }
-            enum "SKIP" {
+            enum "skip" {
                 value 57;
                 description "SKIP";
             }
-            enum "IPv6_ICMP" {
+            enum "ipv6_icmp" {
                 value 58;
                 description "IPv6_ICMP";
             }
-            enum "IPv6_NoNxt" {
+            enum "ipv6_nonxt" {
                 value 59;
                 description "IPv6_NoNxt";
             }
-            enum "IPv6_Opts" {
+            enum "ipv6_opts" {
                 value 60;
                 description "IPv6_Opts";
             }
-            enum "Any_host_internal_protocol" {
+            enum "any_host_internal_protocol" {
                 value 61;
                 description "Any host internal protocol";
             }
-            enum "CFTP" {
+            enum "cftp" {
                 value 62;
                 description "CFTP";
             }
-            enum "Any_local_network" {
+            enum "any_local_network" {
                 value 63;
                 description "Any local network";
             }
-            enum "SAT_EXPAK" {
+            enum "sat_expak" {
                 value 64;
                 description "SAT_EXPAK";
             }
-            enum "KRYPTOLAN" {
+            enum "kryptolan" {
                 value 65;
                 description "KRYPTOLAN";
             }
-            enum "RVD" {
+            enum "rvd" {
                 value 66;
                 description "RVD";
             }
-            enum "IPPC" {
+            enum "ippc" {
                 value 67;
                 description "IPPC";
             }
-            enum "Any_distributed_file_system" {
+            enum "any_distributed_file_system" {
                 value 68;
                 description "Any distributed file system";
             }
-            enum "SAT_MON" {
+            enum "sat_mon" {
                 value 69;
                 description "SAT_MON";
             }
-            enum "VISA" {
+            enum "visa" {
                 value 70;
                 description "VISA";
             }
-            enum "IPCU" {
+            enum "ipcu" {
                 value 71;
                 description "IPCU";
             }
-            enum "CPNX" {
+            enum "cpnx" {
                 value 72;
                 description "CPNX";
             }
-            enum "CPHB" {
+            enum "cphb" {
                 value 73;
                 description "CPHB";
             }
-            enum "WSN" {
+            enum "wsn" {
                 value 74;
                 description "WSN";
             }
-            enum "PVP" {
+            enum "pvp" {
                 value 75;
                 description "PVP";
             }
-            enum "BR_SAT_MON" {
+            enum "br_sat_mon" {
                 value 76;
                 description "BR_SAT_MON";
             }
-            enum "SUN_ND" {
+            enum "sun_nd" {
                 value 77;
                 description "SUN_ND";
             }
-            enum "WB_MON" {
+            enum "wb_mon" {
                 value 78;
                 description "WB_MON";
             }
-            enum "WB_EXPAK" {
+            enum "wb_expak" {
                 value 79;
                 description "WB_EXPAK";
             }
-            enum "ISO_IP" {
+            enum "iso_ip" {
                 value 80;
                 description "ISO_IP";
             }
-            enum "VMTP" {
+            enum "vmtp" {
                 value 81;
                 description "VMTP";
             }
-            enum "SECURE_VMTP" {
+            enum "secure_vmtp" {
                 value 82;
                 description "SECURE_VMTP";
             }
-            enum "VINES" {
+            enum "vines" {
                 value 83;
                 description "VINES";
             }
-            enum "TTP_IPTM" {
+            enum "ttp_iptm" {
                 value 84;
                 description "TTP_IPTM";
             }
-            enum "NSFNET_IGP" {
+            enum "nsfnet_igp" {
                 value 85;
                 description "NSFNET_IGP";
             }
-            enum "DGP" {
+            enum "dgp" {
                 value 86;
                 description "DGP";
             }
-            enum "TCF" {
+            enum "tcf" {
                 value 87;
                 description "TCF";
             }
-            enum "EIGRP" {
+            enum "eigrp" {
                 value 88;
                 description "EIGRP";
             }
-            enum "OSPF" {
+            enum "ospf" {
                 value 89;
                 description "OSPF";
             }
-            enum "Sprite_RPC" {
+            enum "sprite_rpc" {
                 value 90;
                 description "Sprite_RPC";
             }
-            enum "LARP" {
+            enum "larp" {
                 value 91;
                 description "LARP";
             }
-            enum "MTP" {
+            enum "mtp" {
                 value 92;
                 description "MTP";
             }
-            enum "AX.25" {
+            enum "ax.25" {
                 value 93;
                 description "AX.25";
             }
-            enum "OS" {
+            enum "os" {
                 value 94;
                 description "OS";
             }
-            enum "MICP" {
+            enum "micp" {
                 value 95;
                 description "MICP";
             }
-            enum "SCC_SP" {
+            enum "scc_sp" {
                 value 96;
                 description "SCC_SP";
             }
-            enum "ETHERIP" {
+            enum "etherip" {
                 value 97;
                 description "ETHERIP";
             }
-            enum "ENCAP" {
+            enum "encap" {
                 value 98;
                 description "ENCAP";
             }
-            enum "Any_private_encryption_scheme"{
+            enum "any_private_encryption_scheme"{
                 value 99;
                 description "Any private encryption scheme";
             }
-            enum "GMTP" {
+            enum "gmtp" {
                 value 100;
                 description "GMTP";
             }
-            enum "IFMP" {
+            enum "ifmp" {
                 value 101;
                 description "IFMP";
             }
-            enum "PNNI" {
+            enum "pnni" {
                 value 102;
                 description "PNNI";
             }
-            enum "PIM" {
+            enum "pim" {
                 value 103;
                 description "PIM";
             }
-            enum "ARIS" {
+            enum "aris" {
                 value 104;
                 description "ARIS";
             }
-            enum "SCPS" {
+            enum "scps" {
                 value 105;
                 description "SCPS";
             }
-            enum "QNX" {
+            enum "qnx" {
                 value 106;
                 description "QNX";
             }
-            enum "A_N" {
+            enum "a_n" {
                 value 107;
                 description "A_N";
             }
-            enum "IPComp" {
+            enum "ipcomp" {
                 value 108;
                 description "IPComp";
             }
-            enum "SNP" {
+            enum "snp" {
                 value 109;
                 description "SNP";
             }
-            enum "Compaq_Peer" {
+            enum "compaq_peer" {
                 value 110;
                 description "Compaq_Peer";
             }
-            enum "IPX_in_IP" {
+            enum "ipx_in_ip" {
                 value 111;
                 description "IPX_in_IP";
             }
-            enum "VRRP" {
+            enum "vrrp" {
                 value 112;
                 description "VRRP";
             }
-            enum "PGM" {
+            enum "pgm" {
                 value 113;
                 description "PGM";
             }
-            enum "Any_0_hop_protocol"{
+            enum "any_0_hop_protocol"{
                 value 114;
                 description "Any 0_hop protocol";
             }
-            enum "L2TP" {
+            enum "l2tp" {
                 value 115;
                 description "L2TP";
             }
-            enum "DDX" {
+            enum "ddx" {
                 value 116;
                 description "DDX";
             }
-            enum "IATP" {
+            enum "iatp" {
                 value 117;
                 description "IATP";
             }
-            enum "STP" {
+            enum "stp" {
                 value 118;
                 description "STP";
             }
-            enum "SRP" {
+            enum "srp" {
                 value 119;
                 description "SRP";
             }
-            enum "UTI" {
+            enum "uti" {
                 value 120;
                 description "UTI";
             }
-            enum "SMP" {
+            enum "smp" {
                 value 121;
                 description "SMP";
             }
-            enum "SM" {
+            enum "sm" {
                 value 122;
                 description "SM";
             }
-            enum "PTP" {
+            enum "ptp" {
                 value 123;
                 description "PTP";
             }
-            enum "IS_IS" {
+            enum "is_is" {
                 value 124;
                 description "IS_IS";
             }
-            enum "FIRE"{
+            enum "fire"{
                 value 125;
                 description "FIRE";
             }
-            enum "CRTP" {
+            enum "crtp" {
                 value 126;
                 description "CRTP";
             }
-            enum "CRUDP" {
+            enum "crudp" {
                 value 127;
                 description "CRUDP";
             }
-            enum "SSCOPMCE" {
+            enum "sscopmce" {
                 value 128;
                 description "SSCOPMCE";
             }
-            enum "IPLT" {
+            enum "iplt" {
                 value 129;
                 description "IPLT";
             }
-            enum "SPS" {
+            enum "sps" {
                 value 130;
                 description "SPS";
             }
-            enum "PIPE" {
+            enum "pipe" {
                 value 131;
                 description "PIPE";
             }
-            enum "SCTP" {
+            enum "sctp" {
                 value 132;
                 description "SCTP";
             }
-            enum "FC" {
+            enum "fc" {
                 value 133;
                 description "FC";
             }
-            enum "RSVP_E2E_IGNORE" {
+            enum "rsvp_e2e_ignore" {
                 value 134;
                 description "RSVP_E2E_IGNORE";
             }
-            enum "Mobility_Header"{
+            enum "mobility_header"{
                 value 135;
                 description "Mobility Header";
             }
-            enum "UDPLite" {
+            enum "udplite" {
                 value 136;
                 description "UDPLite";
             }
-            enum "MPLS_in_IP" {
+            enum "mpls_in_ip" {
                 value 137;
                 description "MPLS_in_IP";
             }
@@ -1003,19 +1023,19 @@ module rtbrick-types {
                 value 138;
                 description "manet";
             }
-            enum "HIP" {
+            enum "hip" {
                 value 139;
                 description "HIP";
             }
-            enum "Shim6" {
+            enum "shim6" {
                 value 140;
                 description "Shim6";
             }
-            enum "WESP" {
+            enum "wesp" {
                 value 141;
                 description "WESP";
             }
-            enum "ROH" {
+            enum "roh" {
                 value 142;
                 description "ROH";
             }

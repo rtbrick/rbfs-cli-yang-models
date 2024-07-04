@@ -32,6 +32,10 @@ module rtbrick-bgp-types {
                 value "1";
                 description "IPv6 address";
             }
+            enum l2vpn {
+                value "2";
+                description "L2VPN address";
+            }
         }
         description "Afi data type";
     }
@@ -57,6 +61,22 @@ module rtbrick-bgp-types {
             enum vpn-unicast {
                 value "4";
                 description "VPN unicast";
+            }
+            enum evpn {
+                value "5";
+                description "Ethernet VPN";
+            }
+            enum evpn-vpws {
+                value "6";
+                description "Virtual private wire service ";
+            }
+            enum vpls-vpws {
+                value "7";
+                description "vpls-vpws VPN";
+            }
+            enum vpls {
+                value "8";
+                description "EVPN vpls-vpws VPN";
             }
         }
         description "Safi data type";
@@ -93,6 +113,22 @@ module rtbrick-bgp-types {
             enum vpn-unicast {
                 value "3";
                 description "VPN unicast";
+            }
+            enum evpn {
+                value "4";
+                description "Ethernet VPN";
+            }
+            enum evpn-vpws {
+                value "5";
+                description "Virtual private wire service ";
+            }
+            enum vpls-vpws {
+                value "6";
+                description "vpls-vpws VPN";
+            }
+            enum vpls {
+                value "7";
+                description "EVPN vpls-vpws VPN";
             }
         }
         description "Peer Group Safi data type";

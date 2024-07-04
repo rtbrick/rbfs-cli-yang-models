@@ -59,13 +59,13 @@ submodule rtbrick-resmon {
                                 }
                             }';
                     }
-                    leaf tx {
-                        type rtb-types:enable-disable-type;
-                        description "Enable/Disable lasers for optical module, default enable";
+                    leaf tx_disable {
+                        type rtb-types:boolean-true;
+                        description "Disable lasers for optical module, default enable";
                         reference
                             '{
                                 "attribute-getter" : {
-                                    "attribute" : "tx_enable"
+                                    "attribute" : "tx_disable"
                                 }
                             }';
                     }

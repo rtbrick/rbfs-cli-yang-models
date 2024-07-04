@@ -55,6 +55,7 @@ submodule rtbrick-access-aaa-radius-server {
             leaf address {
                 type inet:ipv4-address;
                 description "RADIUS server IPv4 address";
+                mandatory true;
                 reference
                 '{
                     "attribute-getter" : {
@@ -65,6 +66,7 @@ submodule rtbrick-access-aaa-radius-server {
             leaf source-address {
                 type inet:ipv4-address;
                 description "Source IPv4 address used for RADIUS packets";
+                mandatory true;
                 reference
                 '{
                     "attribute-getter" : {

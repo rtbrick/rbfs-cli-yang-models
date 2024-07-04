@@ -21,7 +21,7 @@ module rtbrick-qos-types {
         type string {
             length "1..64";
             pattern
-                '^[_0-9a-zA-Z].*$';
+                '[_0-9a-zA-Z].*';
         }
         description "Acceptable string type for qos";
     }

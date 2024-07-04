@@ -8,6 +8,7 @@ function prepareGit() {
   git pull
   git checkout -b "$BRANCH" || true
   git checkout "$BRANCH"
+  git pull
   rm -rf accessleaf
   rm -rf consolidated-bng
   rm -rf l2bsa
@@ -17,6 +18,8 @@ function commitGit() {
   git add .
   git commit -m "Add yang files for $VERSION" -m "/update.sh \"$VERSION\" \"$BRANCH\" \"$TAG\""
   git push --set-upstream origin "$BRANCH"
+  git tag "$TAG"
+  git push origin tag "$TAG"
 }
 function loadData() {
    # Use jq to iterate over each item in the array directly

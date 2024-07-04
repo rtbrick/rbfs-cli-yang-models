@@ -185,7 +185,9 @@ submodule rtbrick-ldp {
                 }
             }';
             leaf name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Logical interface name";
                 reference
                 '{
@@ -695,6 +697,16 @@ submodule rtbrick-ldp {
                 '{
                     "attribute-getter" : {
                         "attribute" : "transport_preference"
+                    }
+                }';
+            }
+            leaf dual-stack-interop {
+                type rtb-types:enable-disable-type;
+                description "To interop dual stack TLV with non RFC compliant vendors";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "dual_stack_interop"
                     }
                 }';
             }

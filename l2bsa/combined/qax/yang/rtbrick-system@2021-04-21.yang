@@ -13,6 +13,8 @@ submodule rtbrick-system {
         reference "RFC 6991";
     }
 
+    include rtbrick-platform-profile;
+
     organization
       "Rtbrick";
     contact
@@ -35,6 +37,7 @@ submodule rtbrick-system {
            +-> {time-zone}
            +-> {load-last-config}
            +-> {platform-management}
+           +-> {platform-profile}
       ";
 
     revision 2021-04-21 {
@@ -250,7 +253,7 @@ submodule rtbrick-system {
                     type  uint8 {
                         range "3..17";
                     }
-                    description "NTP minimum poll interval";
+                    description "NTP minimum poll interval (3-17), as a power of 2 in seconds";
                     reference
                     '{
                         "attribute-getter" : {
@@ -265,7 +268,7 @@ submodule rtbrick-system {
                     must '. > ../minpoll' {
                         error-message "Max poll interval should always be greater than min poll interval";
                     }
-                    description "NTP maximum poll interval";
+                    description "NTP maximum poll interval (3-17), as a power of 2 in seconds";
                     reference
                     '{
                         "attribute-getter" : {
@@ -288,9 +291,10 @@ submodule rtbrick-system {
             reference
             '{
                 "table-getter": {
-                    "library": "libbds.so",
-                    "symbol": "bds_local_mgmt_tbl_get",
-                    "type" :  "lum_config_table"
+                    "type" :  "lum_config_table",
+                    "table-name" : "global.local_user_management.table",
+                    "notification-type" : "table-change",
+                    "notification-interval": 500
                 }
             }';
             leaf username {
@@ -689,10 +693,6 @@ submodule rtbrick-system {
                     }
                 }';
             }
-            must 'not(load-last-config) or not(host/ztp-enable) or (load-last-config != host/ztp-enable) or load-last-config = "false"' {
-                error-message "Load last config should not be enabled when ztp-enable is set to true";
-            }
-
             leaf time-zone {
                 type rtb-types:time-zone-type;
                 description "The system's time format";
@@ -755,7 +755,7 @@ submodule rtbrick-system {
                         "library": "libconfd.so",
                         "symbol" : "confd_rtbrick_hostname_config_tbl_tmpl_get",
                         "type"   : "global_rtbrick_hostname_tbl",
-                        "default-attribute" : [ {"system_hostname" : "rtbrick"}, {"ztp_enabled" : "true"}, {"ztp_enabled" : "true"}]
+                        "default-attribute" : [ {"system_hostname" : "rtbrick"} ]
                     }
                 }';
                 leaf element-name {
@@ -785,16 +785,6 @@ submodule rtbrick-system {
                     '{
                         "attribute-getter" : {
                             "attribute" : "element_role"
-                        }
-                    }';
-                }
-                leaf ztp-enable {
-                    type rtb-types:boolean-type;
-                    description "Enable ZTP";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "ztp_enabled"
                         }
                     }';
                 }
@@ -866,7 +856,7 @@ submodule rtbrick-system {
                         }
                         leaf network {
                             mandatory true;
-                            type log-alias-network; 
+                            type log-alias-network;
                             description "Log alias endpoint port";
                             reference
                             '{
@@ -907,6 +897,7 @@ submodule rtbrick-system {
             uses secure-management-top;
             uses ntp-top;
             uses lum-top;
+            uses platform-profile-top;
             container platform-management {
                 description "Platform management configuration";
                 container ipmi {
@@ -917,9 +908,10 @@ submodule rtbrick-system {
                         reference
                         '{
                             "table-getter": {
-                                "library": "libbds.so",
-                                 "symbol" : "bds_autogen_cli_ipmi_interface_config",
-                                 "type"   : "ipmi_interface_config_table"
+                                 "type"   : "ipmi_interface_config_table",
+                                 "table-name" : "global.ipmi.interface.config",
+                                 "notification-type" : "table-change",
+                                 "notification-interval": 500
                             }
                         }';
                         leaf id {
@@ -960,9 +952,11 @@ submodule rtbrick-system {
                                 '{
                                     "table-getter": {
                                         "library": "libbds.so",
-                                            "symbol" : "bds_autogen_cli_ipmi_interface_config",
-                                            "type"   : "ipmi_interface_config_table",
-                                            "inherit-attribute": [ "interface-id" ]
+                                        "type"   : "ipmi_interface_config_table",
+                                        "table-name" : "global.ipmi.interface.config",
+                                        "notification-type" : "table-change",
+                                        "notification-interval": 500,
+                                        "inherit-attribute": [ "interface-id" ]
                                     }
                                 }';
                                 leaf prefix4 {
@@ -994,9 +988,10 @@ submodule rtbrick-system {
                         reference
                         '{
                             "table-getter": {
-                                "library": "libbds.so",
-                                 "symbol" : "bds_autogen_cli_ipmi_user_config",
-                                 "type"   : "ipmi_user_config_table"
+                                "type"   : "ipmi_user_config_table",
+                                "table-name" : "global.ipmi.user.config",
+                                "notification-type" : "table-change",
+                                "notification-interval": 500
                             }
                         }';
                         leaf id {
@@ -1077,6 +1072,29 @@ submodule rtbrick-system {
                         '{
                             "attribute-getter" : {
                                 "attribute" : "interval"
+                            }
+                        }';
+                    }
+                }
+                container fail2ban {
+                    description "fail2ban configuration to be able to whitelist some ip-addresses";
+                    reference
+                    '{
+                        "table-getter": {
+                             "type"   : "fail2ban_config_table",
+                             "table-name" : "global.fail2ban.config",
+                             "notification-type" : "table-change",
+                             "notification-interval": 500,
+                             "default-attribute" : [ { "config_name" : "fail2ban"} ]
+                        }
+                    }';
+                    leaf-list ignore-ip {
+                        type inet:ip-address;
+                        description "List of IPs to be whitelistes by fail2ban";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ignore_ip"
                             }
                         }';
                     }

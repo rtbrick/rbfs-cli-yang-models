@@ -14,6 +14,10 @@ submodule rtbrick-access-access-profile {
         prefix "rtb-types";
     }
 
+    import clixon-autocli{
+        prefix autocli;
+    }
+
     organization
       "RtBrick";
     contact
@@ -196,7 +200,8 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf delete-terminated {
                         type rtb-types:boolean-type;
-                        description "Delete terminated sessions immediately without waiting for subscriber daemon";
+                        autocli:hide;
+                        description "Delete terminated sessions immediately without waiting for subscriber daemon (deprecated)";
                         reference
                         '{
                             "attribute-getter" : {
@@ -240,7 +245,7 @@ submodule rtbrick-access-access-profile {
                         }
                         leaf mru {
                             type uint16 { 
-                                range "256..1492";
+                                range "1280..1492";
                             }
                             description "Advertised local MRU";
                             reference
@@ -252,9 +257,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf mtu {
                             type uint16 { 
-                                range "256..1492";
+                                range "1280..1492";
                             }
-                            description "Enforce this MTU as peer MRU <256-1492>";
+                            description "Enforce this MTU as peer MRU <1280-1492>";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -773,6 +778,7 @@ submodule rtbrick-access-access-profile {
                         type string {
                             length "1..64";
                         }
+                        autocli:hide;
                         description "Instance name for IPv4 addresses (deprecated)";
                         reference
                         '{
@@ -875,6 +881,7 @@ submodule rtbrick-access-access-profile {
                         type string {
                             length "1..64";
                         }
+                        autocli:hide;
                         description "Instance name for IPv6 addresses (deprecated)";
                         reference
                         '{

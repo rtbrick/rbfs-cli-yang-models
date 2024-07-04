@@ -1,0 +1,469 @@
+submodule rtbrick-l2x {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+       prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import rtbrick-types {
+       prefix types;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Sudhir CR (sudhir@rtbrick.com)";
+
+    description
+        "This module describes a YANG model for l2x configuration
+        +-> {l2x}
+            +-> {name}
+            +-> {name}
+            +-> {direction}
+            +-> {l2x-attributes}";
+
+    revision 2020-09-15 {
+       description
+          "First revision of l2x configuration";
+        reference "None";
+    }
+
+    typedef l2x-direction {
+        type enumeration {
+
+            enum ingress {
+                value "0";
+                description "Ingress direction";
+            }
+
+            enum egress {
+                value "1";
+                description "Egress direction";
+            }
+
+            enum bi-directional {
+                value "2";
+                description "Egress direction";
+            }
+        }
+        description
+            "L2X direction";
+    }
+
+    typedef l2x-vlan-operation {
+        type enumeration {
+
+            enum single-vlan-add {
+                value "0";
+                description "Add single Vlan";
+            }
+
+            enum double-vlan-add {
+                value "1";
+                description "Add two vlans";
+            }
+
+            enum single-vlan-delete {
+                value "2";
+                description "Deletes single vlan";
+            }
+
+            enum double-vlan-delete {
+                value "3";
+                description "Deletes double vlan";
+            }
+
+            enum swap-outer-vlan {
+                value "4";
+                description "Swaps outer vlan";
+            }
+        }
+        description "L2X vlan operation";
+    }
+
+    typedef l2x-match-type {
+        type enumeration {
+
+            enum match-any {
+                value "0";
+                description "Match any Vlan";
+            }
+
+            enum match-untagged {
+                value "1";
+                description "Match only Untagged";
+            }
+
+            enum match-inner-any {
+                value "2";
+                description "Match any inner Vlan";
+            }
+
+            enum match-outer {
+                value "3";
+                description "Match outer Vlan";
+            }
+
+            enum match-outer-inner {
+                value "4";
+                description "Match outer vlan and Inner vlan";
+            }
+
+            enum match-service-label {
+                value "5";
+                description "Match service label";
+            }
+        }
+        description "L2X ingress match type";
+    }
+
+    typedef l2x-afi {
+        type enumeration {
+            enum ipv4 {
+                value "0";
+                description "IPv4 address family";
+            }
+            enum ipv6 {
+                value "1";
+                description "IPv6 address family";
+            }
+            enum mpls {
+                value "2";
+                description "MPLS address family";
+            }
+        }
+        description "Afi data type";
+    }
+
+    typedef l2x-safi {
+        type enumeration {
+            enum labeled-unicast {
+                value "0";
+                description "Labled unicast";
+            }
+            enum multicast {
+                value "1";
+                description "Labled multicast";
+            }
+            enum unicast {
+                value "2";
+                description "Unicast";
+            }
+        }
+        description "Safi data type";
+
+    }
+
+    grouping l2x-attributes {
+        description
+        "L2X attributes";
+
+        leaf description {
+            type types:string128;
+            description
+                "L2X description";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "description"
+                }
+            }';
+        }
+
+        leaf incoming-interface {
+            type string;
+            description
+                "Incoming physical interface name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "incoming_ifp",
+                    "expansion-getter" : {
+                        "package":"static",
+                        "method" : "static_l2x_interface_name_expander"
+                    }
+                }
+            }';
+        }
+
+        leaf incoming-outer-vlan {
+            type uint16;
+            description
+                "Incoming outer vlan";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "incoming_outer_vlan"
+                }
+            }';
+        }
+
+        leaf incoming-inner-vlan {
+            type uint16;
+            description
+                "Incoming inner vlan";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "incoming_inner_vlan"
+                }
+            }';
+        }
+
+        leaf nexthop4 {
+            type inet:ipv4-address;
+            description
+                "Nexthop hop router IP address";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop4"
+                }
+            }';
+        }
+
+        leaf nexthop6 {
+            type inet:ipv6-address;
+            description
+                "Nexthop hop router IP address";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop6"
+                }
+            }';
+        }
+
+        leaf lookup-instance {
+            type string;
+            description
+                "Lookup routing tables instance where the nexthop will be looked up";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "lookup_instance",
+                    "expansion-getter" : {
+                        "package":"static",
+                        "method" : "static_instance_name_expander"
+                    }
+                }
+            }';
+        }
+
+        leaf lookup-afi {
+            type l2x-afi;
+            description
+                "Lookup routing tables address family where the nexthop will be looked up";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "lookup_afi"
+                }
+            }';
+        }
+
+        leaf lookup-safi {
+            type l2x-safi;
+            description
+                "Lookup routing tables sub address family where the nexthop will be looked up";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "lookup_safi"
+                }
+            }';
+        }
+
+        leaf service-label {
+            type types:mpls-label;
+            description
+                "Service label";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "service_label"
+                }
+            }';
+        }
+
+        leaf outgoing-interface {
+            type string;
+            description
+                "Outgoing physical interface name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "outgoing_ifp",
+                    "expansion-getter" : {
+                        "package":"static",
+                        "method" : "static_l2x_interface_name_expander"
+                    }
+                }
+            }';
+        }
+
+        leaf egress-vlan-operation {
+            type l2x-vlan-operation;
+            description
+                "Outgoing vlan operation";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "vlan_operation"
+                }
+            }';
+        }
+
+        leaf outgoing-outer-vlan {
+            type uint16;
+            description
+                "Outgoing outer vlan";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "outgoing_outer_vlan1"
+                }
+            }';
+        }
+
+        leaf egress-vlan-encapsulation {
+            type types:vlan-encapsulation-type;
+            description
+                "Egress vlan encapsulation";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "encapsulation"
+                }
+            }';
+        }
+
+
+        leaf match-type {
+            type l2x-match-type;
+            description
+                "L2X match type";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_type"
+                }
+            }';
+        }
+
+        leaf ingress-vlan-operation {
+            type l2x-vlan-operation;
+            description
+                "Vlan operation on ingress side outer vlan";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ingress_vlan_operation"
+                }
+            }';
+        }
+
+        leaf ingress-outer-vlan {
+            type uint16;
+            description
+                "Outer vlan at ingress side";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ingress_outer_vlan"
+                }
+            }';
+        }
+
+        leaf ingress-vlan-encapsulation {
+            type types:vlan-encapsulation-type;
+            description
+                "Ingress vlan encapsulation";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ingress_encapsulation"
+                }
+            }';
+        }
+
+        leaf exit-interface {
+            type string;
+            description
+                "Incoming physical interface name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "exit_interface",
+                    "expansion-getter" : {
+                        "package":"ifm",
+                        "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                    }
+                }
+            }';
+        }
+
+    }
+
+    grouping l2x-top {
+            description
+                "Configuration data for l2x configuration table";
+        container l2x {
+              description
+                    "Configuration data for l2x configuration table";
+
+                    list name
+                    {
+                        key "name direction";
+                        description
+                            "L2X configuration commands";
+
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libstaticd.so",
+                                "symbol": "static_yang_get_l2x_cfg_tbl_templ",
+                                "type" :  "static_l2x_candidate_config_table"
+                            }
+                        }';
+
+
+                        leaf name {
+                            type types:string64;
+                            description
+                                "L2X name";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "l2x_name",
+                                    "expansion-getter" : {
+                                        "package": "static",
+                                        "method" : "static_l2x_name_expander"
+                                    }
+                                }
+                            }';
+                        }
+
+                        leaf direction {
+                            type l2x-direction;
+                            description
+                                "L2X direction";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "direction"
+                                    }
+                                }';
+                        }
+
+                        uses l2x-attributes;
+                    }
+              }
+    }
+
+    uses l2x-top;
+}

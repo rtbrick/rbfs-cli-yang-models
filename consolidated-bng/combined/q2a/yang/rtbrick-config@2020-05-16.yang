@@ -11,6 +11,8 @@ module rtbrick-config {
     include rtbrick-logging;
     include rtbrick-time-series;
     include rtbrick-redundancy;
+    include rtbrick-debuginfo;
+    include rtbrick-platform-profile;
 
     // Forwarding
     include rtbrick-interface;
@@ -41,6 +43,7 @@ module rtbrick-config {
     include rtbrick-authentication;
     include rtbrick-snmp;
     //include rtbrick-static;
+    include rtbrick-address-translation;
 
     // Services
     include rtbrick-l2x;
@@ -80,7 +83,7 @@ module rtbrick-config {
     rpc rollback {
 	    description
 		"The <rollback> operation loads a configuration that
-		is backwards n steps specified by a rollback-id or 
+		is backwards n steps specified by a rollback-id or
 		commit-id.";
 
 	    input {
@@ -92,7 +95,7 @@ module rtbrick-config {
 		    leaf id {
 			type int32;
 			description
-			    "Roll backwards to  a coniguration by n steps 
+			    "Roll backwards to  a coniguration by n steps
 			    specified by the rollback-id";
 		    }
 		    leaf commit_id {
@@ -116,7 +119,7 @@ module rtbrick-config {
 		}
 	    }
     }
-  
+
     rpc set_message {
         description
             "RPC for setting the commit message for a particular commit";

@@ -1,0 +1,147 @@
+submodule rtbrick-access-l2tp-pool {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains yang structure for
+       access L2TPv2 pool.";
+    revision 2020-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping access-l2tp-pool {
+        description "Global access L2TPv2 pool configuration";
+        
+        list l2tp-pool {
+            key "pool-name client-name server-name";
+            description "Global L2TPv2 pool configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library" : "libcmdsubsMgmt.so",
+                    "symbol"  : "subsMgmt_cfg_cmd_l2tp_pool_tbl_get",
+                    "type"    : "l2tp_pool_config_table"
+                }
+            }';                                                      
+            leaf pool-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Name of the L2TP pool";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "pool_name"
+                    }
+                }';
+            }
+            leaf client-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "L2TP client (LAC) name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "client_name"
+                    }
+                }';
+            }
+            leaf server-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "L2TP server (LNS) name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "server_name"
+                    }
+                }';
+            }
+            leaf client-ipv4 {
+                type inet:ipv4-address;
+                description "L2TP client (LAC) IPv4";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "client_ipv4"
+                    }
+                }';
+            } 
+            leaf server-ipv4 {
+                type inet:ipv4-address;
+                description "L2PTP server (LNS) IPv4";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "server_ipv4"
+                    }
+                }';
+            } 
+            leaf secret-plain-text {
+                type string;
+                description "Shared secret in plain text";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shared_secret",
+                        "plain-text-password" : true,
+			            "secret-text-leaf-name" : "secret-encrypted-text"
+                    }
+                }';
+            }
+            leaf secret-encrypted-text {
+                type rtb-types:secret-string-type;
+                description "Shared secret in encrypted text";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shared_secret"
+                    }
+                }';
+            }
+            leaf preference {
+                type uint16 { 
+                    range "0..65535";
+                }
+                description "Preference <0-65535>";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "preference"
+                    }
+                }';
+            } 
+            leaf session-limit {
+                type uint16 { 
+                    range "1..65535";
+                }
+                description "Session limit <1-65535>";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "session_limit"
+                    }
+                }';
+            }
+        }   
+    }
+}

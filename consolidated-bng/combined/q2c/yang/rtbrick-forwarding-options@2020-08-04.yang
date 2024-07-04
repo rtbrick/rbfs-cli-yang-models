@@ -12,6 +12,7 @@ submodule rtbrick-forwarding-options {
     include rtbrick-statistics;
     include rtbrick-fragmentation;
     include rtbrick-subscriber-acl;
+    include rtbrick-address-translation;
 
     organization
       "Rtbrick";
@@ -43,6 +44,7 @@ submodule rtbrick-forwarding-options {
             uses statistics-top;
             uses mtu-profile-top;
             uses fragmentation-top;
+            uses address-translation-top;
         }
     }
     uses forwarding-options-top;

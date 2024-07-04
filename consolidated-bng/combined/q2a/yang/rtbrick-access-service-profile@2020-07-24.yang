@@ -39,7 +39,7 @@ submodule rtbrick-access-service-profile {
 
     grouping access-service-profile {
         description "Global access service profile configuration";
-        
+
         list service-profile {
             key "profile-name";
             description "Global service profile configuration";
@@ -50,7 +50,7 @@ submodule rtbrick-access-service-profile {
                     "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
                     "type"    : "service_profile_config_table"
                 }
-            }';                                                      
+            }';
             leaf profile-name {
                 type string {
                     length "1..64";
@@ -62,6 +62,34 @@ submodule rtbrick-access-service-profile {
                         "attribute" : "service_profile_name"
                     }
                 }';
+            }
+            container address-translation {
+                description "Configure NAT for subscriber";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libcmdsubsMgmt.so",
+                        "symbol": "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "type" :  "service_profile_config_table",
+                        "inherit-attribute" : [ "service_profile_name" ]
+                    }
+                }';
+                leaf profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "NAT profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nat_profile_name",
+                            "expansion-getter" : {
+                                "package":"subsMgmt",
+                                "method" :"access_nat_profile_name_expander"
+                            }
+                        }
+                    }';
+                }
             }
             container qos {
                 description "QoS related attributes";
@@ -85,7 +113,7 @@ submodule rtbrick-access-service-profile {
                             "attribute" : "qos_profile_name"
                         }
                     }';
-                } 
+                }
                 leaf parent-scheduler {
                     type string {
                         length "1..64";
@@ -248,7 +276,7 @@ submodule rtbrick-access-service-profile {
                         }
                     }';
                 }
-            }  
+            }
         }
     }
 }

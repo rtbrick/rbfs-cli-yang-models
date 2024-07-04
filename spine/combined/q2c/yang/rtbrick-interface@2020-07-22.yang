@@ -60,6 +60,17 @@ submodule rtbrick-interface {
         description "up/down data type";
     }
 
+    typedef interface-typedef {
+        type enumeration {
+            enum "l2vpn-vpws" {
+                value 1;
+                description
+                    "Interface type l2vpn-vpws is set";
+            }
+        }
+        description "l2 interface type data type";
+    }
+
     typedef type-breakout-mode {
         type enumeration {
             enum "4x10G" {
@@ -415,6 +426,19 @@ submodule rtbrick-interface {
                     }
                 }';
             }
+
+            leaf interface-type {
+                type interface-typedef;
+                description
+                    "Configure L2 interface type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "interface_type"
+                    }
+                }';
+            }
+
             leaf description {
                 type rtb-types:string128;
                 description
@@ -458,6 +482,39 @@ submodule rtbrick-interface {
                         "attribute" : "mpls_status"
                     }
                 }';
+            }
+            container address-translation {
+                description "Configure NAT for logical interface";
+                presence address-translation;
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libcmdifmd.so",
+                            "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                            "type" :  "ifl_config_table",
+                            "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
+                        }
+                    }';
+                leaf direction {
+                    type enumeration {
+                        enum "local" {
+                            value 1;
+                            description "local / internal";
+                        }
+                        enum "public" {
+                            value 2;
+                            description "public / external";
+                        }
+                    }
+                    mandatory true;
+                    description "NAT direction";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nat_direction"
+                        }
+                    }';
+                }
             }
             leaf ipv4-mtu-profile {
                 type rtb-types:string64;
@@ -631,6 +688,9 @@ submodule rtbrick-interface {
                             "attribute" : "admin_status"
                         }
                     }';
+            }
+            must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
+                error-message "Invalid parameters configured on logical interface";
             }
         }  // list subinterface
     }  // grouping subinterface-top

@@ -106,6 +106,9 @@ submodule rtbrick-mirroring {
                 }';
             }
             leaf interface {
+                must 'not (../logical-interface)' {
+                    error-message "Mirror config failed as both source IFP and source IFL is not allowed";
+                }
                 type mirror-source-interface-type;
                 description
                     "Configure source physical interface.";
@@ -121,6 +124,9 @@ submodule rtbrick-mirroring {
                 }';
             }
             leaf logical-interface {
+                must 'not (../interface)' {
+                    error-message "Mirror config failed as both source IFP and source IFL is not allowed";
+                }
                 type mirror-logical-interface-type;
                 description
                     "Configure source logical interface name.";

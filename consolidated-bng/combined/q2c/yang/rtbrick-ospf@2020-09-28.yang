@@ -181,7 +181,7 @@ submodule rtbrick-ospf {
                 type uint32 {
                     range "1..255";
                 }
-                must "(../../network-type = 'broadcast')" {
+                must "(not(../../network-type)) or (../../network-type != 'p2p')" {
                     error-message "Wait timer supported for 'broadcast'";
                 }
                 description
@@ -240,7 +240,7 @@ submodule rtbrick-ospf {
                 type uint32 {
                     range "1..255";
                 }
-                must "(../../network-type = 'broadcast')" {
+                must "(not(../../network-type)) or (../../network-type != 'p2p')" {
                     error-message "Wait timer supported for 'broadcast'";
                 }
                 description

@@ -136,6 +136,9 @@ submodule rtbrick-isis {
                         }
                     }';
                 }
+                must "not(index) or index <= ../../../segment-routing/srgb/range" {
+                    error-message "Please enter a segment index within the configured SRGB range";
+                }
             }
             container ipv6 {
                 description "ISIS IPv6 segment routing interface configuration";
@@ -171,6 +174,9 @@ submodule rtbrick-isis {
                             "attribute" : "ipv6_sid"
                         }
                     }';
+                }
+                must "index <= ../../../segment-routing/srgb/range" {
+                    error-message "Please enter a segment index within the configured SRGB range";
                 }
             }
             container point-to-point {

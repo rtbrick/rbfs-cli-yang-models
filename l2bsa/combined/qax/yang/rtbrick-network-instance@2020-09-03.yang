@@ -50,6 +50,7 @@ submodule rtbrick-network-instance {
     grouping af-policy {
         description "Instance address family Policy related configuration";
         container policy {
+	    when '../afi != "l2vpn"';
             description "Instance address family Policy related configuration";
             reference
             '{
@@ -128,9 +129,8 @@ submodule rtbrick-network-instance {
             reference
             '{
                 "table-getter": {
-                    "library": "libprotoinfrayang.so",
-                    "symbol": "proto_infra_yang_get_global_instance_af_cfg_tbl_templ",
                     "type" :  "instance_af_config_table",
+                    "table-name": "global.instance.afi-safi.config",
                     "inherit-attribute":["instance_name"]
                 }
             }';
@@ -145,6 +145,12 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf safi {
+                must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
+                != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
+                (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
+                    error-message "l2vpn afi can only be configured with
+                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                }
                 type types:safi;
                 description "Subsequent address family indicator";
                 reference

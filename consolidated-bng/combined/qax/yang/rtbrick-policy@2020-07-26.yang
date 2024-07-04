@@ -396,7 +396,7 @@ submodule rtbrick-policy {
         description "Policy action rule group";
         list rule {
             key "rule";
-            description "Policy action configuration";
+            description "Policy action rule configuration";
             reference
             '{
                 "table-getter": {
@@ -560,7 +560,7 @@ submodule rtbrick-policy {
         description "Policy match attribute rule group";
         list attribute {
             key "name";
-            description "Policy match rule configuration";
+            description "Condition table attribute match name";
             reference
             '{
                 "table-getter": {
@@ -576,7 +576,7 @@ submodule rtbrick-policy {
                         '[a-zA-Z_][a-zA-Z0-9_]{0,64}';
                     length "1..64";
                 }
-                description "Attribute type name";
+                description "Condition object attribute name";
                 reference
                 '{
                     "attribute-getter" : {
@@ -586,7 +586,7 @@ submodule rtbrick-policy {
             }
             leaf match {
                 type match-attr-type;
-                description "Match type";
+                description "Condition object match type";
                 reference
                 '{
                     "attribute-getter" : {
@@ -627,7 +627,7 @@ submodule rtbrick-policy {
                     pattern '[a-zA-Z_\.][a-zA-Z0-9_\.]{0,64}';
                     length "1..64";
                 }
-                description "Condition name";
+                description "Condition profile name";
                 reference
                 '{
                     "attribute-getter" : {
@@ -674,7 +674,7 @@ submodule rtbrick-policy {
                 leaf count {
 
                     type uint32;
-                    description "Match object count";
+                    description "Condition object match count";
                     reference
                     '{
                         "attribute-getter" : {
@@ -684,7 +684,7 @@ submodule rtbrick-policy {
                 }
                 leaf match {
                     type match-count-type;
-                    description "Match object count type";
+                    description "Condition object match type";
                     reference
                     '{
                         "attribute-getter" : {
@@ -702,7 +702,7 @@ submodule rtbrick-policy {
             "This grouping define top-level policy model data.";
 
         container policy {
-            description "Policy options";
+            description "Policy configuration";
             uses policy-list;
             uses policy-statement;
             uses policy-condition;

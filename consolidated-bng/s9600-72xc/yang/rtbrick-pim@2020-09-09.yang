@@ -1,0 +1,290 @@
+submodule rtbrick-pim {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-pim-types {
+        prefix "rtb-pim-types";
+    }
+
+    organization
+      "Rtbrick";
+
+    contact
+      "Authors: Anil Kumar S N (anil@rtbrick.com)";
+
+    description
+      "This sub-module contains YANG structure for
+      Protocol-Independent Multicast (PIM) protocol configuration
+
+        +-> instance
+          +->pim
+            +-> afi
+            +-> join-prune-interval
+            +-> sparse-mode
+                +-> interfaces
+                | +-> interface-name
+                |   +-> afi
+                |   +-> hello-interval
+                |   +-> dr-priority
+                |   +-> propagation-delay
+                |   +-> override-interval
+                +-> static-group
+                | +-> static-join
+                |   +-> group-address
+                |   +-> source-addr
+
+                    +-> afi
+                    +-> safi
+                    +-> source
+                    +-> source-ipv6-address
+                    +-> outgoing-interface";
+
+    revision 2020-09-09 {
+        description "First revision of PIM configuration";
+        reference "None";
+    }
+
+    grouping pim-static-join {
+        description "Static Join related configuration";
+        list static-join {
+            description "A static pim join, (*,G) or (S,G)";
+            reference '{
+                "table-getter": {
+                    "library": "libpim-cmd.so",
+                    "symbol": "pim_confd_yang_get_static_membership_cfg_tbl_tmpl",
+                    "type" :  "pim_static_membership_config_table"
+                }
+            }';
+
+            key "outgoing-interface group-address source-address";
+
+            leaf outgoing-interface {
+                type string;
+                description  "Multicast outbound interface name";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "oif",
+                        "expansion-getter" : {
+                            "package":"pim",
+                            "method" : "pim_interface_name_expander"
+                        }
+                    }
+                }';
+            }//leaf outgoing-interface
+
+            leaf group-address {
+                type rtb-pim-types:ipv4-multicast-group-address;
+                description  "Multicast group IP address";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "group4"
+                    }
+                }';
+            }//leaf group-address
+
+            leaf source-address {
+                type rtb-pim-types:ipv4-multicast-source-address;
+                description  "Multicast source IP address";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "source4"
+                    }
+                }';
+            }//leaf source-address
+        }// list static-join
+    }// grouping pim-static-join
+
+    grouping pim-redistribute {
+        description "Redistribution related configuration";
+        list redistribute {
+            key "afi safi source";
+            description "Redistribution related configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libpim-cmd.so",
+                    "symbol": "pim_confd_yang_get_redistribute_cfg_tbl_tmpl",
+                    "type" :  "protocolinfra.redistribution_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+
+            leaf afi {
+                type rtb-pim-types:afi;
+                description "Type AFI";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }//leaf afi
+
+            leaf safi {
+                type rtb-pim-types:safi;
+                description "Type SAFI";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "safi"
+                    }
+                }';
+            }//leaf safi
+
+            leaf source {
+                type rtb-pim-types:rib-source;
+                description "RIB source";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "source"
+                    }
+                }';
+            }//leaf source
+        }//list redistribute
+    }//grouping pim-redistribute
+
+    grouping interface-config-pim {
+        description "Per interface configuration for PIM";
+        list interface {
+
+            key "interface-name";
+            description "List of PIM interfaces.*-";
+            reference '{
+            "table-getter": {
+                "library": "libpim-cmd.so",
+                    "symbol": "pim_confd_yang_get_interface_cfg_tbl_tmpl",
+                    "type" :  "pim_interface_config_table"
+                }
+            }';
+
+            leaf interface-name {
+                type string;
+                description "Reference to an entry in the global interface list";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "interface_name",
+                        "expansion-getter" : {
+                            "package":"pim",
+                            "method" : "pim_logical_interface_name_expander"
+                        }
+                    }
+                }';
+            }//leaf interface-name
+
+            leaf afi {
+                type rtb-pim-types:afi;
+                description "Type AFI";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }//leaf afi
+
+            leaf hello-interval {
+                type uint16 {
+                    range "1..3600";
+                }
+                //default "30";
+                units "seconds";
+                description "PIM Hello Packets Interval. Default: 30s";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "hello_interval"
+                    }
+                }';
+            }//leaf hello-interval
+
+            leaf dr-priority {
+                type uint32;
+                description
+                "PIM DR (Designated Router) priority. Default: 1";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "dr_priority"
+                    }
+                }';
+            }//leaf dr-priority
+
+            leaf propagation-delay {
+                type uint16 {
+                    range "250..2000";
+                }
+                //default "500";
+                units "milliseconds";
+                description
+                "Interface Propagation Delay. Default: 500ms";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "propagation_delay"
+                    }
+                }';
+            }//leaf propagation-delay
+
+            leaf override-interval {
+                type uint16 {
+                    range "0..65535";
+                }
+                //default "2000";
+                units "milliseconds";
+                description
+                "Override Interval. Default: 2000ms";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "override_interval"
+                    }
+                }';
+            }//leaf override-interval
+        }//list interfaces
+    }//grouping interface-config-pim
+
+    grouping pim-top {
+        description "This grouping define top-level PIM model data";
+        container pim {
+            presence pim;
+            description "Protocol PIM configuration";
+            reference '{
+                "table-getter": {
+                    "library": "libpim-cmd.so",
+                    "symbol": "pim_confd_yang_get_instance_cfg_tbl_tmpl",
+                    "type" :  "pim_instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+
+            leaf afi {
+                type rtb-pim-types:afi;
+                description "Type AFI";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }//leaf afi
+
+            leaf join-prune-interval {
+                type uint32 {
+                    range "10 .. 600";
+                }
+
+                description "PIM join & prune interval";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "join_prune_interval"
+                    }
+                }';
+            }//leaf join-prune-interval
+
+            container sparse-mode {
+                description "Protocol PIM sparse mode";
+
+                uses interface-config-pim;
+                uses pim-redistribute;
+                uses pim-static-join;
+            } //container sparse-mode
+        }//container pim
+    }//grouping pim-top
+}//rtbrick-pim
