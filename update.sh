@@ -17,7 +17,7 @@ function prepareGit() {
 function commitGit() {
   git add .
   git commit -m "Add yang files for $VERSION" -m "/update.sh \"$VERSION\" \"$BRANCH\" \"$TAG\""
-  git push --set-upstream origin "$BRANCH"
+  git push --set-upstream origin "$BRANCH" -o merge_request.create -o merge_request.assign="chris@rtrbrick.com"
   git tag "$TAG"
   git push origin tag "$TAG"
 }

@@ -71,6 +71,17 @@ submodule rtbrick-interface {
         description "l2 interface type data type";
     }
 
+    typedef match-typedef {
+        type enumeration {
+            enum "port" {
+                value 1;
+                description
+                    "Match type port based is set";
+            }
+        }
+        description "l2 interface type data type";
+    }
+
     typedef type-breakout-mode {
         type enumeration {
             enum "4x10G" {
@@ -437,6 +448,22 @@ submodule rtbrick-interface {
                         "attribute" : "interface_type"
                     }
                 }';
+            }
+
+            leaf match-type {
+                type match-typedef;
+
+                description
+                    "Configure match types for the port";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_type"
+                    }
+                }';
+                must '(../interface-type = "l2vpn-vpws") and (. = "port") and (count(../vlan) = 0 and count(../inner-vlan) = 0)' {
+                    error-message "The match-type port is configurable only on a l2vpn-vpws untagged interface.";
+                }
             }
 
             leaf description {

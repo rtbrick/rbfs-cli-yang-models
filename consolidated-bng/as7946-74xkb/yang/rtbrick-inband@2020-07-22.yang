@@ -127,6 +127,16 @@ submodule rtbrick-inband {
                         }
                     }';
                 }
+                leaf lix1 {
+                    type rtb-types:boolean-type;
+                    description "Configure lix1 service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "lix1_enabled"
+                        }
+                    }';
+                }
                 leaf all {
                     type rtb-types:boolean-true;
                     description "Configure all services";
