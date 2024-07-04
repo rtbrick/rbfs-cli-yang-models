@@ -66,8 +66,7 @@ submodule rtbrick-access-l2tp-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_l2tp_profile_tbl_get",
+                    "table-name" : "global.access.l2tp.profile.config",
                     "type"    : "l2tp_profile_config_table"
                 }
             }';                                                      

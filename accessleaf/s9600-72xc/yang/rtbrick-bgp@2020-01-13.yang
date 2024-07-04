@@ -189,7 +189,7 @@ submodule rtbrick-bgp {
             }';
             leaf source {
                 type rtb-bgp-types:rib-source;
-                description "RIB source";
+                description "Source protocol";
                 reference
                 '{
                     "attribute-getter" : {
@@ -231,6 +231,103 @@ submodule rtbrick-bgp {
                 '{
                     "attribute-getter" : {
                         "attribute" : "nh_resolve_safi"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-export-afi-safi-route {
+        description "Stitching two address family configuration";
+        container export {
+            description "Stitching two address family configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description "Destination instance to stitch and redistribute";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_instance",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Destination AFI to stitch and redistribute ";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-bgp-types:safi;
+                description "Destination Safi to stitch and redistribute";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_safi"
+                    }
+                }';
+            }
+        }
+    }
+
+grouping bgp-export-label-block {
+        description "Segment routing global block related configuration";
+        container export-label-block {
+            when '../afi = "l2vpn"';
+            description "Stitching label block";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf base {
+                type uint32 {
+                    range "300001..400000";
+                }
+                must "../range" {
+                    error-message "configure/un-configure Stitching label base and range";
+                }
+                description "Stitching Label base (greater than 15)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_base"
+                    }
+                }';
+            }
+            leaf range {
+                type uint32;
+                must "../base" {
+                    error-message "configure/un-configure Stitching label base and range";
+                }
+                description "Stitching Label range";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_range"
                     }
                 }';
             }
@@ -403,6 +500,17 @@ submodule rtbrick-bgp {
                     }
                 }';
             }
+            leaf export-filter {
+                when '../safi = "vpls-vpws" or ../safi = "vpls"';
+                description "Apply remote site id based filters";
+                type rtb-bgp-types:export-filter;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_filter"
+                    }
+                }';              
+            }
             list interface {
                 when '../afi = "l2vpn"';
                 key "name";
@@ -540,7 +648,7 @@ submodule rtbrick-bgp {
                     when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
                     description "srgb base";
                     type uint32 {
-                        range "100000..200000";
+                        range "200001..300000";
                     }
                     reference
                         '{
@@ -549,10 +657,33 @@ submodule rtbrick-bgp {
                             }
                         }';
                 }
+                leaf sid-index {
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Index to be used in transit labels";
+                    type uint32;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "sid_index"
+                            }
+                        }';
+                }
+                leaf control-word {
+                    description "Enable control word";
+                    type rtb-bgp-types:l2-control-flags;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "l2_control_flags"
+                            }
+                        }';
+                }
             }
             uses bgp-resolve;
             uses bgp-srgb;
             uses bgp-redistribute;
+            uses bgp-export-afi-safi-route;
+            uses bgp-export-label-block;
         }
     }
 
@@ -888,6 +1019,65 @@ submodule rtbrick-bgp {
         }
     }
 
+    grouping bgp-pg-address-family-attributes{
+        leaf extended-nexthop {
+            type rtb-types:boolean-type;
+            description "Enable extended nexthop capability";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "extended_nexthop"
+                }
+            }';
+        }
+        leaf nexthop-self {
+            type rtb-types:boolean-type;
+            description "Propagate nexthop self for paths advertised";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop_self"
+                }
+            }';
+        }
+        leaf nexthop-unchanged {
+            type rtb-types:boolean-type;
+            description "Propagate next hop unchanged for paths advertised";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop_unchanged"
+                }
+            }';
+        }
+        leaf remove-private-as {
+            type rtb-types:boolean-type;
+            description "Enable removal of private AS numbers from BGP advertisements";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "remove_private_as"
+                }
+            }';
+        }
+        leaf send-label {
+            when '../afi != "l2vpn"';
+            type rtb-types:boolean-type;
+            description "Advertise labels for unicast address prefixes";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "send_label"
+                }
+            }';
+        }
+        uses bgp-max-prefix-limit;
+        uses bgp-pg-af-default-information;
+        uses bgp-pg-af-policy;
+        uses bgp-pg-af-update-nexthop;
+        uses bgp-pg-af-add-path;
+    }
+
     grouping bgp-pg-address-family {
         description "BGP peer group address family specific configuration commands";
         list address-family {
@@ -928,46 +1118,6 @@ submodule rtbrick-bgp {
                     }
                 }';
             }
-            leaf extended-nexthop {
-                type rtb-types:boolean-type;
-                description "Enable extended nexthop capability";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "extended_nexthop"
-                    }
-                }';
-            }
-            leaf nexthop-self {
-                type rtb-types:boolean-type;
-                description "Propagate nexthop self for paths advertised";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "nexthop_self"
-                    }
-                }';
-            }
-            leaf nexthop-unchanged {
-                type rtb-types:boolean-type;
-                description "Propagate next hop unchanged for paths advertised";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "nexthop_unchanged"
-                    }
-                }';
-            }
-            leaf remove-private-as {
-                type rtb-types:boolean-type;
-                description "Enable removal of private AS numbers from BGP advertisements";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "remove_private_as"
-                    }
-                }';
-            }
             leaf route-reflect-client {
                 type rtb-types:boolean-type;
                 description "Configure a peer as route reflector client";
@@ -978,22 +1128,9 @@ submodule rtbrick-bgp {
                     }
                 }';
             }
-            leaf send-label {
-                when '../afi != "l2vpn"';
-                type rtb-types:boolean-type;
-                description "Advertise labels for unicast address prefixes";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "send_label"
-                    }
-                }';
+            uses bgp-pg-address-family-attributes {
+                when 'safi != "flowspec"';
             }
-            uses bgp-max-prefix-limit;
-            uses bgp-pg-af-default-information;
-            uses bgp-pg-af-policy;
-            uses bgp-pg-af-update-nexthop;
-            uses bgp-pg-af-add-path;
         }
     }
 
@@ -1114,8 +1251,7 @@ submodule rtbrick-bgp {
             reference
             '{
                 "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_global_instance_table_tmpl_get",
+                    "table-name": "global.bgp.instance.config",
                     "type" :  "bgp.instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -1240,8 +1376,7 @@ submodule rtbrick-bgp {
             reference
             '{
                 "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_global_instance_table_tmpl_get",
+                    "table-name": "global.bgp.instance.config",
                     "type" :  "bgp.instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -1301,8 +1436,7 @@ submodule rtbrick-bgp {
             reference
             '{
                 "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_global_instance_table_tmpl_get",
+                    "table-name": "global.bgp.instance.config",
                     "type" :  "bgp.instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -1321,7 +1455,7 @@ submodule rtbrick-bgp {
             leaf external {
                 type rtb-bgp-types:protocol-pref;
                 description
-                    "Distance value for external BGP(EBGP) routesi <1-255>";
+                    "Distance value for external BGP(EBGP) routes <1-255>";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1341,8 +1475,7 @@ submodule rtbrick-bgp {
             reference 
             '{
                 "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_global_instance_table_tmpl_get",
+                    "table-name": "global.bgp.instance.config",
                     "type" :  "bgp.instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }

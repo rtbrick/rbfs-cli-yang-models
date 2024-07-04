@@ -31,8 +31,7 @@ submodule rtbrick-redundancy{
             reference
                 '{
                     "table-getter": {
-                        "library": "libbds.so",
-                         "symbol": "rd_cfg_global_profile_tbl_get",
+                        "table-name": "global.rd.profile.config",
                          "type" :  "rd_profile_config_table"
                     }
                 }';
@@ -73,8 +72,7 @@ submodule rtbrick-redundancy{
                     reference
                         '{
                             "table-getter": {
-                            "library": "libbds.so",
-                            "symbol": "rd_cfg_global_profile_tbl_get",
+                            "table-name": "global.rd.profile.config",
                             "type" :  "rd_profile_config_table",
                             "inherit-attribute": [ "profile_name"]
                             }
@@ -132,8 +130,7 @@ submodule rtbrick-redundancy{
             reference
                 '{
                     "table-getter": {
-                      "library": "libbds.so",
-                      "symbol": "rd_cfg_global_session_tbl_get",
+                      "table-name": "global.rd.session.config",
                       "type" :  "rd_session_config_table",
                     }
                 }';

@@ -196,8 +196,7 @@ submodule rtbrick-acl {
             reference
             '{
                 "table-getter": {
-                     "library" : "libprotoinfrayang.so",
-                     "symbol"  : "proto_infra_yang_get_acl_l2_cfg_tbl_templ",
+                     "table-name": "global.acl.l2.config",
                      "type"    : "global_acl_l2_config_table",
                      "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -389,8 +388,7 @@ submodule rtbrick-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_acl_l3v4_cfg_tbl_templ",
+                    "table-name" : "global.acl.l3v4.config",
                     "type"    : "global_acl_l3v4_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -570,8 +568,7 @@ submodule rtbrick-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_acl_l3v6_cfg_tbl_templ",
+                    "table-name" : "global.acl.l3v6.config",
                     "type"    : "global_acl_l3v6_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -696,9 +693,8 @@ submodule rtbrick-acl {
             reference
                 '{
                     "table-getter": {
-                        "library" : "libprotoinfrayang.so",
-                        "symbol"  : "proto_infra_yang_get_prefix_list_name_cfg_tbl_templ",
-                        "type"    : "global_prefix_list_name_config_table"
+                        "table-name" : "global.prefix.list.name.config",
+			"type"    : "global_prefix_list_name_config_table"
                     }
                 }';
 
@@ -721,8 +717,7 @@ submodule rtbrick-acl {
                 reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_prefix_list_v4_cfg_tbl_templ",
+                            "table-name" : "global.prefix.list.v4.config",
                             "type"    : "global_prefix_list_v4_config_table",
                             "inherit-attribute" : [ "prefix_list_name"]
                         }
@@ -747,8 +742,7 @@ submodule rtbrick-acl {
                 reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_prefix_list_v6_cfg_tbl_templ",
+                            "table-name" : "global.prefix.list.v6.config",
                             "type"    : "global_prefix_list_v6_config_table",
                             "inherit-attribute" : [ "prefix_list_name" ]
                         }
@@ -786,8 +780,7 @@ submodule rtbrick-acl {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_acl_l2_mode_cfg_tbl_templ",
+                            "table-name" : "global.acl.l2.mode.config",
                             "type"    : "global_acl_l2_mode_config_table"
                         }
                     }';
@@ -809,9 +802,8 @@ submodule rtbrick-acl {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libprotoinfrayang.so",
-                                "symbol"  : "proto_infra_yang_get_acl_l2_cfg_tbl_templ",
-                                "type"    : "global_acl_l2_config_table",
+                                "table-name" : "global.acl.l2.config",
+				"type"    : "global_acl_l2_config_table",
                                 "inherit-attribute" : [ "rule_name" ]
                             }
                         }';
@@ -835,8 +827,7 @@ submodule rtbrick-acl {
                             reference
                             '{
                                 "table-getter": {
-                                    "library" : "libprotoinfrayang.so",
-                                    "symbol"  : "proto_infra_yang_get_acl_l2_cfg_tbl_templ",
+                                    "table-name" : "global.acl.l2.config",
                                     "type"    : "global_acl_l2_config_table",
                                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                                 }
@@ -960,8 +951,7 @@ submodule rtbrick-acl {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_acl_l3v4_mode_cfg_tbl_templ",
+                            "table-name" : "global.acl.l3v4.mode.config",
                             "type"    : "global_acl_l3v4_mode_config_table"
                         }
                     }';
@@ -983,8 +973,7 @@ submodule rtbrick-acl {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libprotoinfrayang.so",
-                                "symbol"  : "proto_infra_yang_get_acl_l3v4_cfg_tbl_templ",
+                                "table-name" : "global.acl.l3v4.config",
                                 "type"    : "global_acl_l3v4_config_table",
                                 "inherit-attribute" : [ "rule_name" ]
                             }
@@ -1009,8 +998,7 @@ submodule rtbrick-acl {
                             reference
                             '{
                                 "table-getter": {
-                                    "library" : "libprotoinfrayang.so",
-                                    "symbol"  : "proto_infra_yang_get_acl_l3v4_cfg_tbl_templ",
+                                    "table-name" : "global.acl.l3v4.config",
                                     "type"    : "global_acl_l3v4_config_table",
                                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                                 }
@@ -1134,8 +1122,7 @@ submodule rtbrick-acl {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_acl_l3v6_mode_cfg_tbl_templ",
+                            "table-name" : "global.acl.l3v6.mode.config",
                             "type"    : "global_acl_l3v6_mode_config_table"
                         }
                     }';
@@ -1157,8 +1144,7 @@ submodule rtbrick-acl {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libprotoinfrayang.so",
-                                "symbol"  : "proto_infra_yang_get_acl_l3v6_cfg_tbl_templ",
+                                "table-name" : "global.acl.l3v6.config",
                                 "type"    : "global_acl_l3v6_config_table",
                                 "inherit-attribute" : [ "rule_name"]
                             }
@@ -1183,8 +1169,7 @@ submodule rtbrick-acl {
                             reference
                             '{
                                 "table-getter": {
-                                    "library" : "libprotoinfrayang.so",
-                                    "symbol"  : "proto_infra_yang_get_acl_l3v6_cfg_tbl_templ",
+                                    "table-name" : "global.acl.l3v6.config",
                                     "type"    : "global_acl_l3v6_config_table",
                                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                                 }

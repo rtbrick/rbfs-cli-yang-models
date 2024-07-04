@@ -31,8 +31,7 @@ submodule rtbrick-access-dhcpv6-server {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_dhcpv6_server_tbl_get",
+                    "table-name" : "global.access.dhcpv6.server.config",
                     "type"    : "dhcpv6_server_config_table"
                 }
             }';

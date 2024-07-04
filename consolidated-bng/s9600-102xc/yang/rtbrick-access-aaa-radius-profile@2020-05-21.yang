@@ -121,8 +121,7 @@ submodule rtbrick-access-aaa-radius-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_aaa_radius_profile_tbl_get",
+                    "table-name" : "global.access.aaa.radius.config",
                     "type"    : "aaa_radius_profile_config_table"
                 }
             }';
@@ -185,8 +184,7 @@ submodule rtbrick-access-aaa-radius-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_aaa_radius_profile_tbl_get",
+                        "table-name" : "global.access.aaa.radius.config",
                         "type"    : "aaa_radius_profile_config_table",
                         "inherit-attribute": ["aaa_radius_profile_name"]
                     }
@@ -219,8 +217,7 @@ submodule rtbrick-access-aaa-radius-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_aaa_radius_profile_tbl_get",
+                        "table-name" : "global.access.aaa.radius.config",
                         "type"    : "aaa_radius_profile_config_table",
                         "inherit-attribute": ["aaa_radius_profile_name"]
                     }

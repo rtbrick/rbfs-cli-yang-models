@@ -166,4 +166,15 @@ module rtbrick-config {
         }
     }
 
+    rpc get_committed_table_count {
+        description "RPC for getting the number of config tables modified by the previous successful commit";
+
+        output {
+            leaf tbl_count {
+                mandatory true;
+                type int32;
+                description "Number of config tables modified in the previos commit";
+            }
+        }
+    }
 }

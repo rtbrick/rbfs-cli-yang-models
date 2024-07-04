@@ -45,8 +45,7 @@ submodule rtbrick-access-user-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_user_profile_tbl_get",
+                    "table-name" : "global.access.user.profile.config",
                     "type"    : "user_profile_config_table"
                 }
             }';                                                      

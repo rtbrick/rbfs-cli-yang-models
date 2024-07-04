@@ -30,8 +30,7 @@ submodule rtbrick-daemon-options {
             reference
             '{
                 "table-getter": {
-                    "library": "libprotoinfrayang.so",
-                    "symbol": "proto_infra_yang_get_bd_instance_map_cfg_tbl_templ",
+                    "table-name": "global.bd.instance.mapping",
                     "type" :  "global_bd_instance_mapping_table"
                 }
             }';

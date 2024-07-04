@@ -63,8 +63,7 @@ submodule rtbrick-authentication {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_global_auth_profile_cfg_tbl_templ",
+                    "table-name" : "global.auth.profile.config",
                     "type"    :  "auth_profile_table",
                     "inherit-attribute":[ "profile_name" ]
                 }
@@ -130,8 +129,7 @@ submodule rtbrick-authentication {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_global_auth_cfg_tbl_templ",
+                    "table-name" : "global.auth.config",
                     "type"    :  "auth_table"
                 }
             }';

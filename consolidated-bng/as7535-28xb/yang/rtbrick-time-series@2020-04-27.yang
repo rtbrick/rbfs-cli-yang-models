@@ -107,8 +107,7 @@ submodule rtbrick-time-series {
         reference
         '{
             "table-getter": {
-                "library": "libbds.so",
-                "symbol" : "time_series_status_tbl_get",
+                "table-name": "global.time-series.config",
                 "type"   : "time_series_global_config_table",
                 "default-attribute" : [ {"configuration_name" : "rtbrick" } ]
             }

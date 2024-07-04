@@ -32,8 +32,7 @@ submodule rtbrick-access-pool {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_global_pool_tbl_get",
+                    "table-name" : "global.pool.address-assignment.config",
                     "type"    : "pool_address_config_table"
                 }
             }';                                                      
@@ -66,8 +65,7 @@ submodule rtbrick-access-pool {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_global_pool_tbl_get",
+                        "table-name" : "global.pool.address-assignment.config",
                         "type"    : "pool_address_config_table",
                         "inherit-attribute": ["pool_name"]
                     }
@@ -108,8 +106,7 @@ submodule rtbrick-access-pool {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_global_pool_tbl_get",
+                        "table-name" : "global.pool.address-assignment.config",
                         "type"    : "pool_address_config_table",
                         "inherit-attribute": ["pool_name"]
                     }

@@ -11,7 +11,7 @@ submodule rtbrick-network-instance {
     import rtbrick-types {
        prefix types;
     }
-    
+
     include rtbrick-isis;
     include rtbrick-bgp;
     include rtbrick-bfd;
@@ -55,8 +55,7 @@ submodule rtbrick-network-instance {
             reference
             '{
                 "table-getter": {
-                    "library": "libprotoinfrayang.so",
-                    "symbol": "proto_infra_yang_get_global_instance_af_cfg_tbl_templ",
+                    "table-name": "global.instance.afi-safi.config",
                     "type" :  "instance_af_config_table",
                     "inherit-attribute":["instance_name", "afi", "safi"]
                 }
@@ -91,8 +90,7 @@ submodule rtbrick-network-instance {
             reference
             '{
                 "table-getter": {
-                    "library": "libprotoinfrayang.so",
-                    "symbol": "proto_infra_yang_get_global_instance_af_cfg_tbl_templ",
+                    "table-name": "global.instance.afi-safi.config",
                     "type" :  "instance_af_config_table",
                     "inherit-attribute":["instance_name", "afi", "safi"]
                 }
@@ -175,8 +173,7 @@ submodule rtbrick-network-instance {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_global_instance_cfg_tbl_templ",
+                    "table-name" : "global.instance.config",
                     "type"    :  "instance_config_table"
                 }
             }';
@@ -208,6 +205,16 @@ submodule rtbrick-network-instance {
                 '{
                     "attribute-getter" : {
                         "attribute" : "rd"
+                    }
+                }';
+            }
+            leaf address-translation {
+                type types:boolean-true;
+                description "Enable address-translation on this instance";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "nat_enabled"
                     }
                 }';
             }

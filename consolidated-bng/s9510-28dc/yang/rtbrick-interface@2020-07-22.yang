@@ -161,6 +161,57 @@ submodule rtbrick-interface {
         description "ifp fec type";
     }
 
+    typedef type-holddown-mode {
+        type enumeration {
+            enum "disable" {
+                value 0;
+                description "disable";
+            }
+            enum "enable" {
+                value 1;
+                description "enable";
+            }
+        }
+        description "ifp holddown mode";
+    }
+
+    typedef type-holddown-timer {
+        type enumeration {
+            enum "0" {
+                value 0;
+                description "0 ms";
+            }
+            enum "100" {
+                value 100;
+                description "100 ms";
+            }
+            enum "200" {
+                value 200;
+                description "200 ms";
+            }
+            enum "500" {
+                value 500;
+                description "500 ms";
+            }
+            enum "1000" {
+                value 1000;
+                description "1s";
+            }
+            enum "2000" {
+                value 2000;
+                description "2s";
+            }
+            enum "5000" {
+                value 5000;
+                description "5s";
+            }
+            enum "10000" {
+                value 10000;
+                description "10s";
+            }
+        }
+    }
+
     typedef vlan-range {
         type uint16 {
             range "2 .. 4094";
@@ -646,6 +697,20 @@ submodule rtbrick-interface {
                     }
                 }';
             }
+            leaf vlan-encapsulation {
+                type rtb-types:vlan-encapsulation-type;
+                must "../vlan and ../inner-vlan" {
+                    error-message "Vlan and inner-vlan configuration is mandatory for vlan-encapsulation";
+                }
+                description
+                    "Configure sub-interface's outer vlan encapsulation";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "outer_vlan_encapsulation"
+                    }
+                }';
+            }
             leaf inner-vlan {
                 type vlan-range;
                 description
@@ -713,6 +778,17 @@ submodule rtbrick-interface {
                     '{
                         "attribute-getter" : {
                             "attribute" : "admin_status"
+                        }
+                    }';
+            }
+            leaf garp-disable {
+                type rtb-types:boolean-true;
+                description
+                    "Configure to disable garp";
+                reference
+                '{
+                        "attribute-getter" : {
+                            "attribute" : "garp_disable"
                         }
                     }';
             }
@@ -930,6 +1006,48 @@ submodule rtbrick-interface {
                     }
                 }';
             }
+            leaf holddown {
+                type type-holddown-mode;
+                description
+                    "Configure to disable holddown machinery";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "holddown"
+                    }
+                }';
+                must 'not(contains(../name, "lag-"))' {
+                    error-message "Holddown cannot be configured for lag interface";
+                }
+            }
+            leaf holddown-down-delay {
+                type type-holddown-timer;
+                description
+                    "Configure in unit of ms, overrides default delay of 0ms";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "holddown_down"
+                    }
+                }';
+                must 'not(contains(../name, "lag-"))' {
+                    error-message "Holddown cannot be configured for lag interface";
+                }
+            }
+            leaf holddown-up-delay {
+                type type-holddown-timer;
+                description
+                    "Configure in unit of ms, overrides exponential backoff";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "holddown_up"
+                    }
+                }';
+                must 'not(contains(../name, "lag-"))' {
+                    error-message "Holddown cannot be configured for lag interface";
+                }
+            }
             uses subinterface-top;
         }  // list interface
     }  // grouping interface-top
@@ -952,8 +1070,7 @@ submodule rtbrick-interface {
                         "default-attribute" : [ { "global_interface_all" : "global-interface-all" } ]
                     }
                 }';
-                leaf admin-status
-                {
+                leaf admin-status {
                     type enumeration {
                         enum "down" {
                             value 0;
@@ -975,10 +1092,149 @@ submodule rtbrick-interface {
                         }
                     }';
                 }
+                leaf holddown {
+                    type type-holddown-mode;
+                    description
+                        "Configure to disable holddown machinery on all the interfaces";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "holddown"
+                        }
+                    }';
+                }
             }
         }
     }
 
+    grouping subinterface-set-top {
+        description
+        "Subinterface data for logical interfaces associated with a
+            given interface";
+
+        list unit
+        {
+            key "unit-id";
+            description
+                "Configure sub-interface under the physical interface";
+            reference
+                '{
+                    "table-getter": {
+                        "library": "libcmdifmd.so",
+                        "symbol": "ifm_yang_get_interface_set_member_cfg_tbl_templ",
+                        "type" :  "interface_set_member_config_table",
+                        "inherit-attribute" : [ "intf_set_name", "ifp_name" ]
+                    }
+                }';
+            leaf unit-id {
+                type uint16;
+                description
+                    "Configure unit which identifies sub-interface under physical interface";
+                must 'count(../../../../interface-set/interface/unit[unit-id=current()]) = 1' {
+                   error-message "Interface is not allowed to associated with multiple interface-sets";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "unit_id"
+                    }
+                }';
+            }
+        }  // list subinterface
+    }  // grouping subinterface-set-top
+
+    grouping interface-name-set-top {
+        description
+        "Top-level grouping for interface configuration";
+
+        list interface {
+            key "name";
+            description
+                "The list of named interfaces on the device";
+            must 'count(../interface) = 1' {
+               error-message "Only one physical interface is allowed in interface-set";
+            }
+            reference
+            '{
+                "table-getter": {
+                    "library": "libcmdifmd.so",
+                    "symbol": "ifm_yang_get_interface_set_cfg_tbl_templ",
+                    "type" :  "interface_set_config_table",
+                    "inherit-attribute" : [ "intf_set_name" ]
+                }
+            }';
+            leaf name
+            {
+                type rtb-types:interface-type;
+                description
+                    "Configure interface name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ifp_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                        }
+                    }
+                }';
+            }
+            uses subinterface-set-top;
+        }  // list set-interface uses interface-set-subinterface-top;
+    }  // grouping interface-set-interface-top
+
+    grouping interface-set-top {
+        description
+        "Interface Set";
+
+        list interface-set
+        {
+            key "name";
+            description
+                "Configure interface-set-name";
+            reference
+                '{
+                    "table-getter": {
+                        "library": "libcmdifmd.so",
+                        "symbol": "ifm_yang_get_interface_set_name_cfg_tbl_templ",
+                        "type" :  "interface_set_name_config_table"
+                    }
+                }';
+            leaf name {
+                type string;
+                description
+                    "Configure interface set";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "intf_set_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_intf_set_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf class-of-service {
+                type string;
+                description
+                    "Configure sub interface-groupe's class-of-service profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "qos_profile_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_profile_name_expander"
+                        }
+                    }
+                }';
+            }
+            uses interface-name-set-top;
+        }  // list interface-set add above uses interface-set-interface-top;
+    }  // grouping interface-set-top
+
     uses interface-top;
+    uses interface-set-top;
     //uses global-interface-top;
 }  // module openconfig-interfaces

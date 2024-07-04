@@ -20,7 +20,25 @@ module rtbrick-bgp-types {
         "None";
     }
 
+    typedef export-filter {
+        type enumeration {
+            enum site-id {
+                value "0";
+                description "site-id based filter";
+            }
+        }
+        description "export-filter data type";
+    }
 
+    typedef l2-control-flags {
+        type enumeration {
+            enum enable {
+                value "4";
+                description "set control word";
+            }
+        }
+        description "export-filter data type";
+    }
 
     typedef afi {
         type enumeration {
@@ -78,6 +96,14 @@ module rtbrick-bgp-types {
                 value "8";
                 description "EVPN vpls-vpws VPN";
             }
+            enum flowspec {
+                value "9";
+                description "flow specification";
+            }
+            enum vpn-flowspec {
+                value "10";
+                description "flow specification";
+            }
         }
         description "Safi data type";
     }
@@ -129,6 +155,14 @@ module rtbrick-bgp-types {
             enum vpls {
                 value "7";
                 description "EVPN vpls-vpws VPN";
+            }
+            enum flowspec {
+                value "8";
+                description "flow specification";
+            }
+            enum vpn-flowspec {
+                value "9";
+                description "flow specification";
             }
         }
         description "Peer Group Safi data type";

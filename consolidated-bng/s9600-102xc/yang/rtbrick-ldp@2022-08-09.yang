@@ -47,8 +47,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -144,7 +143,7 @@ submodule rtbrick-ldp {
     grouping ldp-redistribution {
         description
             "This grouping defines LDP redistribution releated configurations";
-        list redistribution {
+        list redistribute {
             key "source";
             description "Redistribution configuration";
             reference
@@ -209,8 +208,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -244,8 +242,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -429,8 +426,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -468,8 +464,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -486,8 +481,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -511,8 +505,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -674,8 +667,7 @@ submodule rtbrick-ldp {
             reference
             '{
                 "table-getter": {
-                    "library": "libldpyang.so",
-                    "symbol":  "ldp_yang_get_global_tbl_templ",
+                    "table-name": "global.ldp.instance.config",
                     "type" :   "ldp_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }

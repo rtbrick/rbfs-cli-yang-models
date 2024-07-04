@@ -236,8 +236,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_list_entries_tbl_tmpl_get",
+                    "table-name": "global.policy.list.entry.config",
                     "type" :  "policy_list_entry_config_table",
                     "inherit-attribute": [ "list_name", "type" ]
                 }
@@ -274,8 +273,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_list_tbl_tmpl_get",
+                    "table-name": "global.policy.list.config",
                     "type" :  "policy_list_config_table"
                 }
             }';
@@ -319,8 +317,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_match_rules_tbl_tmpl_get",
+                    "table-name": "global.policy.match.rules.config",
                     "type" :  "policy_rules_config_table",
                     "inherit-attribute": [ "statement_name", "ordinal" ]
                 }
@@ -400,8 +397,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_action_rules_tbl_tmpl_get",
+                    "table-name": "global.policy.action.rules.config",
                     "type" :  "policy_rules_config_table",
                     "inherit-attribute": [ "statement_name", "ordinal" ]
                 }
@@ -470,8 +466,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_ordinal_tbl_tmpl_get",
+                    "table-name": "global.policy.ordinal.config",
                     "type" :  "policy_ordinal_config_table",
                     "inherit-attribute": [ "statement_name" ]
                 }
@@ -533,8 +528,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_statement_tbl_tmpl_get",
+                    "table-name": "global.policy.statement.config",
                     "type" :  "policy_statement_config_table"
                 }
             }';
@@ -564,8 +558,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_attribute_match_tbl_tmpl_get",
+                    "table-name": "global.policy.condition.attribute.config",
                     "type" :  "policy_attribute_match_config_table",
                     "inherit-attribute": [ "profile_name" ]
                 }
@@ -617,8 +610,7 @@ submodule rtbrick-policy {
             reference
             '{
                 "table-getter": {
-                    "library": "libpolicy-cmds.so",
-                    "symbol": "policy_yang_condition_tbl_tmpl_get",
+                    "table-name": "global.policy.condition.config",
                     "type" :  "policy_condition_config_table"
                 }
             }';
@@ -640,8 +632,7 @@ submodule rtbrick-policy {
                     reference
                     '{
                         "table-getter": {
-                            "library": "libpolicy-cmds.so",
-                            "symbol": "policy_yang_condition_tbl_tmpl_get",
+                            "table-name": "global.policy.condition.config",
                             "type" :  "policy_condition_config_table",
                             "inherit-attribute":["profile_name"]
                     }

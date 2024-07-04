@@ -118,8 +118,7 @@ submodule rtbrick-access-aaa-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                    "table-name" : "global.access.aaa.profile.config",
                     "type"    : "aaa_profile_config_table"
                 }
             }';                                                      
@@ -176,8 +175,7 @@ submodule rtbrick-access-aaa-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                        "table-name" : "global.access.aaa.profile.config",
                         "type"    : "aaa_profile_config_table",
                         "inherit-attribute": ["aaa_profile_name"]
                     }
@@ -210,8 +208,7 @@ submodule rtbrick-access-aaa-profile {
                 reference
                 '{                                                  
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                        "table-name" : "global.access.aaa.profile.config",
                         "type"    : "aaa_profile_config_table",
                         "inherit-attribute": ["aaa_profile_name"]
                     }
@@ -251,8 +248,7 @@ submodule rtbrick-access-aaa-profile {
                     reference
                     '{                                                  
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                            "table-name" : "global.access.aaa.profile.config",
                             "type"    : "aaa_profile_config_table",
                             "inherit-attribute": ["aaa_profile_name"]
                         }
@@ -313,8 +309,7 @@ submodule rtbrick-access-aaa-profile {
                     reference
                     '{                                                  
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_aaa_profile_tbl_get",
+                            "table-name" : "global.access.aaa.profile.config",
                             "type"    : "aaa_profile_config_table",
                             "inherit-attribute": ["aaa_profile_name"]
                         }
