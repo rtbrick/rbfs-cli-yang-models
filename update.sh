@@ -3,7 +3,7 @@ VERSION=${1}
 BRANCH=${2}
 TAG=${3}
 
-function prepare() {
+function prepareGit() {
   git checkout main
   git pull
   git checkout -b "$BRANCH" || true
@@ -13,9 +13,9 @@ function prepare() {
   rm -rf l2bsa
   rm -rf spine
 }
-function commit() {
+function commitGit() {
   git add .
-  git commit -m "Add yang files for $VERSION"
+  git commit -m "Add yang files for $VERSION" -m "/update.sh \"$VERSION\" \"$BRANCH\" \"$TAG\""
   git push --set-upstream origin "$BRANCH"
 }
 function loadData() {
@@ -56,8 +56,9 @@ function loadData() {
      sudo umount "$mountdir"
      sudo rm -rf "temp"
    done
+   sudo chown -R "$USER:$USER" .
 }
 
-prepare
+prepareGit
 loadData
-commit
+commitGit

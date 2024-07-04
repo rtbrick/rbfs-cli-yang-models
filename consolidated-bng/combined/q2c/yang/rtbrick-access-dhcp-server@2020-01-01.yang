@@ -1,0 +1,24 @@
+submodule rtbrick-access-dhcp-server {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Deeksha Bhandary (deeksha@rtbrick.com)";
+
+    description
+        "This sub module contains the top level configurations of dummy access-dhcp-server config to help rtbrick roles.
+  	This must be pre-date the older package";
+
+    revision 2020-01-01 {
+        description
+          "Dummy access-dhcp-server file";
+    }
+
+    grouping access-dhcp-server {
+        description "Dummy global access-dhcp-server top level config";
+    }
+}

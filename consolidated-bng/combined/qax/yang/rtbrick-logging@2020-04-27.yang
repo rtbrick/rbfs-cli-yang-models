@@ -1,0 +1,451 @@
+submodule rtbrick-logging {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Rohit Kumar (rohit@rtbrick.com)";
+    description
+      "This module contains yang definition for LOGGING module";
+    revision 2020-04-27 {
+        description "First revision";
+        reference "None";
+    }
+    typedef facility-type {
+        type enumeration {
+            enum kern {
+                value "0";
+                description "Kernel facility";
+            }
+            enum daemon {
+                value "3";
+                description "Daemon facility";
+            }
+            enum auth {
+                value "4";
+                description "Authentication facility";
+            }
+            enum authpriv {
+                value "10";
+                description "Authentication facility";
+            }
+            enum all {
+                value "255";
+                description "All facilities";
+            }
+        }
+        description "Rsyslog facility type";
+    }
+
+    typedef rsyslog-log-level {
+        type enumeration {
+            enum emergency {
+                value "0";
+                description "emergency";
+            }
+            enum alert {
+                value "1";
+                description "alert";
+            }
+            enum critical {
+                value 2;
+                description "critical";
+            }
+            enum error {
+                value 3;
+                description "error";
+            }
+            enum warning {
+                value "4";
+                description "warning";
+            }
+            enum notice {
+                value "5";
+                description "notice";
+            }
+            enum info {
+                value "6";
+                description "info";
+            }
+            enum debug {
+                value "7";
+                description "debug";
+            }
+        }
+        description "Rsyslog Log level";
+    }
+
+    grouping rtb-logging-top {
+        description "Grouping Logging configuration";
+        container log {
+            description "Log configuration";
+            list bd {
+                key "bd-name";
+                description "BDS log bd's log configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "liblog.so",
+                        "symbol": "log_autogen_cli_config_table",
+                        "type" :  "log_config_table",
+                        "default-attribute" : [ { "module_name" : "all" }, {"log_group_name": "all"} ]
+                    }
+                }';
+                uses logging-bd;
+                uses logging-level;
+                container plugin-alias {
+                    description "BDS log plugin alias configuration";
+                    presence plugin-alias;
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                            "symbol": "log_autogen_cli_config_table",
+                            "type" :  "log_config_table",
+                            "default-attribute" : [ { "module_name" : "all" }, {"log_group_name": "all"}, { "plugin_level" : "error"}],
+                            "inherit-attribute": [ "bd_name" ]
+                        }
+                    }';
+                    uses logging-plugin-params;
+                }
+                list module {
+                    key "module-name";
+                    description "BDS log bd's module configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                            "symbol": "log_autogen_cli_module_config_table",
+                            "type" :  "log_config_table",
+                            "default-attribute" : [{"log_group_name": "all"} ],
+                            "inherit-attribute": [ "bd_name" ]
+                        }
+                    }';
+                    uses logging-module;
+                    container plugin-alias {
+                        description "BDS log plugin alias configuration";
+                        presence plugin-alias;
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "liblog.so",
+                                "symbol": "log_autogen_cli_module_config_table",
+                                "type" :  "log_config_table",
+                                "default-attribute" : [ {"log_group_name": "all"}, { "plugin_level" : "error"}],
+                                "inherit-attribute": [ "bd_name", "module_name" ]
+                            }
+                        }';
+                        uses logging-plugin-params;
+                    }
+                    list group {
+                        key "group-name";
+                        description "BDS log bd's module log-group configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "liblog.so",
+                                "symbol": "log_autogen_cli_group_config_table",
+                                "type" :  "log_config_table",
+                                "inherit-attribute": [ "bd_name", "module_name" ]
+                            }
+                        }';
+                        uses logging-group;
+                        container plugin-alias {
+                            description "BDS log plugin alias configuration";
+                            presence plugin-alias;
+                            reference
+                            '{
+                                "table-getter": {
+                                    "library": "liblog.so",
+                                    "symbol": "log_autogen_cli_group_config_table",
+                                    "type" :  "log_config_table",
+                                    "default-attribute" : [ { "plugin_level" : "error"}],
+                                    "inherit-attribute": [ "bd_name", "module_name", "log_group_name"]
+                                }
+                            }';
+                            uses logging-plugin-params;
+                        }
+                    }
+                }
+            }
+            list module {
+                key "module-name";
+                description "BDS log module configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "liblog.so",
+                        "symbol": "log_autogen_cli_module_config_table",
+                        "type" :  "log_config_table",
+                        "default-attribute" : [ { "bd_name" : "all" }, {"log_group_name": "all"} ]
+                    }
+                }';
+                uses logging-module;
+                container plugin-alias {
+                    description "BDS log plugin alias configuration";
+                    presence plugin-alias;
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                            "symbol": "log_autogen_cli_module_config_table",
+                            "type" :  "log_config_table",
+                            "default-attribute" : [ { "bd_name" : "all" }, {"log_group_name": "all"}, { "plugin_level" : "error"} ],
+                            "inherit-attribute": [ "module_name" ]
+                        }
+                    }';
+                    uses logging-plugin-params;
+                }
+                list group {
+                    key "group-name";
+                    description "BDS log module log-group configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                            "symbol": "log_autogen_cli_group_config_table",
+                            "type" :  "log_config_table",
+                            "default-attribute" : [{ "bd_name" : "all" }],
+                            "inherit-attribute": [ "module_name" ]
+                        }
+                    }';
+                    uses logging-group;
+                    container plugin-alias {
+                        description "BDS log plugin alias configuration";
+                        presence plugin-alias;
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "liblog.so",
+                                "symbol": "log_autogen_cli_group_config_table",
+                                "type" :  "log_config_table",
+                                "default-attribute" : [ { "bd_name" : "all" }, { "plugin_level" : "error"} ],
+                                "inherit-attribute": [ "module_name", "log_group_name"]
+                            }
+                        }';
+                        uses logging-plugin-params;
+                    }
+                }
+            }
+            container system {
+                list facility {
+                    key "facility-name";
+                    description "Linux system log plugin configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                            "symbol": "log_autogen_cli_rsyslog_config_table",
+                            "type" :  "log_rsyslog_config_table",
+                            "default-attribute" : [ { "plugin-log-level" : "error"} ]
+                        }
+                    }';
+                    leaf facility-name {
+                        type facility-type;
+                        description "System facility";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "facility"
+                            }
+                        }';
+                    }
+                    container  plugin-alias {
+                        presence plugin-alias;
+                        description "Linux system log plugin alias configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "liblog.so",
+                                "symbol": "log_autogen_cli_rsyslog_config_table",
+                                "type" :  "log_rsyslog_config_table",
+                                "inherit-attribute": [ "facility" ]
+                            }
+                        }';
+                        leaf alias-name {
+                            type string;
+                            description "Plugin alias name defined in CTRLD";
+                            mandatory true;
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "plugin-alias-name",
+                                    "expansion-getter" : {
+                                        "package":"log",
+                                        "method" : "logger_plugin_alias_expander"
+                                    }
+                                }
+                            }';
+                        }
+                        leaf level {
+                            type rsyslog-log-level;
+                            description "Plugin log level";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "plugin-log-level"
+                                }
+                            }';
+                        }
+                    }
+                }
+                list bd {
+                    description "File logging configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                             "symbol" : "log_autogen_cli_system_config_table",
+                             "type"   : "log_system_config_table"
+                        }
+                    }';
+                    key "bd-name";
+                    uses logging-system-bd;
+                    leaf level {
+                        type rtb-types:log-level;
+                        description "Log level";
+                        mandatory true;
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+    }
+    grouping logging-module {
+        description "Grouping Logging module configuration";
+        leaf module-name {
+            type string;
+            description "Module name";
+            reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "module_name",
+                        "expansion-getter" : {
+                            "package":"log",
+                            "method" : "logger_set_module_name_expander"
+                        }
+                    }
+                }';
+        }
+        uses logging-level;
+    }
+    grouping logging-group {
+        description "Grouping Logging group configuration";
+        leaf group-name {
+            type string;
+            description "Group name";
+            reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "log_group_name",
+                        "expansion-getter" : {
+                            "package":"log",
+                            "method" : "logger_group_name_expander"
+                        }
+                    }
+                }';
+        }
+        uses logging-level;
+        leaf rate-limit {
+            type uint8;
+            description "Rate limit";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "rate_limit"
+                }
+            }';
+        }
+    }
+    grouping logging-bd {
+        description "Grouping Logging bd leaf";
+        leaf bd-name {
+            type string;
+            description "BD name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "bd_name",
+                    "expansion-getter" : {
+                        "package":"log",
+                        "method" : "logger_bd_name_expander"
+                    }
+                }
+            }';
+        }
+    }
+
+    grouping logging-system-bd {
+        description "Grouping Logging bd leaf for system logging";
+        leaf bd-name {
+            type string;
+            description "BD name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "bd_name",
+                    "expansion-getter" : {
+                        "package":"log",
+                        "method" : "logger_system_bd_name_expander"
+                    }
+                }
+            }';
+        }
+    }
+
+    grouping logging-level {
+        description "Grouping Logging level leaf";
+        leaf level {
+            type rtb-types:log-level;
+            description "Log level";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "level"
+                }
+            }';
+        }
+    }
+    grouping logging-plugin-params {
+        description "Grouping Logging plugin configuration parameters";
+        leaf alias-name {
+            type string;
+            description "Plugin alias defined in CTRLD";
+            mandatory true;
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "plugin_alias",
+                    "expansion-getter" : {
+                        "package":"log",
+                        "method" : "logger_plugin_alias_expander"
+                    }
+                }
+            }';
+        }
+        leaf level {
+            type rtb-types:log-level;
+            description "Log level";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "plugin_level"
+                }
+            }';
+        }
+    }
+    uses rtb-logging-top;
+}

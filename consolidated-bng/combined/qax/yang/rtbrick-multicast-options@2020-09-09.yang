@@ -1,0 +1,31 @@
+submodule rtbrick-multicast-options {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+    
+    /* The below submodule is included only to pass
+     * pyang validation. There is no need for submodules
+     * to include other submodules in yang 1.1.
+     * https://github.com/mbj4668/pyang/issues/323
+     */
+    include rtbrick-igmp;
+
+    organization
+      "Rtbrick";
+    contact
+        "Author : Bhishma Acharya (bhishma@rtbrick.com)";
+    description
+        "This is the multicast-options configuration yang file";
+
+    revision 2020-09-09 {
+
+        description
+            "Initial multicast-options configuration";
+
+        reference "None";
+    }
+
+    uses igmp-multicast-options-top;
+}
