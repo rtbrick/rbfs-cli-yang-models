@@ -35,8 +35,7 @@ submodule rtbrick-access-l2tp-pool {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_l2tp_pool_tbl_get",
+                    "table-name" : "global.access.l2tp.pool.config",
                     "type"    : "l2tp_pool_config_table"
                 }
             }';                                                      

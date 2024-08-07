@@ -201,6 +201,7 @@ submodule rtbrick-system {
             description "NTP configuration";
             list server {
                 key "server-name";
+                unique "ipv4-address";
                 description "NTP server configuration";
                 reference
                 '{
@@ -677,8 +678,7 @@ submodule rtbrick-system {
             reference
             '{
                 "table-getter": {
-                    "library": "libconfd.so",
-                    "symbol" : "confd_system_config_tbl_tmpl_get",
+                    "table-name" : "secure.global.system.table.config",
                     "type"   : "system_config_table",
                     "default-attribute" : [ { "configuration_name" : "rtbrick"} ]
                 }
@@ -729,8 +729,7 @@ submodule rtbrick-system {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libbds.so",
-                        "symbol" : "bds_license_config_tbl_tmpl_get",
+                        "table-name": "local.rtbrick.license.config",
                         "type"   : "license_config_table"
                     }
                 }';
@@ -752,9 +751,10 @@ submodule rtbrick-system {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libconfd.so",
-                        "symbol" : "confd_rtbrick_hostname_config_tbl_tmpl_get",
                         "type"   : "global_rtbrick_hostname_tbl",
+                        "table-name" : "global.rtbrick.hostname.config",
+                        "notification-type" : "table-change",
+                        "notification-interval": 500,
                         "default-attribute" : [ {"system_hostname" : "rtbrick"} ]
                     }
                 }';
@@ -795,6 +795,17 @@ submodule rtbrick-system {
                     '{
                         "attribute-getter" : {
                             "attribute" : "heartbeat_interval"
+                        }
+                    }';
+                }
+                leaf-list nameserver {
+                    type inet:ip-address;
+                    max-elements 3;
+                    description "DNS name server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nameserver"
                         }
                     }';
                 }
@@ -1089,7 +1100,7 @@ submodule rtbrick-system {
                         }
                     }';
                     leaf-list ignore-ip {
-                        type inet:ip-address;
+                        type inet:ip-address-and-prefix;
                         description "List of IPs to be whitelistes by fail2ban";
                         reference
                         '{

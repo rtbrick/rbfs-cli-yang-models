@@ -27,8 +27,7 @@ submodule rtbrick-lldp {
             reference
             '{
                 "table-getter": {
-                    "library" : "liblldp-cmd.so",
-                    "symbol"  : "lldp_cfg_cmd_global_cfg_tbl_get",
+                    "table-name" : "global.lldp.config",
                     "type"    : "lldp_global_config_table",
                     "default-attribute" : [ { "mode" : "global" } ]
                 }
@@ -98,8 +97,7 @@ submodule rtbrick-lldp {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "liblldp-cmd.so",
-                        "symbol"  : "lldp_cfg_cmd_intf_cfg_tbl_get",
+                        "table-name" : "global.lldp.interface.config",
                         "type"    : "lldp_interface_config_table"
                     }
                 }';

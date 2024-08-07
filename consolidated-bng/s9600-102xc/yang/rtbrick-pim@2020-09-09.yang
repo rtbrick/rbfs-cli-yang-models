@@ -248,8 +248,7 @@ submodule rtbrick-pim {
             description "Protocol PIM configuration";
             reference '{
                 "table-getter": {
-                    "library": "libpim-cmd.so",
-                    "symbol": "pim_confd_yang_get_instance_cfg_tbl_tmpl",
+                    "table-name": "global.pim.instance.config",
                     "type" :  "pim_instance_config_table",
                     "inherit-attribute":["instance_name"]
                 }

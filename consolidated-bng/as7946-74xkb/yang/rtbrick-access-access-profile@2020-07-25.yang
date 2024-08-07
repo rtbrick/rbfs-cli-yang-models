@@ -14,10 +14,6 @@ submodule rtbrick-access-access-profile {
         prefix "rtb-types";
     }
 
-    import clixon-autocli{
-        prefix autocli;
-    }
-
     organization
       "RtBrick";
     contact
@@ -72,8 +68,7 @@ submodule rtbrick-access-access-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                    "table-name" : "global.access.profile.config",
                     "type"    : "access_profile_config_table"
                 }
             }';
@@ -112,8 +107,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -133,8 +127,7 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libcmdsubsMgmt.so",
-                                "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                                "table-name" : "global.access.profile.config",
                                 "type"    : "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
@@ -198,17 +191,6 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
-                    leaf delete-terminated {
-                        type rtb-types:boolean-type;
-                        autocli:hide;
-                        description "Delete terminated sessions immediately without waiting for subscriber daemon (deprecated)";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "pppoe_delete_terminated"
-                            }
-                        }';
-                    }
                 }
                 container ppp {
                     description "Protocol PPP";
@@ -217,8 +199,7 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libcmdsubsMgmt.so",
-                                "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                                "table-name" : "global.access.profile.config",
                                 "type"    : "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
@@ -245,9 +226,9 @@ submodule rtbrick-access-access-profile {
                         }
                         leaf mru {
                             type uint16 { 
-                                range "1280..1492";
+                                range "1280..1500";
                             }
-                            description "Advertised local MRU";
+                            description "Maximum local MRU <1280-1500>";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -257,9 +238,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf mtu {
                             type uint16 { 
-                                range "1280..1492";
+                                range "1280..1500";
                             }
-                            description "Enforce this MTU as peer MRU <1280-1492>";
+                            description "Maximum local MTU <1280-1500>";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -353,8 +334,7 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libcmdsubsMgmt.so",
-                                "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                                "table-name" : "global.access.profile.config",
                                 "type"    : "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
@@ -435,8 +415,7 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libcmdsubsMgmt.so",
-                                "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                                "table-name" : "global.access.profile.config",
                                 "type"    : "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
@@ -502,8 +481,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -556,8 +534,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -616,8 +593,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -688,8 +664,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -715,8 +690,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -774,23 +748,6 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
-                    leaf instance {
-                        type string {
-                            length "1..64";
-                        }
-                        autocli:hide;
-                        description "Instance name for IPv4 addresses (deprecated)";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_instance",
-                                "expansion-getter" : {
-                                    "package":"subsMgmt",
-                                    "method" :"access_instance_name_expander"
-                                }
-                            }
-                        }';
-                    } 
                     leaf dad-enable {
                         type rtb-types:boolean-type;
                         description "Enable/disable IPv4 duplicate address detection (enabled by default)";
@@ -817,8 +774,7 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_access_profile_tbl_get",
+                            "table-name" : "global.access.profile.config",
                             "type"    : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
@@ -874,23 +830,6 @@ submodule rtbrick-access-access-profile {
                         '{
                             "attribute-getter" : {
                                 "attribute" : "ipv6_dns_secondary_address"
-                            }
-                        }';
-                    } 
-                    leaf instance {
-                        type string {
-                            length "1..64";
-                        }
-                        autocli:hide;
-                        description "Instance name for IPv6 addresses (deprecated)";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_instance",
-                                "expansion-getter" : {
-                                    "package":"subsMgmt",
-                                    "method" :"access_instance_name_expander"
-                                }
                             }
                         }';
                     }

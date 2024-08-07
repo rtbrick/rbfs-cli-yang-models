@@ -53,8 +53,7 @@ submodule rtbrick-access-l2bsa {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdsubsMgmt.so",
-                            "symbol"  : "subsMgmt_cfg_cmd_l2bsa_ia_tbl_get",
+                            "table-name" : "global.access.l2bsa.ia.interface.config",
                             "type"    : "l2bsa_ia_config_table"
                         }
                     }';

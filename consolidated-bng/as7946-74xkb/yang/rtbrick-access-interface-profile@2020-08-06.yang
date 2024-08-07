@@ -165,8 +165,7 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_interface_profile_tbl_get",
+                        "table-name" : "global.access.interface.config",
                         "type"    : "interface_config_table"
                     }
                 }';
@@ -192,8 +191,7 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_interface_profile_tbl_get",
+                        "table-name" : "global.access.interface.config",
                         "type"    : "interface_config_table"
                     }
                 }';
@@ -235,17 +233,6 @@ submodule rtbrick-access-interface-profile {
                         }
                     }';
                 }
-                leaf outer-vlan-encapsulation {
-                    type rtb-types:vlan-encapsulation-type;
-                    description
-                    "Outer VLAN encapsulation";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_encapsulation"
-                        }
-                    }';
-                }
                 uses access-interface-options;
             }
             list double-tagged {
@@ -254,8 +241,7 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_interface_profile_tbl_get",
+                        "table-name" : "global.access.interface.config",
                         "type"    : "interface_config_table"
                     }
                 }';

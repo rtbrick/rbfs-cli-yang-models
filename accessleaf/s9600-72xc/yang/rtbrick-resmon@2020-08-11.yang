@@ -30,8 +30,7 @@ submodule rtbrick-resmon {
                     reference
                         '{
                             "table-getter": {
-                                "library": "libresmon-common.so",
-                                "symbol": "resmon_optics_config_table_templ_get",
+                                "table-name": "global.resmon.optics.config",
                                 "type" :  "resmon_optics_config_table"
                             }
                         }';
@@ -76,8 +75,7 @@ submodule rtbrick-resmon {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libresmon-common.so",
-                            "symbol": "resmon_config_table_templ_get",
+                            "table-name": "global.resmon.config",
                             "type" :  "resmon_config_table",
                             "default-attribute" : [ {"configuration_name" : "monitoring" } ]
                         }

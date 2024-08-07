@@ -32,8 +32,7 @@ submodule rtbrick-access-dhcp-server {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_dhcp_server_tbl_get",
+                    "table-name" : "global.access.dhcp.server.config",
                     "type"    : "dhcp_server_config_table"
                 }
             }';                                                      

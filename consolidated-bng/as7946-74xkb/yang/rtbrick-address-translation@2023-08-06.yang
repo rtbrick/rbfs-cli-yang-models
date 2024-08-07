@@ -294,27 +294,6 @@ submodule rtbrick-address-translation {
                     }
                 }';
             }
-            leaf instance {
-                type string {
-                    length "1 .. 64";
-                }
-                mandatory true;
-                must 'count(../../profile[instance=current()])=1' {
-                    error-message "Only one NAT Profile can be configured per instance";
-                }
-                description
-                    "Configuring NAT for an instance";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "instance",
-                        "expansion-getter" : {
-                            "package":"nat",
-                            "method" :"nat_instance_name_expander"
-                        }
-                    }
-                }';
-            }
             leaf pool {
                 type string {
                     length "1 .. 64";

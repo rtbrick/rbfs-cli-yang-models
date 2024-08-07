@@ -57,8 +57,7 @@ submodule rtbrick-igmp {
             reference
                 '{
                     "table-getter": {
-                        "library": "libigmp-cmd.so",
-                        "symbol": "igmp_yang_config_interface_profile_table_templ",
+                        "table-name": "global.igmp.interface.profile.config",
                         "type" :  "igmp_interface_profile_config_table"
                     }
                 }';
@@ -252,8 +251,7 @@ submodule rtbrick-igmp {
             reference
                 '{
                     "table-getter": {
-                        "library": "libigmp-cmd.so",
-                        "symbol": "igmp_yang_config_instance_table_templ",
+                        "table-name": "global.igmp.instance.config",
                         "type" :  "igmp_instance_config_table",
                         "inherit-attribute":["instance_name"]
                     }

@@ -526,8 +526,7 @@ submodule rtbrick-isis {
             reference
             '{
                 "table-getter": {
-                    "library": "libisisyang.so",
-                    "symbol": "isis_yang_get_global_instance_tbl_templ",
+                    "table-name": "global.isis.instance.config",
                     "type" :  "isis.config.table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -537,8 +536,7 @@ submodule rtbrick-isis {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libisisyang.so",
-                        "symbol": "isis_yang_get_global_instance_tbl_templ",
+                        "table-name": "global.isis.instance.config",
                         "type" :  "isis.config.table",
                         "inherit-attribute":["instance_name"]
                     }
@@ -581,8 +579,7 @@ submodule rtbrick-isis {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libisisyang.so",
-                        "symbol": "isis_yang_get_global_instance_tbl_templ",
+                        "table-name": "global.isis.instance.config",
                         "type" :  "isis.config.table",
                         "inherit-attribute":["instance_name"]
                     }
@@ -735,8 +732,7 @@ submodule rtbrick-isis {
             reference
             '{
                 "table-getter": {
-                    "library": "libisisyang.so",
-                    "symbol": "isis_yang_get_global_instance_tbl_templ",
+                    "table-name": "global.isis.instance.config",
                     "type" :  "isis.config.table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -842,8 +838,7 @@ submodule rtbrick-isis {
             reference
             '{
                 "table-getter": {
-                    "library": "libisisyang.so",
-                    "symbol": "isis_yang_get_global_instance_tbl_templ",
+                    "table-name": "global.isis.instance.config",
                     "type" :  "isis.config.table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -962,8 +957,7 @@ submodule rtbrick-isis {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libisisyang.so",
-                        "symbol": "isis_yang_get_global_flood_filter_tbl_tmpl",
+                        "table-name": "global.isis.flood-filter.config",
                         "type" :  "isis.flood.filter.table"
                     }
                 }';
@@ -1058,8 +1052,7 @@ submodule rtbrick-isis {
             reference
             '{
                 "table-getter": {
-                    "library": "libisisyang.so",
-                    "symbol": "isis_yang_get_global_instance_tbl_templ",
+                    "table-name": "global.isis.instance.config",
                     "type" :  "isis.config.table",
                     "inherit-attribute":["instance_name"]
                 }
@@ -1217,8 +1210,7 @@ submodule rtbrick-isis {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libisisyang.so",
-                        "symbol": "isis_yang_get_global_instance_tbl_templ",
+                        "table-name": "global.isis.instance.config",
                         "type" :  "isis.config.table",
                         "inherit-attribute":["instance_name"]
                     }

@@ -46,8 +46,7 @@ submodule rtbrick-access-service-profile {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                    "table-name" : "global.access.service.profile.config",
                     "type"    : "service_profile_config_table"
                 }
             }';
@@ -68,8 +67,7 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libcmdsubsMgmt.so",
-                        "symbol": "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "table-name": "global.access.service.profile.config",
                         "type" :  "service_profile_config_table",
                         "inherit-attribute" : [ "service_profile_name" ]
                     }
@@ -96,8 +94,7 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "table-name" : "global.access.service.profile.config",
                         "type"    : "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
@@ -144,8 +141,7 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "table-name" : "global.access.service.profile.config",
                         "type"    : "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
@@ -198,8 +194,7 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "table-name" : "global.access.service.profile.config",
                         "type"    : "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
@@ -222,8 +217,7 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdsubsMgmt.so",
-                        "symbol"  : "subsMgmt_cfg_cmd_service_profile_tbl_get",
+                        "table-name" : "global.access.service.profile.config",
                         "type"    : "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }

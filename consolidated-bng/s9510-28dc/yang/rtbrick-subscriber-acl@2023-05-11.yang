@@ -38,8 +38,7 @@ submodule rtbrick-subscriber-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v4_cfg_tbl_templ",
+                    "table-name" : "global.subscriber.acl.l3v4.config",
                     "type"    : "global_subscriber_acl_l3v4_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -175,8 +174,7 @@ submodule rtbrick-subscriber-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v6_cfg_tbl_templ",
+                    "table-name" : "global.subscriber.acl.l3v6.config",
                     "type"    : "global_subscriber_acl_l3v6_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -334,8 +332,7 @@ submodule rtbrick-subscriber-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v4_cfg_tbl_templ",
+                    "table-name" : "global.subscriber.acl.l3v4.config",
                     "type"    : "global_subscriber_acl_l3v4_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -385,8 +382,7 @@ submodule rtbrick-subscriber-acl {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v6_cfg_tbl_templ",
+                    "table-name" : "global.subscriber.acl.l3v6.config",
                     "type"    : "global_subscriber_acl_l3v6_config_table",
                     "inherit-attribute" : [ "rule_name", "ordinal" ]
                 }
@@ -443,8 +439,7 @@ submodule rtbrick-subscriber-acl {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v4_mode_cfg_tbl_templ",
+                            "table-name" : "global.subscriber.acl.l3v4.mode.config",
                             "type"    : "global_subscriber_acl_l3v4_mode_config_table"
                         }
                     }';
@@ -466,8 +461,7 @@ submodule rtbrick-subscriber-acl {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libprotoinfrayang.so",
-                                "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v4_cfg_tbl_templ",
+                                "table-name" : "global.subscriber.acl.l3v4.config",
                                 "type"    : "global_subscriber_acl_l3v4_config_table",
                                 "inherit-attribute" : [ "rule_name" ]
                             }
@@ -514,8 +508,7 @@ submodule rtbrick-subscriber-acl {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "libprotoinfrayang.so",
-                            "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v6_mode_cfg_tbl_templ",
+                            "table-name" : "global.subscriber.acl.l3v6.mode.config",
                             "type"    : "global_subscriber_acl_l3v6_mode_config_table"
                         }
                     }';
@@ -537,8 +530,7 @@ submodule rtbrick-subscriber-acl {
                         reference
                         '{
                             "table-getter": {
-                                "library" : "libprotoinfrayang.so",
-                                "symbol"  : "proto_infra_yang_get_subscriber_acl_l3v6_cfg_tbl_templ",
+                                "table-name" : "global.subscriber.acl.l3v6.config",
                                 "type"    : "global_subscriber_acl_l3v6_config_table",
                                 "inherit-attribute" : [ "rule_name"]
                             }

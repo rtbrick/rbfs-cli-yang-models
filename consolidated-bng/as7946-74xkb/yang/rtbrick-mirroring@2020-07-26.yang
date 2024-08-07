@@ -77,8 +77,7 @@ submodule rtbrick-mirroring {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_mirror_cfg_tbl_templ",
+                    "table-name" : "global.mirror.config",
                     "type"    :  "global_mirror_config_table",
                     "inherit-attribute":[ "mirror_name" ]
                 }
@@ -153,8 +152,7 @@ submodule rtbrick-mirroring {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_mirror_cfg_tbl_templ",
+                    "table-name" : "global.mirror.config",
                     "type"    :  "global_mirror_config_table",
                     "inherit-attribute":[ "mirror_name" ]
                 }
@@ -187,8 +185,7 @@ submodule rtbrick-mirroring {
             reference
             '{
                 "table-getter": {
-                    "library" : "libprotoinfrayang.so",
-                    "symbol"  : "proto_infra_yang_get_mirror_cfg_tbl_templ",
+                    "table-name" : "global.mirror.config",
                     "type"    : "global_mirror_config_table"
                 }
             }';

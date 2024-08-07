@@ -31,8 +31,7 @@ submodule rtbrick-access-dhcp-relay {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdsubsMgmt.so",
-                    "symbol"  : "subsMgmt_cfg_cmd_dhcp_relay_tbl_get",
+                    "table-name" : "global.access.dhcp.relay.config",
                     "type"    : "dhcp_relay_config_table"
                 }
             }';                                                      

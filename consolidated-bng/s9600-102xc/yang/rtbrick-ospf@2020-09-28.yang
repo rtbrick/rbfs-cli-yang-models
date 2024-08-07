@@ -990,8 +990,7 @@ submodule rtbrick-ospf {
             reference
             '{
                 "table-getter": {
-                    "library": "libospfyang.so",
-                    "symbol":  "ospf_yang_get_global_tbl_templ",
+                    "table-name": "global.ospf.instance.config",
                     "type" :   "ospf_instance_config",
                     "default-attribute": [{"afi": "ipv6"}],
                     "inherit-attribute":["instance_name", "instance_id"]
@@ -1013,8 +1012,7 @@ submodule rtbrick-ospf {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libospfyang.so",
-                        "symbol":  "ospf_yang_get_global_tbl_templ",
+                        "table-name": "global.ospf.instance.config",
                         "type" :   "ospf_instance_config",
                         "default-attribute": [{"afi": "ipv6"}],
                         "inherit-attribute":["instance_name", "instance_id"]
@@ -1059,8 +1057,7 @@ submodule rtbrick-ospf {
             reference
             '{
                 "table-getter": {
-                    "library": "libospfyang.so",
-                    "symbol":  "ospf_yang_get_global_tbl_templ",
+                    "table-name": "global.ospf.instance.config",
                     "type" :   "ospf_instance_config",
                     "default-attribute": [{"afi": "ipv4"}],
                     "inherit-attribute":["instance_name"]
@@ -1082,8 +1079,7 @@ submodule rtbrick-ospf {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libospfyang.so",
-                        "symbol":  "ospf_yang_get_global_tbl_templ",
+                        "table-name": "global.ospf.instance.config",
                         "type" :   "ospf_instance_config",
                         "default-attribute": [{"afi": "ipv4"}],
                         "inherit-attribute":["instance_name"]
@@ -1145,8 +1141,7 @@ submodule rtbrick-ospf {
             reference
             '{
                 "table-getter": {
-                    "library": "libospfyang.so",
-                    "symbol":  "ospf_yang_get_global_tbl_templ",
+                    "table-name": "global.ospf.instance.config",
                     "type" :   "ospf_instance_config",
                     "default-attribute": [{"afi": "ipv6"}],
                     "inherit-attribute":["instance_name"]
@@ -1227,8 +1222,7 @@ submodule rtbrick-ospf {
             reference
             '{
                 "table-getter": {
-                    "library": "libospfyang.so",
-                    "symbol":  "ospf_yang_get_global_tbl_templ",
+                    "table-name": "global.ospf.instance.config",
                     "type" :   "ospf_instance_config",
                     "default-attribute": [{"afi": "ipv4"}],
                     "inherit-attribute":["instance_name"]

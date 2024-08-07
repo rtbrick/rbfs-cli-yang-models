@@ -104,8 +104,7 @@ submodule rtbrick-link-aggregation {
             reference
             '{
                 "table-getter": {
-                    "library" : "liblag-cmd.so",
-                    "symbol"  : "lag_cfg_cmd_global_cfg_tbl_get",
+                    "table-name" : "global.lag.config",
                     "type"    : "lag_global_config_table",
                     "default-attribute" : [ { "mode" : "global" } ]
                 }
@@ -117,8 +116,7 @@ submodule rtbrick-link-aggregation {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "liblag-cmd.so",
-                        "symbol"  : "lag_cfg_cmd_lag_intf_cfg_tbl_get",
+                        "table-name" : "global.interface.lag.config",
                         "type"    : "lag_interface_config_table"
                     }
                 }';
@@ -196,8 +194,7 @@ submodule rtbrick-link-aggregation {
                     reference
                     '{
                         "table-getter": {
-                            "library" : "liblag-cmd.so",
-                            "symbol"  : "lag_cfg_cmd_lag_member_intf_cfg_tbl_get",
+                            "table-name" : "global.interface.lag.member.config",
                             "type"    : "lag_member_interface_config_table",
                             "inherit-attribute" : [ "lag_interface_name" ]
                         }
@@ -207,25 +204,28 @@ submodule rtbrick-link-aggregation {
                         type rtb-types:lag-member-interface-type;
                         description "Link aggregation member interface name.";
                         must 'count(../../../../interface[name=current()]/unit) = 0' {
-                            error-message "Lag member inteface cannot have any logical inteface configured";
+                            error-message "Lag member interface cannot have any logical interface configured";
                         }
                         must 'count(../../../../interface[name=current()]/mru) = 0' {
-                            error-message "Lag member inteface cannot have mru configured";
+                            error-message "Lag member interface cannot have mru configured";
                         }
                         must 'count(../../../../interface[name=current()]/auto-negotiation) = 0' {
-                            error-message "Lag member inteface cannot have auto-negotiation configured";
+                            error-message "Lag member interface cannot have auto-negotiation configured";
                         }
                         must 'count(../../../../interface[name=current()]/class-of-service) = 0' {
-                            error-message "Lag member inteface cannot have class-of-service configured";
+                            error-message "Lag member interface cannot have class-of-service configured";
                         }
                         must 'count(../../../../l2x/name[incoming-interface=current()]) = 0' {
-                            error-message "Lag member inteface cannot have L2X configured";
+                            error-message "Lag member interface cannot have L2X configured";
                         }
                         must 'count(../../../../l2x/name[outgoing-interface=current()]) = 0' {
-                            error-message "Lag member inteface cannot have L2X configured";
+                            error-message "Lag member interface cannot have L2X configured";
                         }
                         must 'count(../../../../link-aggregation/interface/member-interface[member-interface-name=current()]) = 1' {
                                 error-message "Member interface name has to be unique across all lags";
+                        }
+                        must 'not(../../../../interface[name=current()]/holddown = "enable")' {
+                            error-message "Lag member interface cannot have holddown enabled";
                         }
                         reference
                         '{

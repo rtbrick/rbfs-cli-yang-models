@@ -56,7 +56,9 @@ submodule rtbrick-platform-profile {
                 }';
 
             leaf profile {
-                type string;
+                type string {
+                    length "1 .. 64";
+                }
                 description "Platform profile name";
                 reference
                     '{

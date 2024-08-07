@@ -40,8 +40,7 @@ submodule rtbrick-access {
           reference
           '{
               "table-getter": {
-                  "library" : "libcmdsubsMgmt.so",
-                  "symbol"  : "subsMgmt_cfg_cmd_global_access_get",
+                  "table-name" : "global.access.config",
                   "type"    : "access_global_config_table",
                   "default-attribute" : [ { "mode" : "global" } ]
               }
