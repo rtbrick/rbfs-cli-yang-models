@@ -71,6 +71,57 @@ submodule rtbrick-interface {
         description "l2 interface type data type";
     }
 
+    typedef vlan-operation-typedef {
+        type enumeration {
+            enum "push" {
+                value 1;
+                description
+                    "Add Vlan";
+            }
+            enum "pop" {
+                value 2;
+                description
+                    "Delete Vlan";
+            }
+            enum "swap" {
+                value 3;
+                description
+                    "Swap Vlan";
+            }
+
+            enum "push-push" {
+                value 4;
+                description
+                    "Swap Vlan";
+            }
+
+            enum "pop-pop" {
+                value 5;
+                description
+                    "Swap Vlan";
+            }
+
+            enum "swap-swap" {
+                value 6;
+                description
+                    "Swap Vlan";
+            }
+
+            enum "swap-push" {
+                value 7;
+                description
+                    "Swap Vlan";
+            }
+
+            enum "pop-swap" {
+                value 8;
+                description
+                    "Swap Vlan";
+            }
+        }
+        description "Vlan operations supported";
+    }
+
     typedef match-typedef {
         type enumeration {
             enum "port" {
@@ -219,6 +270,24 @@ submodule rtbrick-interface {
         description "Vlan range";
     }
 
+    typedef esi-value {
+        type string {
+            pattern '0[0-5]:([0-9A-Fa-f]{2}:){8}[0-9A-Fa-f]{2}';
+            length 29;
+        }
+    }
+
+    typedef esi-mode {
+        type enumeration {
+            enum "all-active" {
+                value 1;
+                description
+                    "All active esi mode";
+            }
+        }
+        description "esi mode";
+    }
+
     grouping subinterface-address-config {
         description
             "Configuration data for subinterfaces address";
@@ -329,7 +398,9 @@ submodule rtbrick-interface {
                      }';
                 }
                 leaf-list community {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description
                         "Configure list of community associated with the address";
                     reference
@@ -340,7 +411,9 @@ submodule rtbrick-interface {
                     }';
                 }
                 leaf-list extended-community {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description
                         "Configure list of extended-community associated with the address";
                     reference
@@ -489,6 +562,45 @@ submodule rtbrick-interface {
                 }';
             }
 
+            container esi {
+                description
+                    "Configure Ethernet Segment Identifier for l2 interface";
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libcmdifmd.so",
+                            "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                            "type" :  "ifl_config_table",
+                            "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
+                        }
+                    }';
+                must '../interface-type = "l2vpn-vpws"' {
+                    error-message "esi should only be configure for l2vpn-vpws interface";
+                }
+                leaf value {
+                    type esi-value;
+                    description
+                        "Configure esi value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "esi_value"
+                        }
+                    }';
+                }
+                leaf mode {
+                    type esi-mode;
+                    description
+                        "Configure esi mode";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "esi_mode"
+                        }
+                    }';
+                }
+            }
+
             leaf interface-type {
                 type interface-typedef;
                 description
@@ -514,6 +626,218 @@ submodule rtbrick-interface {
                 }';
                 must '(../interface-type = "l2vpn-vpws") and (. = "port") and (count(../vlan) = 0 and count(../inner-vlan) = 0)' {
                     error-message "The match-type port is configurable only on a l2vpn-vpws untagged interface.";
+                }
+            }
+
+            container input-vlan-map {
+                description "Configure Input Vlan Mapping";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.interface.logical.config",
+                            "type" :  "ifl_config_table",
+                            "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
+                        }
+                    }';
+
+                leaf vlan-operation {
+                    type vlan-operation-typedef;
+                    description
+                        "Vlan operation at ingress";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    must '((.!= "pop") and (.!= "pop-pop")) or not (../vlan-id)' {
+                        error-message "Vlan Id is not allowed for this vlan operation";
+                    }
+
+                    must 'not ((.!= "pop") and (.!= "pop-pop") and (.!= "pop-swap")) or (../vlan-id)' {
+                        error-message "Vlan Id is mandatory for this vlan operation";
+                    }
+
+                    must '(.!= "push-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for push-push vlan operation";
+                    }
+
+                    must '(.!= "swap-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for swap-push vlan operation";
+                    }
+
+                    must '(.!= "swap-swap") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for swap-swap vlan operation";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "input_vlan_map_vlan_operation"
+                        }
+                    }';
+                }
+
+                leaf vlan-encapsulation {
+                    type rtb-types:vlan-encapsulation-type;
+                    description
+                        "Vlan encapsulation at ingress";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    must '(../vlan-id)' {
+                        error-message "Vlan Id is mandatory for this configuration";
+                    }
+
+                    must '(../vlan-operation != "pop-pop") and (../vlan-operation != "pop")' {
+                        error-message "Vlan encapsulation is not supported for this vlan operation at ingress.";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "input_vlan_map_vlan_encapsulation"
+                        }
+                    }';
+                }
+
+                leaf vlan-id {
+                    type vlan-range;
+                    description
+                        "Configure the vlan for the vlan operation specified";
+
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "input_vlan_map_vlan_id"
+                        }
+                    }';
+                }
+
+                leaf inner-vlan-id {
+                    type vlan-range;
+                    description
+                        "Configure the inner vlan for the vlan operation specified";
+
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "input_vlan_map_inner_vlan_id"
+                        }
+                    }';
+                }
+            }
+
+           container output-vlan-map {
+                description "Configure Output Vlan Mapping";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.interface.logical.config",
+                            "type" :  "ifl_config_table",
+                            "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
+                        }
+                    }';
+
+                leaf vlan-operation {
+                    type vlan-operation-typedef;
+                    description
+                        "Vlan operation at egress";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    must '((.!= "pop") and (.!= "pop-pop")) or not (../vlan-id)' {
+                        error-message "Vlan Id is not allowed for this vlan operation";
+                    }
+
+                    must 'not ((.!= "pop") and (.!= "pop-pop") and (.!= "pop-swap")) or (../vlan-id)' {
+                        error-message "Vlan Id is mandatory for this vlan operation";
+                    }
+
+                    must '(.!= "push-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for push-push vlan operation";
+                    }
+
+                    must '(.!= "swap-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for swap-push vlan operation";
+                    }
+
+                    must '(.!= "swap-swap") or ((../vlan-id) and  (../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is mandatory for swap-swap vlan operation";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_vlan_operation"
+                        }
+                    }';
+                }
+
+                leaf vlan-encapsulation {
+                    type rtb-types:vlan-encapsulation-type;
+                    description
+                        "Vlan encapsulation at egress";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    must '(../vlan-id)' {
+                        error-message "Vlan Id is mandatory for this configuration";
+                    }
+
+                    must '(../vlan-operation != "pop-pop") and (../vlan-operation != "pop")' {
+                        error-message "Vlan encapsulation is not supported for this vlan operation at egress.";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_vlan_encapsulation"
+                        }
+                    }';
+                }
+
+                leaf vlan-id {
+                    type vlan-range;
+                    description
+                        "Configure the vlan for the vlan operation specified";
+
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_vlan_id"
+                        }
+                    }';
+                }
+
+                leaf inner-vlan-id {
+                    type vlan-range;
+                    description
+                        "Configure the inner vlan for the vlan operation specified";
+
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_inner_vlan_id"
+                        }
+                    }';
                 }
             }
 
@@ -672,7 +996,9 @@ submodule rtbrick-interface {
                 }';
             }
             leaf instance {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure sub-interface's instance name";
                 reference
@@ -723,7 +1049,9 @@ submodule rtbrick-interface {
                 }';
             }
             leaf class-of-service {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure sub-interface's class-of-service profile name";
                 reference
@@ -876,7 +1204,9 @@ submodule rtbrick-interface {
                  }';
             }
             leaf host-if {
-                 type string;
+                 type string {
+                     length "1..64";
+                 }
                  description
                      "Configure host_if";
                  reference
@@ -981,7 +1311,9 @@ submodule rtbrick-interface {
                     }';
             }
             leaf class-of-service {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure sub-interface's class-of-service profile name";
                 reference
@@ -1130,7 +1462,7 @@ submodule rtbrick-interface {
                 type uint16;
                 description
                     "Configure unit which identifies sub-interface under physical interface";
-                must 'count(../../../../interface-set/interface/unit[unit-id=current()]) = 1' {
+                must 'count(../../../../interface-set/interface[name=current()/../../name]/unit[unit-id=current()]) = 1' {
                    error-message "Interface is not allowed to associated with multiple interface-sets";
                 }
                 reference
@@ -1201,7 +1533,9 @@ submodule rtbrick-interface {
                     }
                 }';
             leaf name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure interface set";
                 reference
@@ -1216,7 +1550,9 @@ submodule rtbrick-interface {
                 }';
             }
             leaf class-of-service {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure sub interface-groupe's class-of-service profile name";
                 reference

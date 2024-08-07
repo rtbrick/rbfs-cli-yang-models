@@ -63,7 +63,9 @@ submodule rtbrick-pim {
             key "outgoing-interface group-address source-address";
 
             leaf outgoing-interface {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description  "Multicast outbound interface name";
                 reference '{
                     "attribute-getter" : {
@@ -161,7 +163,9 @@ submodule rtbrick-pim {
             }';
 
             leaf interface-name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Reference to an entry in the global interface list";
                 reference '{
                     "attribute-getter" : {

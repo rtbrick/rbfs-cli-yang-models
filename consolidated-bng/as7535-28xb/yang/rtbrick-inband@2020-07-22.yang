@@ -43,7 +43,9 @@ submodule rtbrick-inband {
                         }
                     }';
                 leaf name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description
                         "Configure instance name";
                     reference

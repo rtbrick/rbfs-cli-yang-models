@@ -105,7 +105,9 @@ submodule rtbrick-redundancy{
 
                     leaf instance {
                         mandatory true;
-                        type string;
+                        type string {
+                            length "1..64";
+                        }
                         description "Peer instance name";
 
                         reference
@@ -131,7 +133,7 @@ submodule rtbrick-redundancy{
                 '{
                     "table-getter": {
                       "table-name": "global.rd.session.config",
-                      "type" :  "rd_session_config_table",
+                      "type" :  "rd_session_config_table"
                     }
                 }';
 
@@ -162,7 +164,9 @@ submodule rtbrick-redundancy{
 
             leaf profile {
                 mandatory true;
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Profile name";
                 reference
                     '{

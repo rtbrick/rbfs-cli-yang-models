@@ -1159,7 +1159,7 @@ submodule rtbrick-qos {
             '{
                 "table-getter": {
                     "table-name" : "global.qos.class.policer.map.mode.config",
-                    "type"    : "qos_class_policer_map_mode_config_table",
+                    "type"    : "qos_class_policer_map_mode_config_table"
                 }
             }';
             leaf class-policer-map-name {
@@ -1530,7 +1530,7 @@ submodule rtbrick-qos {
             '{
                 "table-getter": {
                     "table-name" : "global.qos.class.queue.map.mode.config",
-                    "type"    : "qos_class_queue_map_mode_config_table",
+                    "type"    : "qos_class_queue_map_mode_config_table"
                 }
             }';
             leaf class-queue-map-name {

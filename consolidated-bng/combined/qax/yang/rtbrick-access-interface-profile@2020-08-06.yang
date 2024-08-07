@@ -1,0 +1,325 @@
+submodule rtbrick-access-interface-profile {
+
+    yang-version 1.1;                                                                
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains yang structure for
+       access interface profile configuration.";
+    revision 2020-08-06 {
+        description "First revision";
+        reference "None";
+    }
+
+    typedef access-type {
+        type enumeration {
+            enum PPPoE {
+                value "0";
+            }
+            enum IPoE {
+                value "3";
+            }
+        }
+        description "Access service type";
+    }
+
+    grouping access-interface-options {
+        leaf access-type {
+            type access-type;
+            description "Access service type";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "access_type"
+                }
+            }';
+        }   
+        leaf access-profile-name {
+            type string {
+                length "1 .. 64";
+            }
+            description "Access profile name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "access_profile_name",
+                    "expansion-getter" : {
+                        "package":"subsMgmt",
+                        "method" :"access_profile_name_expander"
+                    }
+                }
+            }';
+        } 
+        leaf service-profile-name {
+            type string {
+                length "1 .. 64";
+            }
+            description "Service profile name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "service_profile_name",
+                    "expansion-getter" : {
+                        "package":"subsMgmt",
+                        "method" :"access_service_profile_name_expander"
+                    }
+                }
+            }';
+        } 
+        leaf aaa-profile-name {
+            type string {
+                length "1 .. 64";
+            }
+            description "AAA profile name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "aaa_profile_name",
+                    "expansion-getter" : {
+                        "package":"subsMgmt",
+                        "method" :"access_aaa_profile_name_expander"
+                    }
+                }
+            }';
+        } 
+        leaf vlan-profile-enable {
+            type rtb-types:boolean-type;
+            description "Enable VLAN profiles";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "vlan_profile_enabled"
+                }
+            }';
+        } 
+        leaf max-subscribers-per-vlan {
+            type uint16 { 
+                range "1..65535";
+            }
+            description "Restrict maximum subscribers per VLAN";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "max_subscriber_per_vlan"
+                }
+            }';
+        } 
+        leaf max-subscribers-per-mac {
+            type uint16 { 
+                range "1..65535";
+            }
+            description "Restrict maximum subscribers per MAC address";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "max_subscriber_per_mac"
+                }
+            }';
+        }
+        leaf gateway-ifl {
+            type rtb-types:logical-interface-type;
+            description "IPoE gateway IFL (unnumbered source IFL)";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "gateway_ifl",
+                    "expansion-getter" : {
+                        "package":"subsMgmt",
+                        "method" :"access_ifl_name_expander"
+                    }
+                }
+            }';
+        }
+        leaf redundancy-session-id {
+            type uint32 { 
+                range "1..4294967295";
+            }
+            description "Redundancy session id for this interface <1-4294967295>";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "rd_session_id"
+                }
+            }';
+        }
+    }
+
+    grouping access-interface-profile {
+        description "Global access interface profile configuration";
+        container interface {
+            description "Global interface profile configuration";
+            list untagged {
+                key "interface-name";
+                description "Untagged access";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.interface.config",
+                        "type"    : "interface_config_table"
+                    }
+                }';
+                leaf interface-name {
+                    type rtb-types:interface-type;
+                    description "Name of the physical interface";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "interface_name",
+                            "expansion-getter" : {
+                                "package":"subsMgmt",
+                                "method" :"access_ifp_name_expander"
+                            }
+                        }
+                    }';
+                }
+                uses access-interface-options;
+            }
+            list single-tagged {
+                key "interface-name outer-vlan-min outer-vlan-max";
+                description "Single tagged access";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.interface.config",
+                        "type"    : "interface_config_table"
+                    }
+                }';
+                leaf interface-name {
+                    type rtb-types:interface-type;
+                    description "Name of the physical interface";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "interface_name",
+                            "expansion-getter" : {
+                                "package":"subsMgmt",
+                                "method" :"access_ifp_name_expander"
+                            }
+                        }
+                    }';
+                }
+                leaf outer-vlan-min {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Outer VLAN min <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_min"
+                        }
+                    }';
+                }
+                leaf outer-vlan-max {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Outer VLAN max <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_max"
+                        }
+                    }';
+                }
+                uses access-interface-options;
+            }
+            list double-tagged {
+                key "interface-name outer-vlan-min outer-vlan-max inner-vlan-min inner-vlan-max";
+                description "Double tagged access";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.interface.config",
+                        "type"    : "interface_config_table"
+                    }
+                }';
+                leaf interface-name {
+                    type rtb-types:interface-type;
+                    description "Name of the physical interface";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "interface_name",
+                            "expansion-getter" : {
+                                "package":"subsMgmt",
+                                "method" :"access_ifp_name_expander"
+                            }
+                        }
+                    }';
+                }                
+                leaf outer-vlan-min {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Outer VLAN min <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_min"
+                        }
+                    }';
+                }
+                leaf outer-vlan-max {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Outer VLAN max <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_max"
+                        }
+                    }';
+                }
+                leaf outer-vlan-encapsulation {
+                    type rtb-types:vlan-encapsulation-type;
+                    description
+                    "Outer VLAN encapsulation";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_encapsulation"
+                        }
+                    }';
+                }
+                leaf inner-vlan-min {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Inner VLAN min <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "inner_vlan_min"
+                        }
+                    }';
+                }
+                leaf inner-vlan-max {
+                    type uint16 { 
+                        range "1..4094";
+                    }
+                    description "Inner VLAN max <1-4094>";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "inner_vlan_max"
+                        }
+                    }';
+                }
+                uses access-interface-options;
+            }
+        }  
+    }
+}

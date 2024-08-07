@@ -175,7 +175,9 @@ submodule rtbrick-l2x {
         }
 
         leaf incoming-interface {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Incoming physical interface name";
             reference
@@ -239,7 +241,9 @@ submodule rtbrick-l2x {
         }
 
         leaf lookup-instance {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Lookup routing tables instance where the nexthop will be looked up";
             reference
@@ -291,7 +295,9 @@ submodule rtbrick-l2x {
         }
 
         leaf outgoing-interface {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Outgoing physical interface name";
             reference
@@ -392,7 +398,9 @@ submodule rtbrick-l2x {
         }
 
         leaf exit-interface {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Incoming physical interface name";
             reference

@@ -102,7 +102,9 @@ submodule rtbrick-lldp {
                     }
                 }';
                 leaf interface-name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Interface name";
                     reference
                     '{

@@ -69,6 +69,7 @@ submodule rtbrick-time-series {
     typedef keyval-string {
         type string {
              pattern '.*:.*';
+             length "1..128";
         }
         description "A BDS keyvalue string";
     }
@@ -76,6 +77,7 @@ submodule rtbrick-time-series {
     typedef prometheus-label-key {
         type string {
             pattern '[a-zA-Z_][a-zA-Z0-9_]*';
+            length "1..128";
         }
         description "Prometheus Label key format";
     }
@@ -83,6 +85,7 @@ submodule rtbrick-time-series {
     typedef prometheus-metric-name {
         type string {
             pattern '[a-zA-Z_:][a-zA-Z0-9_:]*';
+            length "1..128";
         }
         description "Prometheus Metric name format";
     }
@@ -145,7 +148,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf table-name {
-                type string;
+                type string{
+		    length "1..128";
+		}
                 mandatory true;
                 description "Table Name";
                 reference
@@ -199,7 +204,9 @@ submodule rtbrick-time-series {
             }
             leaf index-name {
                 when "../bds-type='index-metric'";
-                type string;
+                type string {
+		    length "1..64";
+		}
                 description "Table Index name, for index-metrics";
                 reference
                 '{
@@ -209,7 +216,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf description {
-                type string;
+                type string {
+		    length "1..256";
+		}
                 mandatory true;
                 description "Description for this metric";
                 reference
@@ -234,7 +243,9 @@ submodule rtbrick-time-series {
                 }';
 
                 leaf match-attribute-name {
-                    type string;
+                    type string {
+			length "1..128";
+		    }
                     mandatory true;
                     description "matching attribute name for this filter";
                     reference
@@ -245,7 +256,9 @@ submodule rtbrick-time-series {
                     }';
                 }
                 leaf match-attribute-value {
-                    type string;
+                    type string {
+			length "1..128";
+		    }
                     mandatory true;
                     description "matching attribute value for this filter";
                     reference
@@ -292,7 +305,9 @@ submodule rtbrick-time-series {
                 }';
 
                 leaf attribute-name {
-                    type string;
+                    type string {
+		        length "1..128";
+		    }
                     mandatory true;
                     description "Attribute that needs to be rendered as a metric";
                     reference
@@ -327,7 +342,9 @@ submodule rtbrick-time-series {
                         }';
                     }
                     leaf label-value {
-                        type string;
+                        type string {
+			    length "1..128";
+			}
                         mandatory true;
                         description "Value of the label";
                         reference
@@ -338,7 +355,9 @@ submodule rtbrick-time-series {
                         }';
                     }
                     leaf label-type {
-                        type string;
+                        type string {
+			    length "1..128";
+			}
                         mandatory true;
                         description "label type can be dynamic/static";
                         reference
@@ -362,7 +381,9 @@ submodule rtbrick-time-series {
                         }';
 
                         leaf match-attribute-name {
-                            type string;
+                            type string {
+				length "1..128";
+			    }
                             mandatory true;
                             description "matching attribute name for this filter";
                             reference
@@ -373,7 +394,9 @@ submodule rtbrick-time-series {
                             }';
                         }
                         leaf match-attribute-value {
-                            type string;
+                            type string {
+				length "1..128";
+			    }
                             mandatory true;
                             description "matching attribute value for this filter";
                             reference
@@ -420,7 +443,9 @@ submodule rtbrick-time-series {
                     }';
 
                     leaf match-attribute-name {
-                        type string;
+                        type string {
+			    length "1..128";
+			}
                         mandatory true;
                         description "matching attribute name for this filter";
                         reference
@@ -431,7 +456,9 @@ submodule rtbrick-time-series {
                         }';
                     }
                     leaf match-attribute-value {
-                        type string;
+                        type string {
+			    length "1..128";
+			}
                         mandatory true;
                         description "matching attribute value for this filter";
                         reference
@@ -478,7 +505,9 @@ submodule rtbrick-time-series {
                 }
             }';
             leaf name {
-                type string;
+                type string {
+		    length "1..128";
+		}
                 mandatory true;
                 description "Name of the alert";
                 reference
@@ -489,7 +518,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf group {
-                type string;
+                type string {
+		    length "1..128";
+		}
                 mandatory true;
                 description "Group of the alert";
                 reference
@@ -501,6 +532,7 @@ submodule rtbrick-time-series {
             }
             leaf for{
                 type  string {
+                    length "1..64";
                     pattern '[0-9]+(ms|[smhdwy])';
                 }
                 mandatory true;
@@ -515,6 +547,7 @@ submodule rtbrick-time-series {
 
             leaf interval{
                 type  string {
+                    length "1..64";
                     pattern '[0-9]+(ms|[smhdwy])';
                 }
                 mandatory true;
@@ -527,7 +560,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf expr{
-                type string;
+                type string {
+		    length "1..512";
+		}
                 mandatory true;
                 description "PromQL Alert evaluation expression for execution of this alert";
                 reference
@@ -540,6 +575,7 @@ submodule rtbrick-time-series {
             leaf level {
                 type string {
                     pattern  '[0-7]';
+		    length "1..128";
                 }
                 mandatory true;
                 description "Explicit annotation label level [0 to 7]";
@@ -551,7 +587,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf summary {
-                type string;
+                type string {
+		    length "1..128";
+		}
                 mandatory true;
                 description "Explicit annotation label summary";
                 reference
@@ -562,7 +600,9 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf description {
-                type string;
+                type string {
+		    length "1..256";
+		}
                 mandatory true;
                 description "Alert description";
                 reference

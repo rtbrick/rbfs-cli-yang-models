@@ -51,7 +51,9 @@ submodule rtbrick-bgp {
     grouping bgp-policy {
         description "Policy name";
         leaf policy {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Policy name";
             reference
             '{
@@ -87,7 +89,9 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf profile {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BFD profile name";
                 reference
                 '{
@@ -127,7 +131,9 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf profile {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BFD profile name";
                 reference
                 '{
@@ -146,7 +152,9 @@ submodule rtbrick-bgp {
     grouping bgp-pg-name {
         description "BGP peer group name";
         leaf peer-group {
-            type string;
+            type string {
+                length "1..64";
+            }
             mandatory true;
             description "BGP peer group name";
             reference
@@ -557,10 +565,6 @@ grouping bgp-export-label-block {
                     must 'count(../../../address-family/interface[local-site-id=current()]) = 0' {
                         error-message "Same ID cannot be used for service and site ID";
                     }
-                    must 'count(../../interface[remote-service-id=current()]) = 0' {
-                        error-message "Local service ID is already used as remote service ID in another interface";
-                    }
-
                     reference
                         '{
                             "attribute-getter" : {
@@ -582,9 +586,6 @@ grouping bgp-export-label-block {
                     }
                     must 'count(../../../address-family/interface[remote-site-id=current()]) = 0' {
                         error-message "Same ID cannot be used for service and site ID";
-                    }
-                    must 'count(../../interface[local-service-id=current()]) = 0' {
-                        error-message "Remote service ID is already used as local service ID in another interface";
                     }
                     reference
                         '{
@@ -718,6 +719,18 @@ grouping bgp-export-label-block {
                         }
                     }';
                 }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
+                        }
+                    }';
+                }
                 leaf authentication-id {
                     type string {
                         length "1..64";
@@ -761,6 +774,18 @@ grouping bgp-export-label-block {
                     '{
                         "attribute-getter" : {
                             "attribute" : "source_ipv4_address"
+                        }
+                    }';
+                }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
                         }
                     }';
                 }
@@ -808,6 +833,18 @@ grouping bgp-export-label-block {
                     '{
                         "attribute-getter" : {
                             "attribute" : "source_ipv6_address"
+                        }
+                    }';
+                }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
                         }
                     }';
                 }
@@ -1148,7 +1185,9 @@ grouping bgp-export-label-block {
                 }
             }';
             leaf pg-name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Peer group name";
                 reference
                 '{
@@ -1493,7 +1532,9 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf domain-name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "BGP domain name (max 64 characters)";
                 reference
@@ -1515,7 +1556,9 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf hostname {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "BGP host name (max 64 characters)";
                 reference

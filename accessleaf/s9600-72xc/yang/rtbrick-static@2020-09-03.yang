@@ -134,7 +134,9 @@ submodule rtbrick-static {
         }
 
         leaf lookup-instance {
-            type string;
+            type string {
+                length "1..64";
+	    }
             description
                 "Lookup routing tables instance where the nexthop will be looked up";
             reference
@@ -198,7 +200,9 @@ submodule rtbrick-static {
         }
 
         leaf exit-interface {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Exit interface Name";
             reference
@@ -316,7 +320,9 @@ submodule rtbrick-static {
             "Conditional route related attributes";
 
         leaf match-instance {
-            type string;
+            type string {
+                length "1..64";
+            }
             description
                 "Conditional routing tables instance where the condition will be checked";
             reference
@@ -631,7 +637,9 @@ submodule rtbrick-static {
                 }';
 
                 leaf name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description
                         "Nexthop profile name";
                     reference

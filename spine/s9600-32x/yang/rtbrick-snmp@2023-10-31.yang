@@ -325,7 +325,9 @@ submodule rtbrick-snmp {
                     must '../security-level = "AuthPriv" or ../security-level = "AuthNoPriv"' {
                         error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
                     }
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     reference
                         '{
                             "attribute-getter" : {
@@ -353,7 +355,9 @@ submodule rtbrick-snmp {
                     must '../security-level = "AuthPriv"' {
                         error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
                     }
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     reference
                         '{
                             "attribute-getter" : {
@@ -441,27 +445,6 @@ submodule rtbrick-snmp {
                         '{
                             "attribute-getter" : {
                                 "attribute" : "trap_name"
-                            }
-                        }';
-                }
-                leaf-list instance {
-                    description "List of instances that are part of the return value";
-                    must '(not(../../../../../inband-management/instance/name) and ../../../../name = "default") or (../../../../name = /config:inband-management/instance/name)' {
-                        error-message "Instance list only make sense for inbanad instance or default instance only if inband is not configured";
-                    }
-                    type rtb-types:string64;
-                    /*type leafref {
-                        path "/config:instance/name";
-                    }*/
-                    reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "instance",
-                                "expansion-getter" : {
-                                    "package":"rib",
-                                    "method" : "rib_instance_name_expander"
-                                }
-
                             }
                         }';
                 }

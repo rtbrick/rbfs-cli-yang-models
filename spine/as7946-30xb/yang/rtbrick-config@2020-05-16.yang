@@ -99,7 +99,9 @@ module rtbrick-config {
 			    specified by the rollback-id";
 		    }
 		    leaf commit_id {
-			type string;
+                type string {
+                    length "0..256";
+                }
 			description
 			    "Rollback to configuration indicated by the specified
 			    commit-id";
@@ -108,12 +110,16 @@ module rtbrick-config {
 	    }
 	    output {
 		leaf commit_hash{
-		    type string;
+            type string {
+                length "0..256";
+            }
 		    description
 			"Commit hash corresponding to the rollback-id or commit-id sent";
 		}
 		leaf commit_path{
-		    type string;
+            type string {
+                length "0..256";
+            }
 		    description
 			"Commit hash corresponding to the rollback-id or commit-id sent";
 		}
@@ -127,13 +133,17 @@ module rtbrick-config {
         input {
             leaf commit_id {
                 mandatory true;
-                type string;
+                type string {
+                    length "0..256";
+                }
                 description
                     "Commit hash that identifies a particular commit";
             }
             leaf message {
                 mandatory true;
-                type string;
+                type string {
+                    length "0..256";
+                }
                 description
                     "String describing the configurations done in
                     particular commit";
@@ -147,7 +157,9 @@ module rtbrick-config {
         input {
             leaf cmd {
                 mandatory true;
-                type string;
+                type string {
+                    length "0..16384";
+                }
                 description
                     "String containing the executed command";
             }

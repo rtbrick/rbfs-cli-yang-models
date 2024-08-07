@@ -271,7 +271,9 @@ submodule rtbrick-logging {
                             }
                         }';
                         leaf alias-name {
-                            type string;
+                            type string {
+                                length "1..64";
+                            }
                             description "Plugin alias name defined in CTRLD";
                             mandatory true;
                             reference
@@ -327,7 +329,9 @@ submodule rtbrick-logging {
     grouping logging-module {
         description "Grouping Logging module configuration";
         leaf module-name {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Module name";
             reference
                 '{
@@ -345,7 +349,9 @@ submodule rtbrick-logging {
     grouping logging-group {
         description "Grouping Logging group configuration";
         leaf group-name {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Group name";
             reference
                 '{
@@ -373,7 +379,9 @@ submodule rtbrick-logging {
     grouping logging-bd {
         description "Grouping Logging bd leaf";
         leaf bd-name {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "BD name";
             reference
             '{
@@ -391,7 +399,9 @@ submodule rtbrick-logging {
     grouping logging-system-bd {
         description "Grouping Logging bd leaf for system logging";
         leaf bd-name {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "BD name";
             reference
             '{
@@ -422,7 +432,9 @@ submodule rtbrick-logging {
     grouping logging-plugin-params {
         description "Grouping Logging plugin configuration parameters";
         leaf alias-name {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Plugin alias defined in CTRLD";
             mandatory true;
             reference

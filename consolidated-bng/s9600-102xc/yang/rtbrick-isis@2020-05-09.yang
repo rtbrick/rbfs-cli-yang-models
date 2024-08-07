@@ -63,7 +63,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf profile {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BFD profile name";
                 reference
                 '{
@@ -82,7 +84,9 @@ submodule rtbrick-isis {
     grouping isis-policy {
         description "Policy map name";
         leaf policy {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Policy map name";
             reference
             '{
@@ -296,6 +300,39 @@ submodule rtbrick-isis {
                     }
                 }';
             }
+            leaf priority
+            {
+                when '../../type = "broadcast"';
+                type uint32 {
+                        range "0 .. 127";
+                    }
+                description
+                    "Level-1 priority on an broadcast interface, default 64";
+                default 64;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level1_priority"
+                    }
+                }';
+            }
+            leaf hello-interval
+            {
+                when '../../type = "broadcast"';
+                type uint32 {
+                    range "1 .. 600";
+                }
+                units   "seconds";
+                default 10;
+                description
+                    "ISIS system interface hello interval, default 10";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level1_hello_interval"
+                    }
+                }';
+            }
         }
     }
 
@@ -353,6 +390,39 @@ submodule rtbrick-isis {
                 '{
                     "attribute-getter" : {
                         "attribute" : "level2_disable"
+                    }
+                }';
+            }
+            leaf priority
+            {
+                when '../../type = "broadcast"';
+                type uint32 {
+                        range "0 .. 127";
+                    }
+                description
+                    "Level-2 priority on an broadcast interface, default 64";
+                default 64;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level2_priority"
+                    }
+                }';
+            }
+            leaf hello-interval
+            {
+                when '../../type = "broadcast"';
+                type uint32 {
+                    range "1 .. 600";
+                }
+                units   "seconds";
+                default 10;
+                description
+                    "ISIS system interface hello interval, default 10";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level2_hello_interval"
                     }
                 }';
             }
@@ -646,7 +716,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf flood-filter {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "ISIS flood filter name";
                 reference
@@ -749,7 +821,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key";
                 reference
@@ -762,7 +836,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key1 encrypted";
                 reference
@@ -773,7 +849,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key2";
                 reference
@@ -786,7 +864,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key 2 encrypted";
                 reference
@@ -855,7 +935,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key1";
                 reference
@@ -868,7 +950,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key1 encrypted";
                 reference
@@ -879,7 +963,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key2";
                 reference
@@ -892,7 +978,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key2 encrypted";
                 reference
@@ -962,7 +1050,9 @@ submodule rtbrick-isis {
                     }
                 }';
                 leaf filter-name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Name of the filter";
                     reference
                     '{
@@ -982,7 +1072,9 @@ submodule rtbrick-isis {
                     }';
                 }
                 leaf ordinal-name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Name of the ordinal";
                     reference
                     '{

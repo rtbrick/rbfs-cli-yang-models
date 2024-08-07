@@ -333,7 +333,7 @@ submodule rtbrick-address-translation {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "deterministic",
+                        "attribute" : "deterministic"
                     }
                 }';
             }

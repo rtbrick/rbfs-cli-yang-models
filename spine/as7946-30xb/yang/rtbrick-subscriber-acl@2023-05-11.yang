@@ -180,7 +180,9 @@ submodule rtbrick-subscriber-acl {
                 }
             }';
             leaf destination-ipv6-prefix {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Configure acl l3 ipv6 destination prefix match.";
                 reference
@@ -444,7 +446,9 @@ submodule rtbrick-subscriber-acl {
                         }
                     }';
                     leaf rule-name {
-                        type string;
+                        type string {
+                            length "1..64";
+			}
                         description
                             "Configure subscriber acl rule name.";
                         reference
@@ -513,7 +517,9 @@ submodule rtbrick-subscriber-acl {
                         }
                     }';
                     leaf rule-name {
-                        type string;
+                        type string {
+                            length "1..64";
+                        }
                         description
                             "Configure acl rule name.";
                         reference
