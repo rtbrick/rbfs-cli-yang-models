@@ -1,0 +1,3079 @@
+submodule rtbrick-qos {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    import rtbrick-qos-types {
+        prefix "rtb-qos-types";
+    }
+
+    organization "Rtbrick";
+
+    contact
+      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+
+    description
+      "This module defines configuration and operational state data
+      related to network quality-of-service";
+
+    revision "2020-07-22" {
+      description
+        "First revision of QOS configuration";
+      reference
+        "None";
+    }
+
+    typedef type-direction-qos {
+        type enumeration {
+            enum "ingress" {
+                value 1;
+                description "ingress direction";
+            }
+        }
+        description "direction data type";
+    }
+
+    typedef type-protocol-name {
+        type enumeration {
+            enum "isis" {
+                value 4;
+                description "isis";
+            }
+            enum "ospf" {
+                value 5;
+                description "ospf";
+            }
+            enum "bgp" {
+                value 7;
+                description "bgp";
+            }
+            enum "pim" {
+                value 9;
+                description "pim";
+            }
+            enum "igmp" {
+                value 10;
+                description "igmp";
+            }
+            enum "ppp" {
+                value 11;
+                description "ppp";
+            }
+            enum "l2tpv2" {
+                value 12;
+                description "l2tpv2";
+            }
+            enum "ldp" {
+                value 13;
+                description "ldp";
+            }
+            enum "ipoe" {
+                value 17;
+                description "ipoe";
+            }
+            enum "radius" {
+                value 18;
+                description "radius";
+            }
+            enum "l3-all" {
+                value 19;
+                description "l3-all";
+            }
+            enum "l2-all" {
+                value 20;
+                description "l2-all";
+            }
+            enum "dhcp" {
+                value 21;
+                description "dhcp";
+            }
+        }
+        description "protocol name type";
+    }
+
+    typedef type-remark {
+        type enumeration {
+            enum "tos" {
+                value 1;
+                description "remark-type tos";
+            }
+            enum "p-bit" {
+                value 3;
+                description "remark-type p-bit";
+            }
+        }
+        description "outbound remark type";
+    }
+
+    typedef type-qos-header-compensation-mode {
+        type enumeration {
+            enum "increment" {
+                value 0;
+                description "increment";
+            }
+            enum "decrement" {
+                value 1;
+                description "decrement";
+            }
+        }
+        description "qos increment/decrement data type";
+    }
+
+    typedef type-qos-priority-propagation-status {
+        type enumeration {
+            enum "enable" {
+                value 0;
+                description "enable";
+            }
+            enum "disable" {
+                value 1;
+                description "disable";
+            }
+        }
+        description "qos priority propogation data type";
+    }
+
+    typedef type-qos-queue-group-profile {
+        type enumeration {
+            enum "single-queue" {
+                value 0;
+                description "single-queue-profile";
+            }
+        }
+        description "Supported queue group profile modes";
+    }
+
+    typedef type-qos-color {
+        type enumeration {
+            enum "all" {
+                value 0;
+                description "all";
+            }
+            enum "green" {
+                value 1;
+                description "green";
+            }
+            enum "yellow" {
+                value 2;
+                description "yellow";
+            }
+        }
+        description "qos color data type";
+    }
+
+    typedef type-qos-policer-type {
+        type enumeration {
+            enum "two-rate-three-color" {
+                value 1;
+                description "two-rate-three-color";
+            }
+        }
+        description "qos policer type data type";
+    }
+
+    typedef type-qos-policer-mode {
+        type enumeration {
+            enum "single-level" {
+                value 1;
+                description "single level policer";
+            }
+        }
+        description "qos policer type data type";
+    }
+
+    typedef type-qos-policer-flag {
+        type enumeration {
+            enum "color-blind" {
+                value 0;
+                description "color-blind";
+            }
+        }
+        description "qos policer flag data type";
+    }
+
+    typedef type-qos-policer-level {
+        type enumeration {
+            enum "level-none" {
+                value 0;
+                description "level-none";
+            }
+            enum "level-1" {
+                value 1;
+                description "level-1";
+            }
+            enum "level-2" {
+                value 2;
+                description "level-2";
+            }
+            enum "level-3" {
+                value 3;
+                description "level-3";
+            }
+            enum "level-4" {
+                value 4;
+                description "level-4";
+            }
+        }
+        description "qos policer level data type";
+    }
+
+    typedef type-qos-scheduler-map-queue-connection-type {
+        type enumeration {
+            enum "queue_to_port" {
+                value 1;
+                description "queue to port";
+            }
+        }
+        description "qos scheduler map connection data type";
+    }
+
+    typedef type-qos-scheduler-map-scheduler-connection-type {
+        type enumeration {
+            enum "scheduler_to_port" {
+                value 4;
+                description "scheduler to port";
+            }
+            enum "scheduler_map_to_scheduler_map" {
+                value 5;
+                description "connects schedulers from different scheduler-maps";
+            }
+        }
+        description "qos scheduler map connection data type";
+    }
+
+    typedef type-scheduler-flow {
+        type enumeration {
+            enum "high-flow" {
+                value 1;
+                description "high-flow";
+            }
+            enum "low-flow" {
+                value 2;
+                description "low-flow";
+            }
+        }
+        description "qos scheduler flow data type";
+    }
+
+    typedef type-qos-scheduler-map-connection-point {
+        type enumeration {
+            enum "no_priority" {
+                value 0;
+                description "no_priority";
+            }
+            enum "strict_priority_0" {
+                value 1;
+                description "strict_priority_0";
+            }
+            enum "strict_priority_1" {
+                value 2;
+                description "strict_priority_1";
+            }
+            enum "strict_priority_2" {
+                value 3;
+                description "strict_priority_2";
+            }
+            enum "strict_priority_3" {
+                value 4;
+                description "strict_priority_3";
+            }
+        }
+        description "qos scheduler map connection data type";
+    }
+
+    typedef type-qos-scheduler {
+        type enumeration {
+            enum "fair_queueing" {
+                value 0;
+                description "fair_queueing";
+            }
+            enum "weighted_fair_queueing" {
+                value 1;
+                description "weighted_fair_queueing";
+            }
+            enum "2sp_wfq_independent" {
+                value 2;
+                description "2sp_wfq_independent";
+            }
+            enum "2sp_wfq_discrete" {
+                value 3;
+                description "2sp_wfq_discrete";
+            }
+            enum "wfq_independent_2sp" {
+                value 4;
+                description "wfq_independent_2sp";
+            }
+            enum "wfq_discrete_2sp" {
+                value 5;
+                description "wfq_discrete_2sp";
+            }
+            enum "3sp_wfq_discrete" {
+                value 6;
+                description "3sp_wfq_discrete";
+            }
+            enum "strict_priority" {
+                value 7;
+                description "strict_priority";
+            }
+        }
+        description "qos scheduler_type data type";
+    }
+
+    typedef type-host-inbound-channel-dma {
+        type enumeration {
+            enum "single channel" {
+                value 0;
+                description "Single Channel";
+            }
+            enum "multi channel" {
+                value 1;
+                description "Multi Channel";
+            }
+        }
+        description "Dma data type";
+    }
+
+    typedef type-protocol-trap-name {
+        type enumeration {
+            enum "bgp" {
+                value 1;
+                description "BGP";
+            }
+            enum "ospf" {
+                value 2;
+                description "OSPF";
+            }
+            enum "isis" {
+                value 3;
+                description "ISIS";
+            }
+            enum "radius" {
+                value 4;
+                description "Radius";
+            }
+            enum "pppoe" {
+                value 5;
+                description "PPPoE";
+            }
+            enum "ipoe" {
+                value 6;
+                description "IPoE";
+            }
+            enum "pim" {
+                value 7;
+                description "PIM";
+            }
+            enum "vrrp" {
+                value 8;
+                description "VRRP";
+            }
+            enum "dhcpv6" {
+                value 9;
+                description "DHCPv6";
+            }
+            enum "vrrpv6" {
+                value 10;
+                description "VRRPv6";
+            }
+            enum "igmp" {
+                value 11;
+                description "IGMP";
+            }
+            enum "ssh" {
+                value 12;
+                description "SSH";
+            }
+            enum "snmp" {
+                value 13;
+                description "SNMP";
+            }
+            enum "user-defined" {
+                value 14;
+                description "User Defined";
+            }
+            enum "lldp" {
+                value 15;
+                description "LLDP";
+            }
+            enum "l2tp" {
+                value 16;
+                description "L2TP";
+            }
+            enum "inband" {
+                value 17;
+                description "INBAND";
+            }
+            enum "ldp-discovery" {
+                value 18;
+                description "LDP DISCOVERY";
+            }
+            enum "ldp-nbr" {
+                value 19;
+                description "LDP NBR";
+            }
+            enum "iperf" {
+                value 20;
+                description "IPERF";
+            }
+            enum "lag" {
+                value 23;
+                description "LAG";
+            }
+            enum "all" {
+                value 24;
+                description "ALL";
+            }
+        }
+        description "protocol trap name type";
+    }
+ 
+    typedef service-typedef {
+        type enumeration {
+            enum "l3-ifl" {
+                value 1;
+                description
+                    "service type l3-if is set";
+            }
+            enum "l2vpn-vpws" {
+                value 2;
+                description
+                    "service type l2vpn-vpws is set";
+            }
+        }
+        description "Service l2 interface type data type";
+    }
+
+    grouping qos-control-plane-security-protocol-options {
+        description
+        "Top-level grouping for control plane security protocol options";
+        list protocol {
+            key 'protocol';
+            description
+                "Configure controle plane security protocol";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.cps.protocol.config",
+                    "type"    : "qos_cps_protocol_config_table"
+                }
+            }';
+
+            leaf protocol {
+                type type-protocol-trap-name;
+                description
+                    "Configure protocol name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "protocol"
+                    }
+                }';
+            }
+
+            leaf policer {
+                type rtb-types:string64;
+                description
+                    "Configure policer name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "policer",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_policer_name_expander"
+                        }
+                    }
+                }';
+            }
+
+            leaf match-tos {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure IPv4 tos value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_tos"
+                    }
+                }';
+            }
+
+            leaf match-tc {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure IPv6 tc value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ipv6_tc"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping qos-classifier-top {
+        description
+            "Top-level grouping for QoS classifier model";
+        list classifier {
+            key 'classifier-name';
+            description
+                "Configure traffic classifier";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.classifier.name.mode.config",
+                        "type"    : "qos_classifier_name_mode_config_table"
+                    }
+                }';
+            leaf classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "classifier_name"
+                    }
+                }';
+            }
+            list match-type {
+                key 'match-type';
+                description
+                    "Configure classifier match type based on traffic";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.classifier.type.mode.config",
+                        "type"    : "qos_classifier_type_mode_config_table",
+                        "inherit-attribute" : [ "classifier_name" ]
+                    }
+                }';
+                leaf match-type {
+                    type enumeration {
+                        enum "ipv4-tos" {
+                            value 1;
+                            description "ipv4-tos";
+                        }
+                        enum "ipv6-tc" {
+                            value 2;
+                            description "ipv6-tc";
+                        }
+                        enum "ieee-802.1" {
+                            value 3;
+                            description "ieee-802.1";
+                        }
+                        enum "exp" {
+                            value 5;
+                            description "exp";
+                        }
+                    }
+                    description
+                        "Configure classifier match type";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_type"
+                        }
+                    }';
+                }
+                list codepoint {
+                    key 'codepoint';
+                    description
+                        "Configure classifier codepoint";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.classifier.config",
+                            "type"    : "qos_classifier_config_table",
+                            "inherit-attribute" : [ "classifier_name", "match_type" ]
+                        }
+                    }';
+                    leaf codepoint {
+                        type uint8;
+                        description
+                            "Configure codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "codepoint"
+                            }
+                        }';
+                    }
+                    leaf class {
+                        type rtb-qos-types:type-qos-classifier-class;
+                        description
+                            "Configure codepoint class value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "class"
+                            }
+                        }';
+                    }
+                    leaf remark-codepoint {
+                        type uint8 {
+                             range "0 .. 254";
+                        }
+                        description
+                            "Configure remark codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remark_codepoint"
+                            }
+                        }';
+                    }
+                } // list codepoint
+            } // list match-type
+        } // list classifier-name ends
+    } //qos-classifier-top ends
+
+    grouping qos-interface-top {
+        description
+            "Top-level grouping for QoS interface";
+        list interface {
+            key 'name';
+            description
+                "Configure interface QoS";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.physical.interface.config",
+                    "type"    : "qos_physical_interface_config_table"
+                }
+            }';
+            leaf name {
+                type rtb-types:interface-type;
+                description
+                    "References the configured name of the interface";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "interface_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                        }
+                    }
+                }';
+            }
+            container egress-header-compensation {
+                description
+                    "Configure Interface Egress Header Compensation parameters";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.physical.interface.config",
+                        "type"    : "qos_physical_interface_config_table",
+                        "inherit-attribute" : [ "interface_name" ]
+                    }
+                }';
+                leaf bytes {
+                    type uint8 {
+                        range "0 .. 64";
+                    }
+                    description
+                        "Configure Interface Egress Header Compensation bytes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "eg_header_compensation_bytes"
+                        }
+                    }';
+                }
+                leaf decrement {
+                    type rtb-types:boolean-type;
+                    description
+                        "Configure Header Compensation decrement";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "is_eg_decrement"
+                        }
+                    }';
+                }
+            }
+            container ingress-header-compensation {
+                description
+                    "Configure Interface Ingress Header Compensation parameters";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.physical.interface.config",
+                        "type"    : "qos_physical_interface_config_table",
+                        "inherit-attribute" : [ "interface_name" ]
+                    }
+                }';
+                leaf bytes {
+                    type uint8 {
+                        range "0 .. 64";
+                    }
+                    description
+                        "Configure Ingress Header Compensation bytes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ing_header_compensation_bytes"
+                        }
+                    }';
+                }
+                leaf decrement {
+                    type rtb-types:boolean-type;
+                    description
+                        "Configure Header Compensation decrement";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "is_ing_decrement"
+                        }
+                    }';
+                }
+            }
+            leaf scheduler-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure interface scheduler map profile";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "scheduler_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_scheduler_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf shaping-rate {
+                type uint32;
+                description
+                    "Configure interface shaping rate";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_rate"
+                    }
+                }';
+            }
+        } // list interface
+    } //qos-interface-top
+
+    grouping qos-profile-top {
+        description
+            "Top-level grouping for QoS profile config";
+        list profile {
+            key 'profile-name';
+            description
+                "Configure QoS profiles config";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.profile.config",
+                    "type"    : "qos_profile_config_table"
+                }
+            }';
+            leaf profile-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "profile_name"
+                    }
+                }';
+            }
+            leaf classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf class-queue-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure class-queue-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "class_queue_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_class_queue_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf remark-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure remark-map profile name";
+                must 'count(../../remark-map[remark-map-name=current()]/remark-type[remark-type="exp"]) = 0' {
+                        error-message "Cannot add remark profile with remark-type exp in qos profile";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "remark_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_remark_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf class-policer-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure class-policer-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "class_policer_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_class_policer_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf policer-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure policer profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "policer_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_policer_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf scheduler-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure scheduler-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "scheduler_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_scheduler_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf egress-class-policer-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure egress class-policer-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "egress_class_policer_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_class_policer_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf egress-policer-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure egress policer profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "egress_policer_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_policer_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf multifield-classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure multifield classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "mf_classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_mf_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+        } // list profile-name
+    } //qos-profiles-top
+
+    grouping qos-remark-map-top {
+        description
+            "Top-level grouping for QoS remark profile";
+        list remark-map {
+            key 'remark-map-name';
+            description
+                "Configure QoS remark-map profile";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.remark.map.name.mode.config",
+                        "type"    : "qos_remark_map_name_mode_config_table"
+                    }
+                }';
+            leaf remark-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure remark-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "remark_map_name"
+                    }
+                }';
+            }
+            list remark-type {
+                key 'remark-type';
+                description
+                    "Configure remark type";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.remark.map.type.mode.config",
+                        "type"    : "qos_remark_map_type_mode_config_table",
+                        "inherit-attribute" : [ "remark_map_name" ]
+                    }
+                }';
+                leaf remark-type {
+                    type enumeration {
+                        enum "ipv4-tos" {
+                            value 1;
+                            description "ipv4-tos";
+                        }
+                        enum "ipv6-tc" {
+                            value 2;
+                            description "ipv6-tc";
+                        }
+                        enum "ieee-802.1" {
+                            value 3;
+                            description "ieee-802.1";
+                        }
+                        enum "exp" {
+                            value 5;
+                            description "exp";
+                        }
+                        enum "mpls-ipv4" {
+                            value 7;
+                            description "mpls-ipv4";
+                        }
+                        enum "mpls-ipv6" {
+                            value 8;
+                            description "mpls-ipv6";
+                        }
+                        enum "class-to-ip" {
+                            value 9;
+                            description "class-to-ip";
+                        }
+                        enum "ip-tos" {
+                            value 10;
+                            description "ip-tos";
+                        }
+                    }
+                    description
+                        "Configure remark-type value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "remark_type"
+                        }
+                    }';
+                }
+                list match-codepoint {
+                    key 'match-codepoint';
+                    description
+                        "Configure match codepoint";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.remark.map.match.codepoint.mode.config",
+                            "type"    : "qos_remark_map_codepoint_mode_config_table",
+                            "inherit-attribute" : [ "remark_map_name", "remark_type" ]
+                        }
+                    }';
+                    leaf match-codepoint {
+                        type uint8;
+                        description
+                            "Configure match codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match_codepoint"
+                            }
+                        }';
+                    }
+                    list color {
+                        key 'color';
+                        description
+                            "Configure color";
+                        reference
+                        '{
+                            "table-getter": {
+                                "table-name" : "global.qos.remark.map.config",
+                                "type"    : "qos_remark_map_config_table",
+                                "inherit-attribute" : [ "remark_map_name", "remark_type" , "match_codepoint" ]
+                            }
+                        }';
+                        leaf color {
+                            type type-qos-color;
+                            description
+                                "Configure color value";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "color"
+                                }
+                            }';
+                        }
+                        leaf remark-codepoint {
+                            type uint8;
+                            description
+                                "Configure remark codepoint value";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "remark_codepoint"
+                                }
+                            }';
+                        }
+                    }
+                } //list match-codepoint
+            } // list remark-type
+        } // list remark-map
+    } //grouping qos-remark-map-top
+
+    grouping qos-shaper-top {
+        description
+            "Top-level grouping for QoS shaper";
+        list shaper {
+            key 'shaper-name';
+            description
+                "Configure QoS shaper profile";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.shaper.config",
+                    "type"    : "qos_shaper_config_table"
+                }
+            }';
+            leaf shaper-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure shaper profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_name"
+                    }
+                }';
+            }
+            leaf shaping-rate-high {
+                type uint32 {
+                     range "0 .. 700000000";
+                }
+                description
+                    "Configure shaping high rate value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_rate_high"
+                    }
+                }';
+            }
+            leaf shaping-rate-high-precision {
+                type rtb-types:boolean-true;
+                description
+                    "Configure precision for high flow shaper, should be configured only for the session shapers";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_high_flow_precision"
+                    }
+                }';
+            }
+            leaf shaping-rate-low {
+                type uint32 {
+                     range "0 .. 700000000";
+                }
+                description
+                    "Configure shaping low rate value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_rate_low"
+                    }
+                }';
+            }
+        } // list shaper-name
+    } //grouping qos-shaper-top
+
+    grouping qos-class-policer-map-top {
+        description
+            "Top-level grouping for QoS class-policer-map";
+        list class-policer-map {
+            key 'class-policer-map-name';
+            description
+                "Configure profile which maps traffic class to policer level";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.class.policer.map.mode.config",
+                    "type"    : "qos_class_policer_map_mode_config_table"
+                }
+            }';
+            leaf class-policer-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure class-policer-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "class_policer_map_name"
+                    }
+                }';
+            }
+            list class {
+                key 'class';
+                description
+                    "Configure traffic class and policer mapping";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.class.policer.map.config",
+                        "type"    : "qos_class_policer_map_config_table",
+                        "inherit-attribute" : [ "class_policer_map_name" ]
+                    }
+                }';
+                leaf class {
+                    type rtb-qos-types:type-qos-class;
+                    description
+                        "Configure class value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "class"
+                        }
+                    }';
+                }
+                leaf policer-level {
+                    type type-qos-policer-level;
+                    description
+                        "Configure policer level";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "policer_level"
+                        }
+                    }';
+                }
+            }
+        } // list class-policer-map-name
+    } //grouping qos-class-policer-map-top
+
+    grouping qos-global-top {
+        description
+            "Top-level grouping for QoS Global";
+        container global {
+            description
+                "Configure Global Qos";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.global.config",
+                    "type"    : "qos_global_config_table",
+                    "default-attribute" : [ { "is_global" : "true" } ]
+                }
+            }';
+            leaf classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf multifield-classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure multifield classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "mf_classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_mf_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf l2tp-classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "l2tp_classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf l2tp-remark-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure remark-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "l2tp_remark_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_remark_map_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf priority-propagation {
+                type type-qos-priority-propagation-status;
+                description
+                    "Configure priority-propagation status";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "priority_propagation_status"
+                    }
+                }';
+            }
+            leaf remark-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure remark-map profile name";
+                must 'count(../../instance[remark-map-name=current()]) = 0' {
+                    error-message "Global remark-map-name cannot be associated with other instances";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "remark_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_remark_map_name_expander"
+                        }
+                    }
+                }';
+            }
+        } //container global
+    } //grouping qos-global-top
+
+    grouping qos-queue-top {
+        description
+            "Top-level grouping for QoS queue";
+        list  queue {
+            key 'queue-name';
+            description
+                "Configure QoS queue profile";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.queue.config",
+                        "type"    : "qos_queue_config_table"
+                    }
+                }';
+            leaf queue-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure QoS queue profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "queue_name"
+                    }
+                }';
+            }
+            leaf queue-size {
+                type uint32;
+                description
+                    "Configure QoS queue size";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "queue_size"
+                    }
+                }';
+            }
+            leaf shaper-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure QoS shaper profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_shaper_name_expander"
+                        }
+                    }
+                }';
+            }
+            container wred {
+                description
+                    "Configure Weighted Random Early Detection parameters";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.queue.config",
+                        "type"    : "qos_queue_config_table",
+                        "inherit-attribute" : [ "queue_name" ]
+                    }
+                }';
+                leaf minimum-threshold {
+                    type uint32;
+                    description
+                        "Configure minimum threshold value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_threshold"
+                        }
+                    }';
+                }
+                leaf maximum-threshold {
+                    type uint32;
+                    description
+                        "Configure maximum threshold value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "maximum_threshold"
+                        }
+                    }';
+                }
+                leaf drop-probability {
+                    type uint8 {
+                         range "0 .. 100";
+                    }
+                    description
+                        "Configure drop probability value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "drop_probability"
+                        }
+                    }';
+                }
+            }
+            container header-compensation {
+                description
+                    "Configure Header Compensation parameters";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.queue.config",
+                        "type"    : "qos_queue_config_table",
+                        "inherit-attribute" : [ "queue_name" ]
+                    }
+                }';
+                leaf bytes {
+                    type uint8 {
+                        range "0 .. 64";
+                    }
+                    description
+                        "Configure Header Compensation bytes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "header_compensation_bytes"
+                        }
+                    }';
+                }
+                leaf decrement {
+                    type rtb-types:boolean-type;
+                    description
+                        "Configure Header Compensation decrement";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "is_decrement"
+                        }
+                    }';
+                }
+            }
+        }
+    } //grouping qos-queue-top
+
+    grouping qos-scheduler-top {
+        description
+            "Top-level grouping for scheduler";
+        list  scheduler {
+            key 'scheduler-name';
+            description
+                "Configure QoS scheduler profile";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.scheduler.config",
+                        "type"    : "qos_scheduler_config_table"
+                    }
+                }';
+            leaf scheduler-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure scheduler profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "scheduler_name"
+                    }
+                }';
+            }
+            leaf shaper-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure shaper profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shaper_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_shaper_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf type {
+                type type-qos-scheduler;
+                description
+                    "Configure scheduler type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "type"
+                    }
+                }';
+            }
+            leaf composite {
+                type rtb-types:boolean-true;
+                description
+                    "Configure composite. ";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "is_composite"
+                    }
+                }';
+            }
+        } // list  scheduler
+    } //grouping qos-scheduler-top
+
+    grouping qos-class-queue-map-top {
+        description
+            "Top-level grouping for QoS class-queue-map";
+        list  class-queue-map {
+            key 'class-queue-map-name';
+            description
+                "Configure profile which maps traffic class to queue level";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.class.queue.map.mode.config",
+                    "type"    : "qos_class_queue_map_mode_config_table"
+                }
+            }';
+            leaf class-queue-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure class-queue-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "class_queue_map_name"
+                    }
+                }';
+            }
+            list class {
+                key 'class-type';
+                description
+                    "Configure profile which maps traffic class to policer level";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.class.queue.map.config",
+                        "type"    : "qos_class_queue_map_config_table",
+                        "inherit-attribute" : [ "class_queue_map_name" ]
+                    }
+                }';
+                leaf class-type {
+                    type rtb-qos-types:type-qos-class;
+                    description
+                        "Configure class value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "class"
+                        }
+                    }';
+                }
+                leaf queue-name {
+                   type rtb-qos-types:type-qos-string;
+                   description
+                   "Configure queue profile name";
+                   reference
+                   '{
+                           "attribute-getter" : {
+                           "attribute" : "queue_name",
+                           "expansion-getter" : {
+                               "package":"ifm",
+                               "method" :"qos_queue_name_expander"
+                           }
+                   	}
+                   }';
+            	}
+            }
+        } // list  class-queue-map
+    } //grouping qos-class-queue-map-top
+
+    grouping qos-instance-top {
+        description
+            "Top-level grouping for QoS instance";
+        list instance {
+            key 'name';
+            description
+                "Configure global instance";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.instance.config",
+                    "type"    : "qos_instance_config_table"
+                }
+            }';
+            leaf name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure global QoS instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "instance_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf classifier-name {
+                type rtb-qos-types:type-qos-string;
+                description "Configure classifier profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "classifier_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_classifier_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf remark-map-name {
+                type rtb-qos-types:type-qos-string;
+                description "Configure remark-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "remark_map_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"qos_remark_map_name_expander"
+                        }
+                    }
+                }';
+            }
+        } // list instance
+    } //grouping qos-instance-top
+
+    grouping qos-policer-top {
+        description
+            "Top-level grouping for QoS policer";
+        list  policer {
+            key 'policer-name';
+            description
+                "Configure policer profile";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.policer.config",
+                    "type"    : "qos_policer_config_table"
+                }
+            }';
+            leaf policer-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure policer profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "policer_name"
+                    }
+                }';
+            }
+            leaf flags {
+                type type-qos-policer-flag;
+                description
+                    "Configure policer flag";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "flags"
+                    }
+                }';
+            }
+            container level1-rates {
+                description
+                    "Configure level1 rates";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.policer.config",
+                        "type"    : "qos_policer_config_table",
+                        "inherit-attribute" : [ "policer_name" ]
+                    }
+                }';
+                leaf cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_cir"
+                            }
+                        }';
+                }
+                leaf cbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure committed burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_cbs"
+                            }
+                        }';
+                }
+                leaf pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_pir"
+                            }
+                        }';
+                }
+                leaf pbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure peak burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_pbs"
+                            }
+                        }';
+                }
+                leaf max-cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure maximum committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_max_cir"
+                            }
+                        }';
+                }
+                leaf max-pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure maximum peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level1_max_pir"
+                            }
+                        }';
+                }
+            }
+            container level2-rates {
+                description
+                    "Configure level2 rates";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.policer.config",
+                        "type"    : "qos_policer_config_table",
+                        "inherit-attribute" : [ "policer_name" ]
+                    }
+                }';
+                leaf cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_cir"
+                            }
+                        }';
+                }
+                leaf cbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure committed burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_cbs"
+                            }
+                        }';
+                }
+                leaf pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_pir"
+                            }
+                        }';
+                }
+                leaf pbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure peak burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_pbs"
+                            }
+                        }';
+                }
+                leaf max-cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure maximum committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_max_cir"
+                            }
+                        }';
+                }
+                leaf max-pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure maximum peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_max_pir"
+                            }
+                        }';
+                }
+            }
+            container level3-rates {
+                description
+                    "Configure level3 rates";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.policer.config",
+                        "type"    : "qos_policer_config_table",
+                        "inherit-attribute" : [ "policer_name" ]
+                    }
+                }';
+                leaf cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_cir"
+                            }
+                        }';
+                }
+                leaf cbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure committed burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_cbs"
+                            }
+                        }';
+                }
+                leaf pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_pir"
+                            }
+                        }';
+                }
+                leaf pbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure peak burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_pbs"
+                            }
+                        }';
+                }
+                leaf max-cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure maximum committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_max_cir"
+                            }
+                        }';
+                }
+                leaf max-pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure maximum peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level3_max_pir"
+                            }
+                        }';
+                }
+            }
+            container level4-rates {
+                description
+                    "Configure level3 rates";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.policer.config",
+                        "type"    : "qos_policer_config_table",
+                        "inherit-attribute" : [ "policer_name" ]
+                    }
+                }';
+                leaf cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_cir"
+                            }
+                        }';
+                }
+                leaf cbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure committed burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_cbs"
+                            }
+                        }';
+                }
+                leaf pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_pir"
+                            }
+                        }';
+                }
+                leaf pbs {
+                    type uint32 {
+                         range "0 .. 33200";
+                    }
+                    description
+                        "Configure peak burst rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_pbs"
+                            }
+                        }';
+                }
+                leaf max-cir {
+                    type uint32 {
+                         range "0 .. 700000000";
+                    }
+                    description
+                        "Configure maximum committed information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_max_cir"
+                            }
+                        }';
+                }
+                leaf max-pir {
+                    type uint32 {
+                         range "0 .. 1400000000";
+                    }
+                    description
+                        "Configure maximum peak information rate value";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level4_max_pir"
+                            }
+                        }';
+                }
+            }
+            leaf levels {
+                type uint8;
+                description
+                    "Configure number of policer levels";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "levels"
+                    }
+                }';
+            }
+            leaf type {
+                type type-qos-policer-type;
+                description
+                    "Configure type of policer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "type"
+                    }
+                }';
+            }
+            leaf mode {
+                type type-qos-policer-mode;
+                description
+                    "Configure mode of policer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "mode"
+                    }
+                }';
+            }
+        } // list  policer
+    } //grouping qos-policer-top
+
+    grouping qos-queue-group-top {
+        description
+            "Top-level grouping for QoS queue-group";
+        list  queue-group {
+            key 'queue-group-name';
+            description
+                "Configure QoS queue-group profile";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.queue.group.config",
+                    "type"    : "qos_queue_group_config_table"
+                }
+            }';
+            leaf queue-group-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure queue group name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "queue_group_name"
+                    }
+                }';
+            }
+            leaf queue-numbers {
+                type uint8;
+                description "Configure queue group size";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "queue_numbers"
+                    }
+                }';
+            }
+        } // list  queue-group
+    } //grouping qos-queue-group-top ends
+
+    grouping qos-scheduler-map-top {
+        description
+            "Top-level grouping for QoS scheduler-map";
+        list  scheduler-map {
+            key 'scheduler-map-name';
+            description
+                "Configure QoS scheduler-map profile";
+            must 'count(queue-group-name) <= 1' {
+                error-message "- Cannot have more than 1 queue group in the same scheduler map";
+            }
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.scheduler.map.mode.config",
+                    "type"    : "qos_scheduler_map_mode_config_table"
+                }
+            }';
+            leaf scheduler-map-name {
+                type rtb-qos-types:type-qos-string;
+                description
+                    "Configure scheduler-map profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "scheduler_map_name"
+                    }
+                }';
+            }
+            list queue-group-name {
+                key 'group-name';
+                description
+                    "Configure queue-group";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.scheduler.map.queue.group.config",
+                        "type"    : "qos_scheduler_map_queue_group_config_table",
+                        "inherit-attribute" : [ "scheduler_map_name" ]
+                    }
+                }';
+                leaf group-name {
+                    type rtb-qos-types:type-qos-string;
+                    description
+                        "Configure queue group name";
+                    must 'count(../queue-name) <=  (../../../queue-group[queue-group-name=current()]/queue-numbers)' {
+                        error-message "Queue count must not be greater than the queue-numbers specified for the group name";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "queue_group_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"qos_queue_group_name_expander"
+                            }
+                        }
+                    }';
+                }
+                list queue-name {
+                    key 'name';
+                    description
+                        "Configure queue";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.scheduler.map.queue.config",
+                            "type"    : "qos_scheduler_map_queue_config_table",
+                            "inherit-attribute" : [ "scheduler_map_name", "queue_group_name" ]
+                        }
+                    }';
+                    leaf name {
+                        type rtb-qos-types:type-qos-string;
+                        description
+                            "Configure queue profile name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "queue_name",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" :"qos_queue_name_expander"
+                                }
+                            }
+                        }';
+                    }
+                    leaf parent-flow {
+                        type type-scheduler-flow;
+                        description
+                            "Configure parent flow type";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "parent_scheduler_flow"
+                            }
+                        }';
+                    }
+                    leaf parent-scheduler-name {
+                        type rtb-qos-types:type-qos-string;
+                        description
+                            "Configure parent scheduler profile name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "parent_scheduler_name",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" :"qos_scheduler_name_expander"
+                                }
+                            }
+                        }';
+                    }
+                    leaf connection-point {
+                        type type-qos-scheduler-map-connection-point;
+                        description
+                            "Configure connection point";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "connection_point"
+                            }
+                        }';
+                    }
+                    leaf weight {
+                        type uint8;
+                        description
+                            "Configure weight of the scheduler-map connection";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "weight"
+                            }
+                        }';
+                    }
+                    leaf port-connection {
+                        type type-qos-scheduler-map-queue-connection-type;
+                        description
+                            "Configure port connection";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "connection_type"
+                            }
+                        }';
+                    }
+                }
+            }
+            list scheduler-name {
+                key 'name';
+                description
+                    "Configure scheduler profile name";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.scheduler.map.scheduler.config",
+                        "type"    : "qos_scheduler_map_scheduler_config_table",
+                        "inherit-attribute" : [ "scheduler_map_name" ]
+                    }
+                }';
+                leaf name {
+                    type rtb-qos-types:type-qos-string;
+                    description
+                        "Configure scheduler profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "scheduler_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"qos_scheduler_name_expander"
+                            }
+                        }
+                    }';
+                }
+                leaf parent-scheduler-name {
+                    type rtb-qos-types:type-qos-string;
+                    description
+                        "Configure parent scheduler profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "parent_scheduler_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"qos_scheduler_name_expander"
+                            }
+                        }
+                    }';
+                }
+                leaf connection-point {
+                    type type-qos-scheduler-map-connection-point;
+                    description
+                        "Configure connection point";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "connection_point"
+                        }
+                    }';
+                }
+                leaf weight {
+                    type uint8;
+                    description
+                        "Configure weight of the scheduler-map connection";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "weight"
+                        }
+                    }';
+                }
+                must '((not(connection-point) or not(../../scheduler[current()]/type) or connection-point != "strict_priority_2" or ../../scheduler[current()]/type != "3sp_wfq_discrete") or
+                    (connection-point = "strict_priority_2" and ../../scheduler[current()]/type="3sp_wfq_discrete" and weight))' {
+                    error-message "Weight configuration is mandatory when scheduler type is 3sp_wfq_discrete and connection-point is strict_priority_2";
+                }
+                leaf port-connection {
+                    type type-qos-scheduler-map-scheduler-connection-type;
+                    description
+                        "Configure port connection";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "connection_type"
+                        }
+                    }';
+                }
+            }
+        } // list  scheduler-map
+    } //grouping qos-scheduler-map-top
+
+    grouping qos-host-path-qos-top {
+        description
+            "Top-level grouping for host path qos";
+        container ingress-qos {
+            description
+                "Configure host path quality of service";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.host-inbound.config",
+                    "type"    : "host_inbound_table",
+                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
+                }
+            }';
+            leaf state {
+                type enumeration {
+                    enum "enable" {
+                        value 1;
+                        description "enable";
+                    }
+                }
+                description "";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "host_path_qos_enable"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping qos-control-plane-security {
+        description
+            "Top-level grouping for control plane security";
+        container control-plane-security {
+            description
+                "Configure control plane security";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.host-inbound.config",
+                    "type"    : "host_inbound_table",
+                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
+                }
+            }';
+            leaf state {
+                type enumeration {
+                    enum "disable" {
+                        value 0;
+                        description "disable";
+                    }
+                    enum "enable" {
+                        value 1;
+                        description "enable";
+                    }
+                }
+                description "";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "default_host_inbound_pkt_policing"
+                    }
+                }';
+            }
+
+            uses qos-control-plane-security-protocol-options;
+        }
+    }
+
+    grouping qos-match-ipv4-prefix-list-attributes {
+        description
+            "Configure acl ipv4 prefix list match parameters";
+        leaf source-ipv4-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl source ipv4 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv4_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v4_name_expander"
+                        }
+                    }
+                }';
+        }
+
+        leaf destination-ipv4-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl destination ipv4 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv4_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v4_name_expander"
+                        }
+                    }
+                }';
+        }
+    }
+
+    grouping qos-match-ipv6-prefix-list-attributes {
+        description
+            "Configure acl ipv6 prefix list match parameters";
+        leaf source-ipv6-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl source ipv6 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv6_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v6_name_expander"
+                        }
+                    }
+                }';
+        }
+
+        leaf destination-ipv6-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl destination ipv6 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv6_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v6_name_expander"
+                        }
+                    }
+                }';
+        }
+    }
+
+    grouping qos-match-l3v4 {
+        description
+            "Configuring acl l3v4 match parameters";
+        container match {
+            description
+                "Configuration parameters relating acl l3v4 match";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.multifield.l3v4.config",
+                    "type"    : "qos_mf_acl_l3v4_config_table",
+                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                }
+            }';
+            leaf destination-ipv4-prefix {
+                type inet:ipv4-prefix;
+                description
+                    "Configuring acl l3 ipv4 destination prefix match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv4_prefix"
+                    }
+                }';
+            }
+            leaf direction {
+                type type-direction-qos;
+                description
+                    "Configuring acl l3 traffic direction match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "acl_direction"
+                    }
+                }';
+            }
+            leaf forward-class {
+                type rtb-qos-types:type-qos-class;
+                description
+                    "Configure forward class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_forward_class"
+                    }
+                }';
+            }
+
+            leaf ipv4-dscp {
+                type uint8 {
+                    range "0 .. 63";
+                }
+                description
+                    "Configure ipv4 dscp value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_dscp"
+                    }
+                }';
+            }
+
+            leaf ipv4-tos {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure ipv4 tos value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_tos"
+                    }
+                }';
+            }
+
+            leaf source-ipv4-prefix {
+                type inet:ipv4-prefix;
+                description
+                    "Configuring acl l3 ipv4 source prefix match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv4_prefix"
+                    }
+                }';
+            }
+            leaf destination-l4-port {
+                type uint16 {
+                     range "0 .. 65535";
+                }
+                description
+                    "Configuring acl l4 destination port match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_l4_port"
+                    }
+                }';
+            }
+            leaf ip-protocol {
+                type rtb-types:type-ipproto;
+                description
+                    "Configuring acl ip protocol value match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ip_protocol"
+                    }
+                }';
+            }
+            leaf source-l4-port {
+                type uint16 {
+                     range "0 .. 65535";
+                }
+                description
+                    "Configuring acl l4 source port match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_l4_port"
+                    }
+                }';
+            }
+            leaf mpls-traffic {
+                type enumeration {
+                   enum "true" {
+                       value 1;
+                       description "true";
+                   }
+                }
+                description
+                    "Configuring acl mpls traffic match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_mpls_traffic"
+                    }
+                }';
+            }
+            uses qos-match-ipv4-prefix-list-attributes;
+        }
+
+    }
+
+    grouping qos-match-l3v6 {
+        description
+            "Configuring acl l3v6 match parameters";
+        container match {
+            description
+                "Configuration parameters relating acl l3v6 match";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.qos.multifield.l3v6.config",
+                    "type"    : "qos_mf_acl_l3v6_config_table",
+                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                }
+            }';
+            leaf destination-ipv6-prefix {
+                type inet:ipv6-prefix;
+                description
+                    "Configuring acl l3 ipv6 destination prefix match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv6_prefix"
+                    }
+                }';
+            }
+            leaf direction {
+                type type-direction-qos;
+                description
+                    "Configuring acl l3 traffic direction match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "acl_direction"
+                    }
+                }';
+            }
+            leaf forward-class {
+                type rtb-qos-types:type-qos-class;
+                description
+                    "Configure forward class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_forward_class"
+                    }
+                }';
+            }
+            leaf ipv6-tc {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure codepoint class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ipv6_tc"
+                    }
+                }';
+            }
+            leaf source-ipv6-prefix {
+                type inet:ipv6-prefix;
+                description
+                    "Configuring acl l3 ipv6 source prefix match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv6_prefix"
+                    }
+                }';
+            }
+            leaf destination-l4-port {
+                type uint16 {
+                     range "0 .. 65535";
+                }
+                description
+                    "Configuring acl l4 destination port match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_l4_port"
+                    }
+                }';
+            }
+            leaf ip-protocol {
+                type rtb-types:type-ipproto;
+                description
+                    "Configuring acl ip protocol value match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ip_protocol"
+                    }
+                }';
+            }
+            leaf source-l4-port {
+                type uint16 {
+                     range "0 .. 65535";
+                }
+                description
+                    "Configuring acl l4 source port match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_l4_port"
+                    }
+                }';
+            }
+            leaf mpls-traffic {
+                type enumeration {
+                   enum "true" {
+                       value 1;
+                       description "true";
+                   }
+                }
+                description
+                    "Configuring acl mpls traffic match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_mpls_traffic"
+                    }
+                }';
+            }
+            uses qos-match-ipv6-prefix-list-attributes;
+        }
+
+    }
+
+    grouping qos-multifield-classifier-top {
+        description
+            "Top-level grouping for multifield classifier";
+        container multifield-classifier {
+            description
+                "Configure multifield-classifier";
+            container acl {
+                description
+                    "container for list of acl config";
+                container l3v4 {
+                    description
+                        "container for l3v4 acl config";
+                    list rule {
+                        key "rule-name";
+                        description
+                            "Configuration parameters relating acl rule";
+                        reference
+                            '{
+                                "table-getter": {
+                                    "table-name" : "global.qos.multifield.l3v4.mode.config",
+                                    "type"    : "qos_mf_acl_l3v4_mode_config_table"
+                                }
+                            }';
+                        leaf rule-name {
+                            type rtb-qos-types:type-qos-string;
+                            description
+                                "Configure acl rule name";
+                            reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "rule_name"
+                                    }
+                                }';
+                        }
+                        list ordinal {
+                            key "ordinal-value";
+                            description
+                                "Configuration parameters relating acl ordinal";
+                            reference
+                                '{
+                                    "table-getter": {
+                                        "table-name" : "global.qos.multifield.l3v4.config",
+                                        "type"    : "qos_mf_acl_l3v4_config_table",
+                                        "inherit-attribute" : [ "rule_name" ]
+                                    }
+                                }';
+                            leaf ordinal-value {
+                                type uint32 {
+                                    range "0 .. 200000";
+                                }
+                                description
+                                    "Configure acl ordinal value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "ordinal"
+                                        }
+                                    }';
+                            }
+                            uses qos-match-l3v4;
+                            container action {
+                                description
+                                    "Configure acl action parameters";
+                                reference
+                                    '{
+                                        "table-getter": {
+                                             "table-name" : "global.qos.multifield.l3v4.config",
+                                             "type"    : "qos_mf_acl_l3v4_config_table",
+                                             "inherit-attribute" : [ "rule_name", "ordinal" ]
+                                        }
+                                    }';
+                                leaf forward-class {
+                                    type rtb-qos-types:type-qos-class;
+                                    description
+                                        "Configure action forward class value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_forward_class"
+                                            }
+                                        }';
+                                }
+                                leaf remark-codepoint {
+                                    type uint8 {
+                                        range "0 .. 254";
+                                    }
+                                    description
+                                        "Configure action remark codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                            } // container action
+                            leaf priority {
+                                type uint16 {
+                                    range "100 .. 20000";
+                                }
+                                description
+                                    "Configure acl priority value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "priority"
+                                        }
+                                    }';
+                            }
+                        }
+                    }
+                } // container l3v4
+                container l3v6 {
+                    description
+                        "container for l3v6 acl config";
+                    list rule {
+                        key "rule-name";
+                        description
+                            "Configuration parameters relating acl rule";
+                        reference
+                            '{
+                                "table-getter": {
+                                    "table-name" : "global.qos.multifield.l3v6.mode.config",
+                                    "type"    : "qos_mf_acl_l3v6_mode_config_table"
+                                }
+                            }';
+                        leaf rule-name {
+                            type rtb-qos-types:type-qos-string;
+                            description
+                                "Configure acl rule name";
+                            reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "rule_name"
+                                    }
+                                }';
+                        }
+                        list ordinal {
+                            key 'ordinal-value';
+                            description
+                                "Configuration parameters relating acl rule";
+                            reference
+                                '{
+                                    "table-getter": {
+                                        "table-name" : "global.qos.multifield.l3v6.config",
+                                        "type"    : "qos_mf_acl_l3v6_config_table",
+                                        "inherit-attribute" : [ "rule_name" ]
+                                    }
+                                }';
+                            leaf ordinal-value {
+                                type uint32 {
+                                    range "0 .. 200000";
+                                }
+
+                                description
+                                    "Configure acl ordinal value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "ordinal"
+                                        }
+                                    }';
+                            }
+                            uses qos-match-l3v6;
+                            container action {
+                                description
+                                    "Configure acl action parameters";
+                                reference
+                                    '{
+                                        "table-getter": {
+                                            "table-name" : "global.qos.multifield.l3v6.config",
+                                            "type"    : "qos_mf_acl_l3v6_config_table",
+                                            "inherit-attribute" : [ "rule_name", "ordinal" ]
+                                        }
+                                    }';
+                                leaf forward-class {
+                                    type rtb-qos-types:type-qos-class;
+                                    description
+                                        "Configure action forward class value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_forward_class"
+                                            }
+                                        }';
+                                }
+                                leaf remark-codepoint {
+                                    type uint8 {
+                                        range "0 .. 254";
+                                    }
+                                    description
+                                        "Configure action remark_codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                            } // container action
+                            leaf priority {
+                                type uint16 {
+                                    range "100 .. 20000";
+                                }
+                                description
+                                    "Configure acl priority value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "priority"
+                                        }
+                                    }';
+                            }
+                        }
+                    }
+                } // container l3v6
+            } // container acl
+        }
+    }
+
+    grouping qos-outbound-marking-top {
+        description
+        "Top-level grouping for control plane QoS outbound marking configuration";
+        container outbound-marking {
+            description
+                "Configure control plane QoS outbound marking";
+
+                list protocol {
+                key "protocol remark-type";
+                description
+                    "Configure controle plane QoS outbound marking protocol";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.qos.hostpath.outbound.config",
+                        "type"    : "qos_global_hostpath_outbound_config_table"
+                    }
+                }';
+
+                leaf protocol {
+                    type type-protocol-name;
+                    description
+                        "Configure protocol name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "protocol"
+                        }
+                    }';
+                }
+
+                leaf remark-type {
+                    type type-remark;
+                    mandatory true;
+                    description
+                        "Configure codepoint type";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "remark_type"
+                        }
+                    }';
+                }
+
+                leaf codepoint {
+                    type uint8;
+                    mandatory true;
+                    description
+                        "Configure codepoint value";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "codepoint"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+
+    grouping qos-control-plane-top {
+        description
+        "Top-level grouping for control plane QoS configuration";
+        container control-plane-qos {
+            description
+                "Configure control plane QoS";
+            uses qos-outbound-marking-top;
+            uses qos-host-path-qos-top;
+        }
+    }
+
+    grouping qos-top {
+        description
+            "Top-level grouping for QoS model";
+        container class-of-service {
+            description
+                "Top-level container for QoS data";
+            uses qos-classifier-top;
+            uses qos-class-policer-map-top;
+            uses qos-class-queue-map-top;
+            uses qos-control-plane-top;
+            uses qos-global-top;
+            uses qos-instance-top;
+            uses qos-interface-top;
+            uses qos-policer-top;
+            uses qos-profile-top;
+            uses qos-queue-top;
+            uses qos-queue-group-top;
+            uses qos-remark-map-top;
+            uses qos-scheduler-top;
+            uses qos-scheduler-map-top;
+            uses qos-shaper-top;
+            uses qos-multifield-classifier-top;
+        } //container forwarding-options
+    } //grouping qos-top
+} //module rtbrick-qos

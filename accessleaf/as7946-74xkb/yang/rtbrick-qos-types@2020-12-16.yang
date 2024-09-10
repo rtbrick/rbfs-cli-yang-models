@@ -1,0 +1,108 @@
+module rtbrick-qos-types {
+    yang-version 1.1;
+    namespace "urn:types:qos:rtbrick";
+    prefix qos-types;
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+    description
+      "This is the type file containing the common qos types across rtbrick.
+      Shall be included in other yangs and used in appropriate places";
+
+    revision 2020-12-16 {
+        description
+          "This is the first revision of rtbrick yang file";
+        reference "None";
+    }
+
+    typedef type-qos-string {
+        type string {
+            length "1..64";
+            pattern
+                '[_0-9a-zA-Z].*';
+        }
+        description "Acceptable string type for qos";
+    }
+
+    typedef type-qos-class {
+        type enumeration {
+            enum "class-0" {
+                value 0;
+                description "class-0";
+            }
+            enum "class-1" {
+                value 1;
+                description "class-1";
+            }
+            enum "class-2" {
+                value 2;
+                description "class-2";
+            }
+            enum "class-3" {
+                value 3;
+                description "class-3";
+            }
+            enum "class-4" {
+                value 4;
+                description "class-4";
+            }
+            enum "class-5" {
+                value 5;
+                description "class-5";
+            }
+            enum "class-6" {
+                value 6;
+                description "class-6";
+            }
+            enum "class-7" {
+                value 7;
+                description "class-7";
+            }
+            enum "class-all" {
+                value 8;
+                description "class-all";
+            }
+        }
+        description "qos class data type";
+    }
+
+    typedef type-qos-classifier-class {
+        type enumeration {
+            enum "class-0" {
+                value 0;
+                description "class-0";
+            }
+            enum "class-1" {
+                value 1;
+                description "class-1";
+            }
+            enum "class-2" {
+                value 2;
+                description "class-2";
+            }
+            enum "class-3" {
+                value 3;
+                description "class-3";
+            }
+            enum "class-4" {
+                value 4;
+                description "class-4";
+            }
+            enum "class-5" {
+                value 5;
+                description "class-5";
+            }
+            enum "class-6" {
+                value 6;
+                description "class-6";
+            }
+            enum "class-7" {
+                value 7;
+                description "class-7";
+            }
+        }
+        description "qos classifier class data type";
+    }
+}

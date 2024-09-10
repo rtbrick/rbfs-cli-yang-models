@@ -1,0 +1,101 @@
+submodule rtbrick-daemon-options {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+        "Author : Kuldeep Mishra (kuldeep@rtbrick.com)";
+    description
+        "This is the daemon-options configuration yang file";
+
+    revision 2020-09-14 {
+
+        description
+            "Initial daemon-options configuration";
+
+        reference "None";
+    }
+
+    grouping daemon-options-top {
+        description
+            "Top-level grouping containing a list of daemon options";
+        list daemon-options {
+            key "instance-name afi safi bd-type";
+            description
+                "List of daemon options";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.bd.instance.mapping",
+                    "type" :  "global_bd_instance_mapping_table"
+                }
+            }';
+            leaf instance-name { // TODO Will be changed to instance once bug 5414 is fixed.
+                type string {
+                    length "1..64";
+                }
+                description "Instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "instance_name"
+                    }
+                }';
+            }
+            leaf afi {
+                type string {
+                    length "1..64";
+                }
+                description "AFI value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type string {
+                    length "1..64";
+                }
+                description "SAFI value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "safi"
+                    }
+                }';
+            }
+            leaf bd-type {
+                type string {
+                    length "1..64";
+                }
+                description "BD type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bd_type"
+                    }
+                }';
+            }
+            leaf-list bd-name {
+                type string {
+                    length "1..64";
+                }
+                description "BD name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bd_name"
+                    }
+                }';
+            }
+        }
+    }
+
+    uses daemon-options-top;
+}
