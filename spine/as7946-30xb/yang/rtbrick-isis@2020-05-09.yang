@@ -63,7 +63,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf profile {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BFD profile name";
                 reference
                 '{
@@ -82,7 +84,9 @@ submodule rtbrick-isis {
     grouping isis-policy {
         description "Policy map name";
         leaf policy {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "Policy map name";
             reference
             '{
@@ -139,6 +143,9 @@ submodule rtbrick-isis {
                 must "not(index) or index <= ../../../segment-routing/srgb/range" {
                     error-message "Please enter a segment index within the configured SRGB range";
                 }
+                must "not(anycast-index) or anycast-index <= ../../../segment-routing/srgb/range" {
+                    error-message "Please enter anycast-index within the configured SRGB range";
+                }
             }
             container ipv6 {
                 description "ISIS IPv6 segment routing interface configuration";
@@ -153,7 +160,7 @@ submodule rtbrick-isis {
                 }';
                 leaf anycast-index {
                     type uint32;
-                    description "Authentication on hello packets";
+                    description "Anycast index segment-ID";
                     reference
                     '{
                         "attribute-getter" : {
@@ -175,11 +182,17 @@ submodule rtbrick-isis {
                         }
                     }';
                 }
-                must "index <= ../../../segment-routing/srgb/range" {
+                must "not(index) or index <= ../../../segment-routing/srgb/range" {
                     error-message "Please enter a segment index within the configured SRGB range";
+                }
+                must "not(anycast-index) or anycast-index <= ../../../segment-routing/srgb/range" {
+                    error-message "Please enter anycast-index within the configured SRGB range";
                 }
             }
             container point-to-point {
+                must "not(../../type) or ../../type != 'broadcast'"{
+                    error-message "segment-routing adjacency-index should be configured only on point-to-point interface";
+                }
                 description "Grouping ISIS segment routing point-to-point interface configuration";
                 reference
                 '{
@@ -296,6 +309,45 @@ submodule rtbrick-isis {
                     }
                 }';
             }
+            leaf priority
+            {
+                must '../../type = "broadcast"'{
+                    error-message "Level-1 priority can be configured only on broadcast interface";
+                }
+                type uint32 {
+                        range "0 .. 127";
+                    }
+                description
+                    "Level-1 priority on an broadcast interface, default 64";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level1_priority"
+                    }
+                }';
+            }
+            leaf hello-interval
+            {
+                when '../../type = "broadcast"';
+                type uint32 {
+                    range "1 .. 600";
+                }
+                units   "seconds";
+                must '../../type = "broadcast"'{
+                    error-message "Level-1 hello-interval can be configured only on broadcast interface";
+                }
+                must "not(../../../holding-time) or  . < ../../../holding-time" {
+                    error-message "Level-1 hello-interval must be less than holding-time.";
+                }
+                description
+                    "Level-1 interface hello interval, default 10s";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level1_hello_interval"
+                    }
+                }';
+            }
         }
     }
 
@@ -353,6 +405,44 @@ submodule rtbrick-isis {
                 '{
                     "attribute-getter" : {
                         "attribute" : "level2_disable"
+                    }
+                }';
+            }
+            leaf priority
+            {
+                must '../../type = "broadcast"'{
+                    error-message "Level-2 priority can be configured only on broadcast interface";
+                }
+                type uint32 {
+                        range "0 .. 127";
+                    }
+                description
+                    "Level-2 priority on an broadcast interface, default 64";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level2_priority"
+                    }
+                }';
+            }
+            leaf hello-interval
+            {
+                type uint32 {
+                    range "1 .. 600";
+                }
+                units   "seconds";
+                must '../../type = "broadcast"'{
+                    error-message "Level-2 hello-interval can be configured only on broadcast interface";
+                }
+                must "not(../../../holding-time) or  . < ../../../holding-time" {
+                    error-message "Level-2 hello-interval must be less than holding-time.";
+                }
+                description
+                    "Level-2 interface hello interval, default 10s";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level2_hello_interval"
                     }
                 }';
             }
@@ -646,7 +736,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf flood-filter {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "ISIS flood filter name";
                 reference
@@ -719,6 +811,24 @@ submodule rtbrick-isis {
                     }
                 }';
             }
+            leaf hello-interval
+            {
+                type uint32 {
+                    range "1 .. 600";
+                }
+                units   "seconds";
+                description
+                    "ISIS system interface hello interval, default 10s";
+                must "not(../../holding-time) or  . < ../../holding-time" {
+                    error-message "hello-interval must be less than holding-time.";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "hello_interval"
+                    }
+                }';
+            }
             uses interface-level-segment-routing;
             uses interface-level;
             uses isis-bfd;
@@ -749,7 +859,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key";
                 reference
@@ -762,7 +874,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key1 encrypted";
                 reference
@@ -773,7 +887,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key2";
                 reference
@@ -786,7 +902,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key 2 encrypted";
                 reference
@@ -855,7 +973,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key1";
                 reference
@@ -868,7 +988,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key1-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key1 encrypted";
                 reference
@@ -879,7 +1001,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-plain-text {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication key2";
                 reference
@@ -892,7 +1016,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf key2-encrypted-text {
-                type string;
+                type string {
+                    length "1..512";
+                }
                 description
                     "Authentication key2 encrypted";
                 reference
@@ -962,7 +1088,9 @@ submodule rtbrick-isis {
                     }
                 }';
                 leaf filter-name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Name of the filter";
                     reference
                     '{
@@ -982,7 +1110,9 @@ submodule rtbrick-isis {
                     }';
                 }
                 leaf ordinal-name {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description "Name of the ordinal";
                     reference
                     '{
@@ -1083,7 +1213,7 @@ submodule rtbrick-isis {
             }
             leaf holding-time
             {
-                type uint8 {
+                type uint32 {
                     range "3 .. 180";
                 }
                 units "seconds";

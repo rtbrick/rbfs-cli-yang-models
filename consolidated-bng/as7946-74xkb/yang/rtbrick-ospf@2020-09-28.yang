@@ -544,7 +544,9 @@ submodule rtbrick-ospf {
             }
             leaf authentication-profile
             {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication profile attachment";
                 reference
@@ -669,7 +671,9 @@ submodule rtbrick-ospf {
             }
             leaf authentication-profile
             {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication profile attachment";
                 reference
@@ -754,7 +758,9 @@ submodule rtbrick-ospf {
             }
             leaf authentication-profile
             {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication profile attachment";
                 reference
@@ -838,7 +844,9 @@ submodule rtbrick-ospf {
             }
             leaf authentication-profile
             {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "Authentication profile attachment";
                 reference
@@ -868,7 +876,9 @@ submodule rtbrick-ospf {
     grouping ospf-policy {
         description "Policy map name";
         leaf policy {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "policy map name";
             reference
             '{
@@ -1172,7 +1182,9 @@ submodule rtbrick-ospf {
                 }';
             }
             leaf hostname {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "OSPF Router host name";
                 reference
@@ -1240,7 +1252,9 @@ submodule rtbrick-ospf {
                 }';
             }
             leaf hostname {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description
                     "OSPF Router host name";
                 reference

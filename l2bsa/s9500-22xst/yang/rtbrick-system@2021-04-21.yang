@@ -380,12 +380,14 @@ submodule rtbrick-system {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "encrypted_password",
+                        "attribute" : "encrypted_password"
                     }
                 }';
             }
             leaf-list ssh-pub-key{
-                type string;
+                type string {
+                    length "1..8192";
+                }
                 max-elements 5;
                 description "SSH public key";
                 reference

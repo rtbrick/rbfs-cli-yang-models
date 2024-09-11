@@ -30,11 +30,15 @@ submodule rtbrick-access-aaa-radius-profile {
         type enumeration {
             enum DEFAULT {
                 value "0";
-                description "Default port format";
+                description "Default format";
             }
             enum SLOTS {
                 value "1";
                 description "Slot format";
+            }
+            enum PORTS {
+                value "2";
+                description "Port format";
             }
         }
         description "NAS-Port format";

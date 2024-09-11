@@ -153,6 +153,18 @@ submodule rtbrick-access-interface-profile {
                 }
             }';
         }
+        leaf pppoe-pado-delay {
+            type uint8 { 
+                range "1..255";
+            }
+            description "Optional PPPoE PADO delay in seconds <1-255>";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "pppoe_pado_delay"
+                }
+            }';
+        } 
     }
 
     grouping access-interface-profile {

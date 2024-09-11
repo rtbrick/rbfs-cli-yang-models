@@ -100,10 +100,6 @@ module rtbrick-bgp-types {
                 value "9";
                 description "flow specification";
             }
-            enum vpn-flowspec {
-                value "10";
-                description "flow specification";
-            }
         }
         description "Safi data type";
     }
@@ -158,10 +154,6 @@ module rtbrick-bgp-types {
             }
             enum flowspec {
                 value "8";
-                description "flow specification";
-            }
-            enum vpn-flowspec {
-                value "9";
                 description "flow specification";
             }
         }

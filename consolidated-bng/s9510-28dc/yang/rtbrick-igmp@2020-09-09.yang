@@ -62,7 +62,9 @@ submodule rtbrick-igmp {
                     }
                 }';
             leaf profile-name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "IGMP interface config profile name";
                 reference
                     '{
@@ -154,7 +156,9 @@ submodule rtbrick-igmp {
                     }';
             }//leaf start-query-interval
             leaf filter-policy {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "IGMP membership filtering policy name";
                 reference
                     '{
@@ -168,7 +172,9 @@ submodule rtbrick-igmp {
                     }';
             }//leaf filter-policy
             leaf ssm-map-policy {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "IGMP SSM policy name. The policy for (*,G) mapping to (S,G)";
                 reference
                     '{
@@ -218,7 +224,9 @@ submodule rtbrick-igmp {
                 }';
         }//leaf max-groups
         leaf interface-profile {
-            type string;
+            type string {
+                length "1..64";
+            }
             description "IGMP interface configuration profile name";
             reference
                 '{
@@ -296,7 +304,9 @@ submodule rtbrick-igmp {
                             }
                         }';
                     leaf interface-name {
-                        type string;
+                        type string {
+                            length "1..64";
+                        }
                         description "Reference to an entry in the global interface list";
                         reference
                             '{
@@ -345,7 +355,9 @@ submodule rtbrick-igmp {
                         }';
                 }//leaf source-address
                 leaf outgoing-interface {
-                    type string;
+                    type string {
+                        length "1..64";
+                    }
                     description  "Multicast outbound interface name";
                     reference
                         '{

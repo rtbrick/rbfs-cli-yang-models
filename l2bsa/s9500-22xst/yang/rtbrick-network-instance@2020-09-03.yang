@@ -119,6 +119,56 @@ submodule rtbrick-network-instance {
         }
     }
 
+    grouping import-rib {
+        list import-rib {
+            description "Route import related configuration";
+            key "instance";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.instance.afi-safi.import-rib.config",
+                        "type" : "instance_af_import_rib_config_table",
+                        "inherit-attribute": ["instance_name", "afi", "safi"]
+                    }
+                }';
+
+            leaf instance {
+                type types:string64;
+                description "Name of the source instance from which routes are imported";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "src_instance"
+                        }
+                    }';
+               must '(. != ../../../name)' {
+                    error-message "Routes cannot be imported from the self instance";
+                }
+
+            }
+
+            leaf policy {
+                type types:string64;
+                description "Name of the policy applicable on the imported routes";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "policy_name"
+                        }
+                    }';
+            }
+
+            must '((../afi = "ipv4") or (../afi = "ipv6"))' {
+                error-message "Import-rib feature supported only for ipv4 and ipv6 address-family";
+            }
+            must '(../safi = "unicast")' {
+                error-message "Import-rib feature supported only for unicast safi";
+            }
+
+        }
+    }
+
+
     grouping address-family {
         description "Instance address family related configurations";
         list address-family {
@@ -160,6 +210,7 @@ submodule rtbrick-network-instance {
             }
             uses af-policy;
             uses route-target;
+            uses import-rib;
         }
     }
 

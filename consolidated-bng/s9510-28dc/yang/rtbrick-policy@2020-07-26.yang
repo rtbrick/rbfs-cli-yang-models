@@ -69,16 +69,20 @@ submodule rtbrick-policy {
                 value "7";
                 description "Operation to prepend existing data with a value";
             }
-            enum goto-next-ordinal {
+            enum delete-attribute-match {
                 value "8";
+                description "Operation to delete attribute that matches";
+            }
+            enum goto-next-ordinal {
+                value "9";
                 description "Operation to continue executing policy to next ordinal";
             }
             enum return-deny{
-                value "9";
+                value "10";
                 description "Operation to stop executing policy and return deny";
             }
             enum return-permit {
-                value "10";
+                value "11";
                 description "Operation to stop executing policy and return permit";
             }
         }
@@ -252,7 +256,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf value {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 mandatory true;
                 description "Attribute value";
                 reference
@@ -292,7 +298,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf type {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "List type";
                 reference
                 '{
@@ -333,7 +341,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf type {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Attribute-type against which this rule will be judged";
                 reference
                 '{
@@ -367,7 +377,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf-list value {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 ordered-by user;
                 description "Value against which mentioned attribute-type data will be judged";
                 reference
@@ -413,7 +425,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf type {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Attribute type";
                 reference
                 '{
@@ -435,9 +449,20 @@ submodule rtbrick-policy {
                         "attribute" : "operation_type"
                     }
                 }';
+                must "not(. = 'delete-attribute-match') or (../type = 'community' or ../type = 'extended-community' or ../type = 'large-community')" {
+                    error-message "Action type 'delete-attribute-match' is supported only for application-type community, extended-community and large-community";
+                }
+                must "not(. = 'delete-attribute-match') or (../type = ../../../match/rule/type )" {
+                    error-message "Match rule is not configured for application-type with action 'delete-attribute-match'";
+                }
+                must "not(. = 'delete-attribute-match') or (count(../../../match/rule[type = current()/../type][value-type='list']) = 0)" {
+                    error-message "Match rule value-type 'list' is not supported with action 'delete-attribute-match";
+                }
             }
             leaf-list value {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Value which is used for performing the operation on the mentioned attribute-type";
                 reference
                 '{
@@ -546,6 +571,9 @@ submodule rtbrick-policy {
                     }
                 }';
             }
+            must "not((count(./ordinal/match/rule[type = 'ipv4-prefix']) > 0) and (count(./ordinal/match/rule[type = 'ipv6-prefix']) > 0))" {
+                error-message "Match rule for ipv4-prefix and ipv6-prefix should not be configured under same policy";
+            }
             uses policy-ordinal;
         }
     }
@@ -588,7 +616,9 @@ submodule rtbrick-policy {
                 }';
             }
             leaf-list value {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 ordered-by user;
                 description "Match value for attribute";
                 reference
@@ -651,7 +681,6 @@ submodule rtbrick-policy {
                 }
                 leaf bd {
                     type string {
-
                         length "1..64";
                     }
                     description "BD's name, which resolves the condition";
@@ -701,4 +730,3 @@ submodule rtbrick-policy {
     }
     uses policy-top;
 }
-

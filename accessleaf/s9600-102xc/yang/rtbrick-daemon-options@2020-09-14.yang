@@ -35,7 +35,9 @@ submodule rtbrick-daemon-options {
                 }
             }';
             leaf instance-name { // TODO Will be changed to instance once bug 5414 is fixed.
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "Instance name";
                 reference
                 '{
@@ -45,7 +47,9 @@ submodule rtbrick-daemon-options {
                 }';
             }
             leaf afi {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "AFI value";
                 reference
                 '{
@@ -55,7 +59,9 @@ submodule rtbrick-daemon-options {
                 }';
             }
             leaf safi {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "SAFI value";
                 reference
                 '{
@@ -65,7 +71,9 @@ submodule rtbrick-daemon-options {
                 }';
             }
             leaf bd-type {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BD type";
                 reference
                 '{
@@ -75,7 +83,9 @@ submodule rtbrick-daemon-options {
                 }';
             }
             leaf-list bd-name {
-                type string;
+                type string {
+                    length "1..64";
+                }
                 description "BD name";
                 reference
                 '{
