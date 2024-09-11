@@ -1,0 +1,181 @@
+submodule rtbrick-inband {
+    yang-version 1.1;
+  
+    belongs-to rtbrick-config {
+       prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization "Rtbrick";
+  
+    contact
+      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+  
+    description
+      "This module defines configuration data related to network inband config";
+  
+    revision "2020-07-22" {
+      description
+        "First revision of inband configuration";
+      reference
+        "None";
+    }
+
+    grouping inband-top {
+        description "Configuring top level inband";
+        container inband-management {
+        description "Configuring inband management";
+            list instance {
+                must 'count(../instance) = 1' {
+                    error-message "Inband configuration is allowed only on one instance";
+                }
+                key 'name';
+                description "Configuring instance name";
+                reference
+                    '{
+                        "table-getter": {
+                            "library" : "libcmdifmd.so",
+                            "symbol"  : "ifm_yang_get_inband_mgmt_cfg_tbl_templ",
+                            "type"    : "inband_mgmt_global_instance_config_table"
+                        }
+                    }';
+                leaf name {
+                    type string {
+                        length "1..64";
+                    }
+                    description
+                        "Configure instance name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "instance_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"ifm_instance_name_expander"
+                        }
+                        }
+                    }';
+                }
+                leaf ssh {
+                    type rtb-types:boolean-type;
+                    description "Configure ssh services";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ssh_enabled"
+                        }
+                    }';
+                }
+                leaf telnet {
+                    type rtb-types:boolean-type;
+                    description "Configure telnet services";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "telnet_enabled"
+                        }
+                    }';
+                }
+                leaf ctrld {
+                    type rtb-types:boolean-type;
+                    description "Configure ctrld services";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ctrld_enabled"
+                        }
+                    }';
+                }
+                leaf apigw {
+                    type rtb-types:boolean-type;
+                    description "Configure apigw services";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "apigw_enabled"
+                        }
+                    }';
+                }
+                leaf ntp {
+                    type rtb-types:boolean-type;
+                    description "Configure ntp service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ntp_enabled"
+                        }
+                    }';
+                }
+                leaf tacacs {
+                    type rtb-types:boolean-type;
+                    description "Configure tacacs service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_enabled"
+                        }
+                    }';
+                }
+                leaf snmp {
+                    type rtb-types:boolean-type;
+                    description "Configure snmp service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "snmp_enabled"
+                        }
+                    }';
+                }
+                leaf lix1 {
+                    type rtb-types:boolean-type;
+                    description "Configure lix1 service";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "lix1_enabled"
+                        }
+                    }';
+                }
+                leaf all {
+                    type rtb-types:boolean-true;
+                    description "Configure all services";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "all_enabled"
+                        }
+                    }';
+                }
+                leaf connection-tracking {
+                    type rtb-types:boolean-true;
+                    description "Configure connection tracking";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "conntrack_enabled"
+                        }
+                    }';
+                }
+                leaf source-prefix-list {
+                    type rtb-types:string64;
+                    description
+                        "Configuring inband management source ipv4 prefix list name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "source_ipv4_prefix_list",
+                            "expansion-getter" : {
+                                "package":"protoinfra",
+                                "method" :"proto_infra_prefix_list_v4_name_expander"
+                            }
+                        }
+                    }';
+                }
+            } // list instance
+        }  // container inband-management
+    }  // grouping inband
+    uses inband-top;
+}

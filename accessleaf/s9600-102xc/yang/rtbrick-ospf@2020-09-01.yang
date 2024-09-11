@@ -1,0 +1,27 @@
+submodule rtbrick-ospf {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Kuldeep Mishra (kuldeep@rtbrick.com)";
+
+    description
+        "This sub module contains the top level configurations of dummy ospf configuration to help rtbrick roles
+  	This must be dated before the latest package";
+
+    revision 2020-09-01 {
+        description
+          "Dummy ospf yang file";
+        reference "None";
+    }
+
+
+    grouping ospf-top {
+        description "Dummy ospf top level config";
+
+    }
+}

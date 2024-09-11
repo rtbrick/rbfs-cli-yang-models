@@ -1,0 +1,26 @@
+submodule rtbrick-address-translation {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Jeevan Samrudh (jeevan@rtbrick.com)";
+
+    description
+        "This sub module contains the top level configurations of dummy NAT configuration to help rtbrick roles
+        This must be dated before the latest package";
+
+    revision 2020-01-01 {
+        description
+          "Dummy NAT yang file";
+        reference "None";
+    }
+
+
+    grouping address-translation-top {
+        description "Dummy NAT top level config";
+    }
+}

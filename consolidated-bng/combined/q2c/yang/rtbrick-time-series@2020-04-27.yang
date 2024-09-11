@@ -1,0 +1,639 @@
+submodule rtbrick-time-series {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "Author : Navaneeth Y V (navaneethyv@rtbrick.com)";
+    description
+      "This sub-module contains the YANG structure for the time series configuration, that can interact with Prometheus.
+       time-series
+           +-> { metrics }
+               +-> { metric config}
+           +-> {alert}
+             +-> { alert config }
+      ";
+    revision 2020-04-27 {
+        description "First revision";
+        reference "None";
+    }
+    /* Typedefs */
+    typedef bds-match-type {
+        type enumeration {
+            enum exact {
+                value "0";
+                description "Exact Match";
+            }
+            enum regular-expression {
+                value "1";
+                description "Regular expression match";
+            }
+        }
+        description "Metric match BDS type";
+    }
+
+    typedef prometheus-metric-type {
+        type enumeration {
+            enum counter {
+                value "0";
+                description "Counter";
+            }
+            enum gauge {
+                value "1";
+                description "Gauge";
+            }
+        }
+        description "Prometheus metric types";
+    }
+
+    typedef bds-metric-type {
+        type enumeration {
+            enum index-metric {
+                value "0";
+                description "Metric from BDS Table Metadata";
+            }
+            enum object-metric {
+                value "1";
+                description "Metric from BDS object attributes";
+            }
+        }
+        description "Metric type from a BDS perspective";
+    }
+    typedef keyval-string {
+        type string {
+             pattern '.*:.*';
+             length "1..128";
+        }
+        description "A BDS keyvalue string";
+    }
+
+    typedef prometheus-label-key {
+        type string {
+            pattern '[a-zA-Z_][a-zA-Z0-9_]*';
+            length "1..128";
+        }
+        description "Prometheus Label key format";
+    }
+
+    typedef prometheus-metric-name {
+        type string {
+            pattern '[a-zA-Z_:][a-zA-Z0-9_:]*';
+            length "1..128";
+        }
+        description "Prometheus Metric name format";
+    }
+
+    typedef match-negate-type {
+        type enumeration {
+            enum false {
+                value "0";
+                description "Dont return negate";
+            }
+            enum true {
+                value "1";
+                description "Return negate";
+            }
+        }
+        default false;
+    }
+
+    /* Time series hierarchy */
+    container time-series {
+        description "Time series Hierarchy";
+        reference
+        '{
+            "table-getter": {
+                "table-name": "global.time-series.config",
+                "type"   : "time_series_global_config_table",
+                "default-attribute" : [ {"configuration_name" : "rtbrick" } ]
+            }
+        }';
+        leaf history-status {
+            type rtb-types:enable-disable-type;
+            description "TSDB history status";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute": "time-series-history-enable"
+                }
+            }';
+        }
+        list metric {
+            key "name";
+            description "Metric configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbds.so",
+                    "symbol" : "time_series_autogen_cli_global_metric_cfg_tbl_tmpl_get",
+                    "type"   : "time_series_metric_config_table"
+                }
+            }';
+            leaf name {
+                type prometheus-metric-name;
+                mandatory true;
+                description "Metric name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "metric-name"
+                    }
+                }';
+            }
+            leaf table-name {
+                type string{
+		    length "1..128";
+		}
+                mandatory true;
+                description "Table Name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "table-name"
+                    }
+                }';
+            }
+            leaf include-subscribed-tables {
+                type rtb-types:boolean-type;
+                description "Whether we should apply this configuration on a subscribed tables as well, [false by default]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "include-subscribed-tables"
+                    }
+                }';
+            }
+            leaf append-timestamp {
+                type rtb-types:boolean-type;
+                description "Whether we should append timestamp for every metric, [false by default]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "append-timestamp"
+                    }
+                }';
+            }
+            leaf bds-type {
+                type bds-metric-type;
+                mandatory true;
+                description "Metric BDS type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "metric-bds-type"
+                    }
+                }';
+            }
+            leaf prometheus-type {
+                type prometheus-metric-type;
+                mandatory true;
+                description "Metric Prometheus type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "metric-prometheus-type"
+                    }
+                }';
+            }
+            leaf index-name {
+                when "../bds-type='index-metric'";
+                type string {
+		    length "1..64";
+		}
+                description "Table Index name, for index-metrics";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "index-name"
+                    }
+                }';
+            }
+            leaf description {
+                type string {
+		    length "1..256";
+		}
+                mandatory true;
+                description "Description for this metric";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "metric-description"
+                    }
+                }';
+            }
+
+            list filter{
+                key "match-attribute-name";
+                description "Metric filter configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbds.so",
+                        "symbol": "time_series_autogen_cli_global_filter_metric_cfg_tbl_tmpl_get",
+                        "type" :  "time_series_filter_metric_config_table",
+                        "inherit-attribute": [ "metric-name" ]
+                    }
+                }';
+
+                leaf match-attribute-name {
+                    type string {
+			length "1..128";
+		    }
+                    mandatory true;
+                    description "Matching attribute name for this filter";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match-attribute-name"
+                        }
+                    }';
+                }
+                leaf match-attribute-value {
+                    type string {
+			length "1..128";
+		    }
+                    mandatory true;
+                    description "Matching attribute value for this filter";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match-attribute-value"
+                        }
+                    }';
+                }
+                leaf match-type {
+                    type bds-match-type;
+                    mandatory true;
+                    description "Match type [regular-expression or exact]";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match-type"
+                        }
+                    }';
+                }
+                leaf match-negate {
+                    type match-negate-type;
+                    description "Match-negate [True or False]";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match-negate"
+                        }
+                    }';
+                }
+            }
+
+            list attribute {
+                key "attribute-name";
+                description "Metric filter configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbds.so",
+                        "symbol": "time_series_autogen_cli_global_attribute_cfg_tbl_tmpl_get",
+                        "type" :  "time_series_attribute_config_table",
+                        "inherit-attribute": [ "metric-name" ]
+                    }
+                }';
+
+                leaf attribute-name {
+                    type string {
+		        length "1..128";
+		    }
+                    mandatory true;
+                    description "Attribute that needs to be rendered as a metric";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "attribute-name"
+                        }
+                    }';
+                }
+                list label{
+                    key "label-key";
+                    description "Label key configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "libbds.so",
+                            "symbol": "time_series_autogen_cli_global_label_cfg_tbl_tmpl_get",
+                            "type" :  "time_series_label_config_table",
+                            "inherit-attribute": [ "metric-name", "attribute-name" ]
+                        }
+                    }';
+
+                    leaf label-key {
+                        type prometheus-label-key;
+                        mandatory true;
+                        description "Key for the label";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "label-key"
+                            }
+                        }';
+                    }
+                    leaf label-value {
+                        type string {
+			    length "1..128";
+			}
+                        mandatory true;
+                        description "Value of the label";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "label-value"
+                            }
+                        }';
+                    }
+                    leaf label-type {
+                        type string {
+			    length "1..128";
+			}
+                        mandatory true;
+                        description "Label type can be dynamic/static";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "label-type"
+                            }
+                        }';
+                    }
+                    list filter{
+                        key "match-attribute-name";
+                        description "Attribute filter configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libbds.so",
+                                "symbol":  "time_series_autogen_cli_global_filter_label_cfg_tbl_tmpl_get",
+                                "type" :   "time_series_filter_label_config_table",
+                                "inherit-attribute": [ "metric-name","attribute-name","label-key" ]
+                            }
+                        }';
+
+                        leaf match-attribute-name {
+                            type string {
+				length "1..128";
+			    }
+                            mandatory true;
+                            description "Matching attribute name for this filter";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "match-attribute-name"
+                                }
+                            }';
+                        }
+                        leaf match-attribute-value {
+                            type string {
+				length "1..128";
+			    }
+                            mandatory true;
+                            description "Matching attribute value for this filter";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "match-attribute-value"
+                                }
+                            }';
+                        }
+                        leaf match-type {
+                            type bds-match-type;
+                            mandatory true;
+                            description "Match type [regular-expression or exact]";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "match-type"
+                                }
+                            }';
+                        }
+                        leaf match-negate {
+                            type match-negate-type;
+                            description "Match-negate [True or False]";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "match-negate"
+                                }
+                            }';
+                        }
+                    }
+                }
+                list filter{
+                    key "match-attribute-name";
+                    description "Attribute filter configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "libbds.so",
+                            "symbol":  "time_series_autogen_cli_global_filter_attribute_cfg_tbl_tmpl_get",
+                            "type" :  "time_series_filter_attribute_config_table",
+                            "inherit-attribute": [ "metric-name", "attribute-name" ]
+                        }
+                    }';
+
+                    leaf match-attribute-name {
+                        type string {
+			    length "1..128";
+			}
+                        mandatory true;
+                        description "Matching attribute name for this filter";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-attribute-name"
+                            }
+                        }';
+                    }
+                    leaf match-attribute-value {
+                        type string {
+			    length "1..128";
+			}
+                        mandatory true;
+                        description "Matching attribute value for this filter";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-attribute-value"
+                            }
+                        }';
+                    }
+                    leaf match-type {
+                        type bds-match-type;
+                        mandatory true;
+                        description "Match type [regular-expression or exact]";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-type"
+                            }
+                        }';
+                    }
+                    leaf match-negate {
+                        type match-negate-type;
+                        description "Match-negate [True or False]";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-negate"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+
+        list alert {
+            key "name";
+            description "Alert configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbds.so",
+                    "symbol" : "time_series_autogen_cli_global_alert_cfg_tbl_tmpl_get",
+                    "type"   : "time_series_alert_config_table"
+                }
+            }';
+            leaf name {
+                type string {
+		    length "1..128";
+		}
+                mandatory true;
+                description "Name of the alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "alert-name"
+                    }
+                }';
+            }
+            leaf group {
+                type string {
+		    length "1..128";
+		}
+                mandatory true;
+                description "Group of the alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "alert-group-name"
+                    }
+                }';
+            }
+            leaf for{
+                type  string {
+                    length "1..64";
+                    pattern '[0-9]+(ms|[smhdwy])';
+                }
+                mandatory true;
+                description "Interval for the alert has to be active after which prometheus will fire the alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "for"
+                    }
+                }';
+            }
+
+            leaf interval{
+                type  string {
+                    length "1..64";
+                    pattern '[0-9]+(ms|[smhdwy])';
+                }
+                mandatory true;
+                description "Evaluation interval of this alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "interval"
+                    }
+                }';
+            }
+            leaf expr{
+                type string {
+		    length "1..512";
+		}
+                mandatory true;
+                description "PromQL Alert evaluation expression for execution of this alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "expr"
+                    }
+                }';
+            }
+            leaf level {
+                type string {
+                    pattern  '[0-7]';
+		    length "1..128";
+                }
+                mandatory true;
+                description "Explicit annotation label level [0 to 7]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "level"
+                    }
+                }';
+            }
+            leaf summary {
+                type string {
+		    length "1..128";
+		}
+                mandatory true;
+                description "Explicit annotation label summary";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "summary"
+                    }
+                }';
+            }
+            leaf description {
+                type string {
+		    length "1..256";
+		}
+                mandatory true;
+                description "Alert description";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "description"
+                    }
+                }';
+            }
+            leaf-list labels {
+                type keyval-string;
+                ordered-by user;
+                description "Key,value pair of labels for this alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "labels"
+                    }
+                }';
+            }
+            leaf-list annotations {
+                type keyval-string;
+                ordered-by user;
+                description "Key,value pair of annotations for this alert";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "annotations"
+                    }
+                }';
+            }
+        }
+    }
+}

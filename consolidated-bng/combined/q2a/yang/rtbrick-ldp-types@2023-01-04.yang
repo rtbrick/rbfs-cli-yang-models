@@ -1,0 +1,85 @@
+module rtbrick-ldp-types {
+    yang-version 1.1;
+    namespace
+    "urn:config:rtbrick:ldp:types";
+    prefix rtb-ldp-types;
+
+    organization 
+        "RtBrick";
+
+    contact
+        "Author: ankit@rtbrick.com, akshath@rtbrick.com";
+
+    description
+      "This module contains general data definitions for use in LDP YANG
+    model.";
+
+    revision "2023-01-04" {
+      description "Addition of LDP types for rtbrick";
+      reference
+        "None";
+    }
+
+    typedef rib-source {
+        type enumeration {
+
+            enum direct {
+                value "2";
+                description "Source direct";
+            }
+            enum static {
+                value "3";
+                description "Source static";
+            }
+            enum isis {
+                value "4";
+                description "Source isis";
+            }
+            enum ospf {
+                value "5";
+                description "Source ospf";
+            }
+            enum bgp {
+                value "6";
+                description "Source bgp";
+            }
+            enum ppp {
+                value "11";
+                description "Source PPP";
+            }
+            enum ipoe {
+                value "17";
+                description "Source IPOE";
+            }
+        }
+        description "LDP interface type";
+    }
+
+    typedef afi {
+        type enumeration {
+            enum ipv4 {
+                value "0";
+                description "IPv4 address";
+            }
+            enum ipv6 {
+                value "1";
+                description "IPv6 address";
+            }
+        }
+        description "Afi data type";
+    }
+
+    typedef nbr-type {
+        type enumeration {
+            enum sender {
+                value "0";
+                description "Targeted hello Sender";
+            }
+            enum receiver {
+                value "1";
+                description "Targeted hello Sender";
+            }
+        }
+        description "Afi data type";
+    }
+}
