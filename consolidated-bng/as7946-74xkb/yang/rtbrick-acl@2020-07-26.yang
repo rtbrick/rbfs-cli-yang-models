@@ -1,0 +1,1349 @@
+submodule rtbrick-acl {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import ietf-yang-types {
+        prefix ietfyang;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    import rtbrick-qos-types {
+        prefix "rtb-qos-types";
+    }
+
+    organization
+      "Rtbrick";
+
+    contact
+      "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+
+    description
+      "This module describes the YANG model for the access control list (ACL) configuration.";
+
+    revision 2020-07-26 {
+        description
+        "Configuration hierarchy for access control list";
+
+        reference "None";
+    }
+
+    typedef logical-interface-type {
+      type string {
+          length "1..64";
+          pattern
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
+              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])';
+      }
+      description
+        "Logical Interface type, type supported are ifp and recycle";
+    }
+
+    typedef type-direction-acl {
+        type enumeration {
+            enum "ingress" {
+                value 1;
+                description "ingress direction";
+            }
+        }
+        description "direction data type";
+    }
+
+    typedef type-acl {
+        type enumeration {
+            enum "l2" {
+                value 1;
+                description "l2";
+            }
+            enum "l3v4" {
+                value 2;
+                description "l3v4";
+            }
+            enum "l3v6" {
+                value 3;
+                description "l3v6";
+            }
+            enum "mpls" {
+                value 4;
+                description "MPLS";
+            }
+        }
+        description "ACL data type";
+    }
+
+    typedef type-meta-data {
+        type enumeration {
+            enum "type-1" {
+                value 5;
+                description
+                    "Layer2 service identifier meta-data";
+            }
+        }
+        description "Layer2 service identifier meta-data";
+    }
+
+    grouping acl-match-interface-attributes {
+        description
+            "Configure acl interface match parameters.";
+        leaf interface {
+            type rtb-types:interface-type;
+            description
+                "Configure interface match";
+            reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ifp_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                            }
+                    }
+                }';
+        }
+
+        leaf logical-interface {
+            type logical-interface-type;
+            description
+                "Configure interface match";
+            reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                    }
+                }';
+        }
+    }
+
+    grouping acl-match-ipv4-prefix-list-attributes {
+        description
+            "Configure acl ipv4 prefix list match parameters.";
+        leaf source-ipv4-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl source ipv4 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv4_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v4_name_expander"
+                        }
+                    }
+                }';
+        }
+
+        leaf destination-ipv4-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl destination ipv4 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv4_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v4_name_expander"
+                        }
+                    }
+                }';
+        }
+    }
+
+    grouping acl-match-ipv6-prefix-list-attributes {
+        description
+            "Configure acl ipv6 prefix list match parameters.";
+        leaf source-ipv6-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl source ipv6 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv6_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v6_name_expander"
+                        }
+                    }
+                }';
+        }
+
+        leaf destination-ipv6-prefix-list {
+            type rtb-types:string64;
+            description
+                "Configuring acl destination ipv6 prefix list name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv6_prefix_list",
+                        "expansion-getter" : {
+                            "package":"protoinfra",
+                            "method" :"proto_infra_prefix_list_v6_name_expander"
+                        }
+                    }
+                }';
+        }
+    }
+
+    grouping acl-match-l2 {
+        description
+            "Configure acl l2 match parameters.";
+        container match {
+            description
+                "Configuration parameters relating acl l2 matchi.";
+            reference
+            '{
+                "table-getter": {
+                     "table-name": "global.acl.l2.config",
+                     "type"    : "global_acl_l2_config_table",
+                     "inherit-attribute" : [ "rule_name", "ordinal" ]
+                }
+            }';
+            leaf destination-mac {
+                type ietfyang:mac-address;
+                description
+                    "Configure acl l2 destination mac match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_mac"
+                    }
+                }';
+            }
+            leaf source-mac {
+                type ietfyang:mac-address;
+                description
+                    "Configure acl l2 source mac match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_mac"
+                    }
+                }';
+            }
+            leaf ethertype {
+                type uint16;
+                description
+                    "Configure acl l2 ethertype match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ether_type"
+                    }
+                }';
+            }
+            leaf inner-vlan {
+                type uint16;
+                description
+                    "Configure acl l2 inner-vlan match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_inner_vlan"
+                    }
+                }';
+            }
+            leaf direction {
+                type type-direction-acl;
+                description
+                    "Configure acl l2 direction match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "acl_direction"
+                    }
+                }';
+            }
+            leaf interface {
+                type rtb-types:interface-type;
+                description
+                    "Configure interface match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ifp_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                        }
+                    }
+                }';
+            }
+            leaf logical-interface {
+                type logical-interface-type;
+                description
+                    "Configure interface match";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ifl_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                        }
+                    }
+                }';
+            }
+            leaf outer-vlan {
+                type uint16;
+                description
+                    "Configure acl l2 outer-vlan match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_outer_vlan"
+                    }
+                }';
+            }
+            leaf inner-tag-protocol-id {
+                type uint16;
+                description
+                    "Configure acl l2 inner tpid match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_inner_tpid"
+                    }
+                }';
+            }
+            leaf outer-tag-protocol-id {
+                type uint16;
+                description
+                    "Configure acl l2 outer tpid match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_outer_tpid"
+                    }
+                }';
+            }
+            leaf inner-vlan-priority {
+                type uint8;
+                description
+                    "Configure acl l2 inner vlan priority match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_set_inner_vlan_priority"
+                    }
+                }';
+            }
+            leaf outer-vlan-priority {
+                type uint8;
+                description
+                    "Configure acl l2 outer vlan priority match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_set_outer_vlan_priority"
+                    }
+                }';
+            }
+            leaf inner-vlan-cfi {
+                type uint8;
+                description
+                    "Configure acl l2 inner vlan cfi match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_set_inner_vlan_cfi"
+                    }
+                }';
+            }
+            leaf outer-vlan-cfi {
+                type uint8;
+                description
+                    "Configure acl l2 outer vlan cfi match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_set_outer_vlan_cfi"
+                    }
+                }';
+            }
+            leaf traffic-class {
+                type rtb-qos-types:type-qos-class;
+                description
+                    "Configure forward class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_forward_class"
+                    }
+                }';
+            }
+            leaf service-inner-vlan-priority {
+                type uint8 {
+                    range "0 .. 7";
+                }
+                description
+                    "Configure service inner vlan priority value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_service_inner_vlan_priority"
+                    }
+                }';
+            }
+            leaf service-outer-vlan-priority {
+                type uint8 {
+                    range "0 .. 7";
+                }
+                description
+                    "Configure layer2 service outer vlan priority value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_service_outer_vlan_priority"
+                    }
+                }';
+            }
+            leaf interface-meta-data {
+                type type-meta-data;
+                description
+                    "Configure layer2 service meta-data value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_interface_meta_data"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping acl-match-l3v4 {
+        description
+            "Configure acl l3v4 match parameters.";
+        container match {
+            description
+                "Configuration parameters relating acl l3v4 match.";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.acl.l3v4.config",
+                    "type"    : "global_acl_l3v4_config_table",
+                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                }
+            }';
+            leaf destination-ipv4-prefix {
+                type inet:ipv4-prefix;
+                description
+                    "Configure acl l3 ipv4 destination prefix match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv4_prefix"
+                    }
+                }';
+            }
+            leaf direction {
+                type type-direction-acl;
+                description
+                    "Configure acl l3 traffic direction match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "acl_direction"
+                    }
+                }';
+            }
+            leaf source-ipv4-prefix {
+                type inet:ipv4-prefix;
+                description
+                    "Configure acl l3 ipv4 source prefix match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv4_prefix"
+                    }
+                }';
+            }
+            leaf match-mpls-traffic {
+                type rtb-types:boolean-true;
+                description
+                    "Match single MPLS label termination";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_mpls_traffic"
+                        }
+                    }';
+            }
+            leaf destination-l4-port {
+                type uint16;
+                description
+                    "Configure acl l4 destination port match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_l4_port"
+                    }
+                }';
+            }
+            leaf ip-protocol {
+                type rtb-types:type-ipproto;
+                description
+                    "Configure acl ip protocol value match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ip_protocol"
+                    }
+                }';
+            }
+            leaf source-l4-port {
+                type uint16;
+                description
+                    "Configure acl l4 source port match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_l4_port"
+                    }
+                }';
+            }
+
+            uses acl-match-ipv4-prefix-list-attributes;
+
+            leaf traffic-class {
+                type rtb-qos-types:type-qos-class;
+                description
+                    "Configure traffic class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_forward_class"
+                    }
+                }';
+            }
+
+            leaf ipv4-dscp {
+                type uint8 {
+                    range "0 .. 63";
+                }
+                description
+                    "Configure ipv4 dscp value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_dscp"
+                    }
+                }';
+            }
+
+            leaf ipv4-tos {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure ipv4 tos value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_tos"
+                    }
+                }';
+            }
+
+            leaf ttl {
+                type uint8;
+                description
+                    "Configure ipv4 ttl value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ttl"
+                    }
+                }';
+            }
+
+            leaf ip-options {
+                type enumeration {
+                   enum "true" {
+                       value 1;
+                       description "true";
+                   }
+                }
+                description
+                    "Configure match if IPv4 packet has options";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ip_has_options"
+                    }
+                }';
+            }
+
+            uses acl-match-interface-attributes;
+
+            leaf destination-ipv4-local {
+                type rtb-types:boolean-true;
+                description
+                    "Configure destination ipv4 local traffic match";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "destination_ipv4_local"
+                        }
+                    }';
+            }
+        }
+
+    }
+
+    grouping acl-match-l3v6 {
+        description
+            "Configure acl l3v6 match parameters.";
+        container match {
+            description
+                "Configuration parameters relating acl l3v6 match";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.acl.l3v6.config",
+                    "type"    : "global_acl_l3v6_config_table",
+                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                }
+            }';
+            leaf destination-ipv6-prefix {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "Configure acl l3 ipv6 destination prefix match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_ipv6_prefix"
+                    }
+                }';
+            }
+            leaf direction {
+                type type-direction-acl;
+                description
+                    "Configure acl l3 traffic direction match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "acl_direction"
+                    }
+                }';
+            }
+            leaf source-ipv6-prefix {
+                type inet:ipv6-prefix;
+                description
+                    "Configure acl l3 ipv6 source prefix match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_ipv6_prefix"
+                    }
+                }';
+            }
+            leaf destination-l4-port {
+                type uint16;
+                description
+                    "Configure acl l4 destination port match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_destination_l4_port"
+                    }
+                }';
+            }
+            leaf ip-protocol {
+                type rtb-types:type-ipproto;
+                description
+                    "Configure acl ip protocol value match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ip_protocol"
+                    }
+                }';
+            }
+            leaf source-l4-port {
+                type uint16;
+                description
+                    "Configure acl l4 source port match.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_source_l4_port"
+                    }
+                }';
+            }
+
+            uses acl-match-ipv6-prefix-list-attributes;
+
+            leaf traffic-class {
+                type rtb-qos-types:type-qos-class;
+                description
+                    "Configure traffic class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_forward_class"
+                    }
+                }';
+            }
+            leaf ipv6-tc {
+                type uint8 {
+                    range "0 .. 254";
+                }
+                description
+                    "Configure codepoint class value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_ipv6_tc"
+                    }
+                }';
+            }
+
+            uses acl-match-interface-attributes;
+
+            leaf destination-ipv6-local {
+                type rtb-types:boolean-true;
+                description
+                    "Configure destination ipv6 local traffic match";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "destination_ipv6_local"
+                        }
+                    }';
+            }
+        }
+    }
+
+    grouping prefix-list-top {
+        description
+            "Top-level grouping of prefix list configuration model.";
+        list prefix-list {
+            key 'prefix-list-name';
+            description
+                "Prefix list name configuration";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.prefix.list.name.config",
+                        "type"    : "global_prefix_list_name_config_table"
+                    }
+                }';
+
+            leaf prefix-list-name {
+                type rtb-types:string64;
+                description
+                    "Prefix list name configuration";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "prefix_list_name"
+                    }
+                }';
+            }
+
+            list ipv4-prefix {
+                key 'ipv4-prefix';
+                description
+                    'Prefix configuration';
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.prefix.list.v4.config",
+                            "type"    : "global_prefix_list_v4_config_table",
+                            "inherit-attribute" : [ "prefix_list_name"]
+                        }
+                    }';
+
+                leaf ipv4-prefix {
+                    type inet:ipv4-prefix;
+                    description
+                        "ipv4 prefix";
+                     reference
+                     '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_prefix"
+                        }
+                     }';
+                }
+            }
+            list ipv6-prefix {
+                key 'ipv6-prefix';
+                description
+                    'Prefix configuration';
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.prefix.list.v6.config",
+                            "type"    : "global_prefix_list_v6_config_table",
+                            "inherit-attribute" : [ "prefix_list_name" ]
+                        }
+                    }';
+
+                leaf ipv6-prefix {
+                    type inet:ipv6-prefix;
+                    description
+                        "ipv6 prefix";
+                     reference
+                     '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_prefix"
+                        }
+                     }';
+                }
+            }
+
+        }
+    }
+
+    grouping acl-top {
+        description
+            "Top-level grouping containing a list of acl config.";
+        container acl {
+            description
+                "container for list of acl config.";
+            container l2 {
+                description
+                    "container for l2 acl config.";
+                list rule {
+                    key "rule-name";
+                    description
+                        "Configuration parameters relating acl rule";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.acl.l2.mode.config",
+                            "type"    : "global_acl_l2_mode_config_table"
+                        }
+                    }';
+                    leaf rule-name {
+                        type string {
+                            length "1..64";
+                        }
+                        description
+                            "Configure acl rule name.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "rule_name"
+                            }
+                        }';
+                    }
+                    list ordinal {
+                        key "ordinal-value";
+                        description
+                            "Configuration parameters relating acl ordinal";
+                        reference
+                        '{
+                            "table-getter": {
+                                "table-name" : "global.acl.l2.config",
+                                "type"    : "global_acl_l2_config_table",
+                                "inherit-attribute" : [ "rule_name" ]
+                            }
+                        }';
+                        leaf ordinal-value {
+                            type uint32 {
+                                range "0 .. 200000";
+                            }
+                            description
+                                "Configure ordinal value.";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "ordinal"
+                                }
+                            }';
+                        }
+                        uses acl-match-l2;
+                        container action {
+                            description
+                                "Container for acl action parameters.";
+                            reference
+                            '{
+                                "table-getter": {
+                                    "table-name" : "global.acl.l2.config",
+                                    "type"    : "global_acl_l2_config_table",
+                                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                                }
+                            }';
+                            leaf drop {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, drop packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_drop"
+                                    }
+                                }';
+                            }
+                            leaf permit {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, permit packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_permit"
+                                    }
+                                }';
+                            }
+                            leaf redirect-to-cpu {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, redirect packets to cpu.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_redirect_to_cpu"
+                                    }
+                                }';
+                            }
+                            leaf forward-class {
+                                type rtb-qos-types:type-qos-class;
+                                description
+                                    "Configure forward class value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_forward_class"
+                                        }
+                                    }';
+                            }
+                            leaf policer-name {
+                                type rtb-qos-types:type-qos-string;
+                                description
+                                    "Configure policer profile name.";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_policer_profile_name",
+                                                "expansion-getter" : {
+                                                    "package":"ifm",
+                                                    "method" :"qos_policer_name_expander"
+                                                }
+                                        }
+                                    }';
+                            }
+                            leaf statistics {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, enable statistics.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_stat"
+                                    }
+                                }';
+                            }
+                            leaf mirror {
+                                type string {
+                                    length "1..64";
+                                }
+                                description
+                                    "Configure acl action mirror name.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "mirror_name"
+                                    }
+                                }';
+                            }
+                            leaf capture {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, capture packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                        } // container action
+                        leaf priority {
+                            type uint16 {
+                                range "100 .. 20000";
+                            }
+                            description
+                                "Configure acl priority value.";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "priority"
+                                }
+                            }';
+                        }
+                    }
+                }
+            } // container l2
+            container l3v4 {
+                description
+                    "container for l3v4 acl config.";
+                list rule {
+                    key "rule-name";
+                    description
+                        "Configuration parameters relating acl rule.";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.acl.l3v4.mode.config",
+                            "type"    : "global_acl_l3v4_mode_config_table"
+                        }
+                    }';
+                    leaf rule-name {
+                        type string {
+                            length "1..64";
+                        }
+                        description
+                            "Configure acl rule name.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "rule_name"
+                            }
+                        }';
+                    }
+                    list ordinal {
+                        key "ordinal-value";
+                        description
+                            "Configuration parameters relating acl ordinal.";
+                        reference
+                        '{
+                            "table-getter": {
+                                "table-name" : "global.acl.l3v4.config",
+                                "type"    : "global_acl_l3v4_config_table",
+                                "inherit-attribute" : [ "rule_name" ]
+                            }
+                        }';
+                        leaf ordinal-value {
+                            type uint32 {
+                                range "0 .. 200000";
+                            }
+                            description
+                                "Configure ordinal value";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "ordinal"
+                                }
+                            }';
+                        }
+                        uses acl-match-l3v4;
+                        container action {
+                            description
+                                "Container for acl action parameters.";
+                            reference
+                            '{
+                                "table-getter": {
+                                    "table-name" : "global.acl.l3v4.config",
+                                    "type"    : "global_acl_l3v4_config_table",
+                                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                                }
+                            }';
+                            leaf drop {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, drop packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_drop"
+                                    }
+                                }';
+                            }
+                            leaf permit {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, permit packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_permit"
+                                    }
+                                }';
+                            }
+                            leaf redirect-to-cpu {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, redirect packets to cpu.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_redirect_to_cpu"
+                                    }
+                                }';
+                            }
+                            leaf forward-class {
+                                type rtb-qos-types:type-qos-class;
+                                description
+                                    "Configure forward class value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_forward_class"
+                                        }
+                                    }';
+                            }
+                            leaf policer-name {
+                                type rtb-qos-types:type-qos-string;
+                                description
+                                    "Configure policer profile name.";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_policer_profile_name",
+                                                "expansion-getter" : {
+                                                    "package":"ifm",
+                                                    "method" :"qos_policer_name_expander"
+                                                }
+                                        }
+                                    }';
+                            }
+                            leaf statistics {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, enable statistics.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_stat"
+                                    }
+                                }';
+                            }
+                            leaf mirror {
+                                type string {
+                                    length "1..64";
+                                }
+                                description
+                                    "Configure acl action mirror name.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "mirror_name"
+                                    }
+                                }';
+                            }
+                            leaf capture {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, capture packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                        } // container action
+                        leaf priority {
+                            type uint16 {
+                                range "100 .. 20000";
+                            }
+                            description
+                                "Configure acl priority value.";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "priority"
+                                }
+                            }';
+                        }
+                    }
+                }
+            } // container l3v4
+            container l3v6 {
+                description
+                    "container for l3v6 acl config.";
+                list rule {
+                    key "rule-name";
+                    description
+                        "Configuration parameters relating acl rule";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.acl.l3v6.mode.config",
+                            "type"    : "global_acl_l3v6_mode_config_table"
+                        }
+                    }';
+                    leaf rule-name {
+                        type string {
+                            length "1..64";
+                        }
+                        description
+                            "Configure acl rule name.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "rule_name"
+                            }
+                        }';
+                    }
+                    list ordinal {
+                        key "ordinal-value";
+                        description
+                            "Configuration parameters relating acl ordinal.";
+                        reference
+                        '{
+                            "table-getter": {
+                                "table-name" : "global.acl.l3v6.config",
+                                "type"    : "global_acl_l3v6_config_table",
+                                "inherit-attribute" : [ "rule_name"]
+                            }
+                        }';
+                        leaf ordinal-value {
+                            type uint32 {
+                                range "0 .. 200000";
+                            }
+                            description
+                                "Configure ordinal value.";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "ordinal"
+                                }
+                            }';
+                        }
+                        uses acl-match-l3v6;
+                        container action {
+                            description
+                                "Container for acl action parameters.";
+                            reference
+                            '{
+                                "table-getter": {
+                                    "table-name" : "global.acl.l3v6.config",
+                                    "type"    : "global_acl_l3v6_config_table",
+                                    "inherit-attribute" : [ "rule_name", "ordinal" ]
+                                }
+                            }';
+                            leaf drop {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, drop packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_drop"
+                                    }
+                                }';
+                            }
+                            leaf permit {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, permit packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_permit"
+                                    }
+                                }';
+                            }
+                            leaf redirect-to-cpu {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, redirect packets to cpu.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_redirect_to_cpu"
+                                    }
+                                }';
+                            }
+                            leaf forward-class {
+                                type rtb-qos-types:type-qos-class;
+                                description
+                                    "Configure forward class value";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_forward_class"
+                                        }
+                                    }';
+                            }
+                            leaf policer-name {
+                                type rtb-qos-types:type-qos-string;
+                                description
+                                    "Configure policer profile name.";
+                                reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "action_policer_profile_name",
+                                                "expansion-getter" : {
+                                                    "package":"ifm",
+                                                    "method" :"qos_policer_name_expander"
+                                                }
+                                        }
+                                    }';
+                            }
+                            leaf statistics {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, enable statistics.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_stat"
+                                    }
+                                }';
+                            }
+                            leaf mirror {
+                                type string {
+                                    length "1..64";
+                                }
+                                description
+                                    "Configure acl action mirror name.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "mirror_name"
+                                    }
+                                }';
+                            }
+                            leaf capture {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, capture packets.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                        } // container action
+                        leaf priority {
+                            type uint16 {
+                                range "100 .. 20000";
+                            }
+                            description
+                                "Configure acl priority value.";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "priority"
+                                }
+                            }';
+                        }
+                    }
+                }
+            } // container l3v6
+        } // container acl
+    }// grouping acl-top
+}

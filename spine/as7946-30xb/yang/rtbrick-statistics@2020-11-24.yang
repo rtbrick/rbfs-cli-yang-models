@@ -1,0 +1,113 @@
+submodule rtbrick-statistics {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+
+    contact
+      "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+
+    description
+      "This module describes the YANG model for the statistics configuration.";
+
+    revision 2020-11-24 {
+        description
+        "Configuration hierarchy for statistics";
+
+        reference "None";
+    }
+
+    typedef stats-type {
+        type enumeration {
+            enum "vpp-node-counters" {
+                value 0;
+                description "node counters";
+            }
+            enum "ifp-counters" {
+                value 1;
+                description "ifp counters";
+            }
+            enum "ifl-counters" {
+                value 2;
+                description "ifl counters";
+            }
+            enum "qos-queue-counters" {
+                value 4;
+                description "queue counters";
+            }
+            enum "acl-counters" {
+                value 6;
+                description "acl counters";
+            }
+            enum "lag-counters" {
+                value 9;
+                description "lag counters";
+            }
+        }
+        description "statistics data type";
+    }
+
+    grouping statistics-top {
+        description
+            "Top-level statistics configuration";
+        container statistics {
+            description
+                "container for statistics configure";
+            list type {
+                key "type";
+                description
+                    "Configuring statistics type";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.statistics.config",
+                        "type"    : "statistics_config_table"
+                    }
+                }';
+                leaf type {
+                    type stats-type;
+                    description
+                        "Configure statistics type";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "stats_type"
+                        }
+                    }';
+                }
+                leaf diff-counter {
+                    type enumeration {
+                        enum "enable" {
+                            value 1;
+                            description "enable";
+                        }
+                    }
+                    description
+                        "Configure statistics diff and rate counters";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "diff_counter_status"
+                        }
+                    }';
+                }
+                leaf interval {
+                    type uint8;
+                    description
+                        "Configure statistics collection interval";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "gc_interval"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+
+}

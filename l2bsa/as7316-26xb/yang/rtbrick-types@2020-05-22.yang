@@ -1,0 +1,1098 @@
+module rtbrick-types {
+    yang-version 1.1;
+    namespace "urn:types:rtbrick";
+    prefix types;
+    import ietf-inet-types {
+        prefix "inet";
+    }
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Ankit Kumar Sinha (ankit@rtbrick.com)
+                 Navaneeth Y V (navaneethyv@rtbrick.com)";
+    description
+      "This is the type file containing the common types across rtbrick.
+      Shall be included in other yangs and used in appropriate places";
+
+    revision 2020-05-22 {
+        description
+          "This is the first revision of rtbrick yang file
+          This file defines root module of Rtbrick,
+          Applications need to add their submodule here with include statement";
+        reference "None";
+    }
+
+    /* Typedef defination */
+    typedef time-zone-type {
+        type enumeration {
+            enum GMT {
+                value "0";
+                description "Type GMT";
+            }
+            enum Local {
+                value "1";
+                description "Type Local";
+            }
+        }
+        description "Time type format";
+    }
+
+    typedef boolean-type {
+        type enumeration {
+            enum false {
+                value "0";
+                description "False";
+            }
+            enum true {
+                value "1";
+                description "True";
+            }
+        }
+        description "Boolean data type";
+    }
+
+    typedef boolean-true {
+        type enumeration {
+            enum true {
+                value "1";
+                description "True";
+            }
+        }
+        description "Boolean data type - True";
+    }
+
+    typedef enable-disable-type {
+        type enumeration {
+            enum disable {
+                value "0";
+                description "Enable";
+            }
+            enum enable {
+                value "1";
+                description "Disable";
+            }
+        }
+        description "Boolean enable or disable type";
+    }
+
+    typedef on-off-type {
+        type enumeration {
+            enum off {
+                value "0";
+                description "Turn on";
+            }
+            enum on {
+                value "1";
+                description "Turn off";
+            }
+        }
+        description "Boolean on or off type";
+    }
+
+    typedef element-role-type {
+        type enumeration {
+            enum ACCESSLEAF {
+                value "0";
+                description "accessleaf";
+            }
+            enum BORDERLEAF {
+                value "1";
+                description "borderleaf";
+
+            }
+            enum SPINE {
+                value "2";
+                description "spine";
+            }
+            enum UNKNOWN {
+                value "3";
+                description "spine";
+            }
+        }
+        description "Rtbrick element roles";
+    }
+
+
+    typedef afi {
+        type enumeration {
+            enum ipv4 {
+                value "0";
+                description "IPv4 address";
+            }
+            enum ipv6 {
+                value "1";
+                description "IPv6 address";
+            }
+            enum mpls {
+                value "2";
+                description "MPLS";
+            }
+            enum l2vpn {
+                value "3";
+                description "L2VPN address";
+            }
+        }
+        description "AFI data type";
+    }
+
+    typedef safi {
+        type enumeration {
+            enum labeled-unicast {
+                value "0";
+                description "Labeled unicast";
+            }
+            enum multicast {
+                value "1";
+                description "Multicast";
+            }
+            enum unicast {
+                value "2";
+                description "Unicast";
+            }
+            enum evpn {
+                value "3";
+                description "Ethernet VPN";
+            }
+            enum evpn-vpws {
+                value "4";
+                description "Virtual private wire service";
+            }
+            enum vpls-vpws {
+                value "5";
+                description "VPLS VPWS VPN";
+            }
+            enum vpls {
+                value "6";
+                description "VPLS VPN";
+            }
+        }
+        description "SAFI data type";
+    }
+
+    typedef secret-string-type {
+        type string {
+            pattern '$(2|5|6).+';
+            length "4..16419";
+        }
+    }
+
+    typedef policy-name-type {
+        type string {
+            length "1..64";
+        }
+        description "Policy name";
+    }
+
+    typedef route-distinguisher-type {
+        type union {
+            type string {
+                length "1..64";
+                pattern
+                    '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]):'
+                    + '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|'
+                    + '429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+                    + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|'
+                    + '[1-3][0-9]{9}|[1-9][0-9]{1,8}|[0-9])';
+            }
+            type string {
+                length "1..64";
+                pattern
+                    '([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-6]|12[8-9]|'
+                    + '1[3-9][0-9]|2[0-1][0-9]|22[0-3])(\.([0-9]|'
+                    + '[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}:'
+                    + '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+            }
+            type string {
+                length "1..64";
+                pattern
+                    '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|'
+                    + '429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+                    + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|'
+                    + '[1-3][0-9]{9}|[1-9][0-9]{1,8}|[0-9])L:'
+                    + '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+            }
+        }
+        description "A route distinguisher value";
+    }
+
+    typedef community-type {
+        type string {
+            length "1..64";
+            pattern
+                '((6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]):'
+                + '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9]))|'
+                + 'NO_EXPORT|NO_ADVERTISE|NO_EXPORT_SUBCONFED|NOPEER';
+        }
+    }
+    typedef route-target-type {
+        type union {
+            type string {
+                length "1..64";
+                pattern
+                    'target:(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[1-9]):'
+                    + '(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|'
+                    + '429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+                    + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|'
+                    + '[1-3][0-9]{9}|[1-9][0-9]{1,8}|[0-9])';
+            }
+            type string {
+                length "1..64";
+                pattern
+                    'target:([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-6]|12[8-9]|'
+                    + '1[3-9][0-9]|2[0-1][0-9]|22[0-3])(\.([0-9]|'
+                    + '[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}:'
+                    + '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+            }
+            type string {
+                length "1..64";
+                pattern
+                    'target:(429496729[0-5]|42949672[0-8][0-9]|4294967[0-1][0-9]{2}|'
+                    + '429496[0-6][0-9]{3}|42949[0-5][0-9]{4}|4294[0-8][0-9]{5}|'
+                    + '429[0-3][0-9]{6}|42[0-8][0-9]{7}|4[0-1][0-9]{8}|'
+                    + '[1-3][0-9]{9}|[1-9][0-9]{1,8}|[1-9])L:'
+                    + '(6553[0-5]|655[0-2][0-9]|65[0-4][0-9]{2}|6[0-4][0-9]{3}|'
+                    + '[1-5][0-9]{4}|[1-9][0-9]{1,3}|[0-9])';
+            }
+        }
+        description "A route target value";
+    }
+
+    typedef router-id-type {
+      type string {
+        length "1..64";
+        pattern
+          '([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-6]|12[8-9]|'
+            + '1[3-9][0-9]|2[0-1][0-9]|22[0-3])(\.([0-9]|'
+            + '[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}';
+      }
+      description
+        "An IPv4 router id in dotted quad notation";
+    }
+
+    typedef non-reserved-ipv4-address {
+        type string {
+            length "1..64";
+            pattern
+                '([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-6]|12[8-9]|'
+                + '1[3-9][0-9]|2[0-1][0-9]|22[0-3])(\.([0-9]|'
+                + '[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}';
+        }
+        description
+            "An IPv4 address excluding some reserved prefix in dotted quad notation";
+    }
+
+    typedef non-reserved-ipv4-prefix {
+        type string {
+            length "1..64";
+            pattern
+                '([1-9]|[1-9][0-9]|1[0-1][0-9]|12[0-6]|12[8-9]|'
+                + '1[3-9][0-9]|2[0-1][0-9]|22[0-3])(\.([0-9]|'
+                + '[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])){3}'
+                + '/(([0-9])|([1-2][0-9])|(3[0-2]))';
+        }
+        description
+            "An IPv4 prefix excluding all reserved prefix in dotted quad notation";
+    }
+
+    typedef non-reserved-ipv6-prefix-for-match {
+        type inet:ipv6-prefix {
+            pattern '([^fF]{2}[0-9a-fA-F]{2}|[fF][^fF][0-9a-fA-F]{2}|[^fF][fF][0-9a-fA-F]{2}|[0-9a-fA-F]{0,3}|:):.+';
+            pattern '(([^0fF].*|0[^0fF].*|0{2}[^0fF].*|0{3}[^fF].*|0{0,2}[fF][^:].+|'
+                  + '(0{0,3}[fF]:(0{0,4}:){0,6}|0{0,3}[fF]:(0{0,4}:){0,6}'
+                  + '([^0fF:].*|0[^0fF:].*|0{2}[^0fF:].*|0{3}[^fF:].*|0{0,2}[fF].+|0{1,4})))/(128)|'
+                  + '.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))';
+            pattern '(([^0].*|[0]{1,3}[^:0].*|(0{0,4}:){1,7}([^01:].*|0{1,3}[^01:].*|0{1,3}1[0-9a-fA-F]{0,2}:.*|1.+'
+                  + '|:(0{0,3}[^01]|[^01].*|0[^01].+|00[^0].+|01.+|1.+)))/128'
+                  + '|.*/(([0-9])|([0-9]{2})|(1[0-1][0-9])|(12[0-7])))';
+        }
+        description
+            "An IPv6 prefix excluding all reserved prefix except 'fe80::xx'";
+    }
+
+    typedef non-reserved-ipv6-prefix {
+        type non-reserved-ipv6-prefix-for-match {
+            pattern '([^fF][0-9a-fA-F]{3}|[fF][^eE][0-9a-fA-F]{2}|[fF][eE][^8][0-9a-fA-F]|[fF][eE][8][^0]|[0-9a-fA-F]{0,3}|:):.+';
+        }
+        description
+            "An IPv6 prefix excluding all reserved prefix";
+    }
+
+    typedef non-reserved-ipv6-address-no-zone {
+        type types:non-reserved-ipv6-address {
+            pattern '[0-9a-fA-F:\.]*';
+        }
+        description
+            "An IPv6 address without zone index excluding all reserved address";
+    }
+
+    typedef non-reserved-ipv6-address {
+        type inet:ipv6-address {
+            pattern '([^fF]{2}[0-9a-fA-F]{2}|[fF][^fF][0-9a-fA-F]{2}|[^fF][fF][0-9a-fA-F]{2}|[0-9a-fA-F]{0,3}|:):.+';
+            pattern '([^fF][0-9a-fA-F]{3}|[fF][^eE][0-9a-fA-F]{2}|[fF][eE][^8][0-9a-fA-F]|[fF][eE][8][^0]|[0-9a-fA-F]{0,3}|:):.+';
+            pattern '([^0fF].*|0[^0fF].*|0{2}[^0fF].*|0{3}[^fF].*|0{0,2}[fF][^:].+|(0{0,3}[fF]:(0{0,4}:){0,6}|'
+                  +  '0{0,3}[fF]:(0{0,4}:){0,6}([^0fF:].*|0[^0fF:].*|0{2}[^0fF:].*|0{3}[^fF:].*|0{0,2}[fF].+|0{1,4})))'
+                  + '(%.+)?';
+            pattern '([^0:].*|[0]{1,3}[^:0].*|(0{0,4}:){1,7}([^01:].*|0{1,3}[^01:].*|0{1,3}1[0-9a-fA-F]{0,2}:.*|'
+                  + '1.+|:(0{0,3}[^01]|[^01].*|0[^01].+|00[^0].+|01.+|1.+)))'
+                  + '(%.+)?';
+        }
+        description
+            "An IPv6 address excluding all reserved address";
+    }
+
+    typedef interface-type {
+      type string {
+          length "1..64";
+          pattern
+              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
+              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
+              + '|lag-([0-9]|[1-9][0-9])|all';
+      }
+      description
+        "An Interface type";
+    }
+
+    typedef lag-interface-type {
+      type string {
+          length "1..64";
+          pattern
+              'lag-([0-9]|[1-9][0-9])';
+      }
+      description
+        "Link-aggregation Interface type";
+    }
+
+    typedef lag-member-interface-type {
+      type string {
+          length "1..64";
+          pattern
+              'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])';
+      }
+      description
+        "Link-aggregation Member Interface type";
+    }
+
+    typedef logical-interface-type {
+      type string {
+          length "1..64";
+          pattern
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
+	      + '|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
+              + '|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
+              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
+              + '|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
+              + '|lag-([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|[409][0-6])';
+      }
+      description
+        "Logical Interface type";
+    }
+
+    typedef string4096 {
+        type string {
+            length "1..4096";
+        }
+        description "String with max 4096 length";
+    }
+
+    typedef string2048 {
+        type string {
+            length "1..2048";
+        }
+        description "String with max 2048 length";
+    }
+
+    typedef string1024 {
+        type string {
+            length "1..1024";
+        }
+        description "String with max 1024 length";
+    }
+
+    typedef string512 {
+        type string {
+            length "1..512";
+        }
+        description "String with max 512 length";
+    }
+
+    typedef string128 {
+        type string {
+            length "1..128";
+        }
+        description "String with max 128 length";
+    }
+
+    typedef string64 {
+        type string {
+            length "1..64";
+        }
+        description "String with max 64 length";
+    }
+
+    typedef string48 {
+        type string {
+            length "1..48";
+        }
+        description "String with max 48 length";
+    }
+
+    typedef mpls-label {
+        type uint32 {
+            range "0 .. 1048575";
+        }
+        description "Mpls label value should be in the range 0 - 2^20-1";
+    }
+
+    typedef rtb-unicast-mac-type {
+        type string {
+            length "1..64";
+            pattern "[0-9a:fA-F][02468aAcCeE](:[0-9a:fA-F]{2}){5}";
+        }
+        description
+            "A unicast destination MAC address. The I/G address bit is
+            used to identify the destination MAC address as an individual
+            MAC address or a group MAC address. If the I/G address bit is
+            0, it indicates that the MAC address field is an individual
+            MAC address. If this bit is 1, the MAC address is a group MAC
+            address that identifies one or more (or all) stations
+            connected to the IEEE 802 network";
+    }
+
+    typedef vlan-encapsulation-type {
+        type enumeration {
+            enum 802.1q {
+                value "0";
+                description "802.1q encapsulation";
+            }
+
+            enum 802.1ad {
+                value "1";
+                description "802.1ad encapsulation";
+            }
+        }
+        description "Vlan encapsulation";
+    }
+
+    typedef type-ipproto {
+        type enumeration {
+            enum "hopopt" {
+                value 0;
+                description "HOPOPT";
+            }
+            enum "icmp" {
+                value 1;
+                description "ICMP";
+            }
+            enum "igmp" {
+                value 2;
+                description "IGMP";
+            }
+            enum "ggp" {
+                value 3;
+                description "GGP";
+            }
+            enum "ip_in_ip" {
+                value 4;
+                description "IP_in_IP";
+            }
+            enum "st" {
+                value 5;
+                description "ST";
+            }
+            enum "tcp" {
+                value 6;
+                description "TCP";
+            }
+            enum "cbt" {
+                value 7;
+                description "CBT";
+            }
+            enum "egp" {
+                value 8;
+                description "EGP";
+            }
+            enum "igp" {
+                value 9;
+                description "IGP";
+            }
+            enum "bbn_rcc_mon" {
+                value 10;
+                description "BBN_RCC_MON";
+            }
+            enum "nvp_ii" {
+                value 11;
+                description "NVP_II";
+            }
+            enum "pup" {
+                value 12;
+                description "PUP";
+            }
+            enum "argus" {
+                value 13;
+                description "ARGUS";
+            }
+            enum "emcon" {
+                value 14;
+                description "EMCON";
+            }
+            enum "xnet"{
+                value 15;
+                description "XNET";
+            }
+            enum "chaos" {
+                value 16;
+                description "CHAOS";
+            }
+            enum "udp" {
+                value 17;
+                description "UDP";
+            }
+            enum "mux" {
+                value 18;
+                description "MUX";
+            }
+            enum "dcn_meas" {
+                value 19;
+                description "DCN_MEAS";
+            }
+            enum "hmp" {
+                value 20;
+                description "HMP";
+            }
+            enum "prm" {
+                value 21;
+                description "PRM";
+            }
+            enum "xns_idp" {
+                value 22;
+                description "XNS_IDP";
+            }
+            enum "trunk_1" {
+                value 23;
+                description "TRUNK_1";
+            }
+            enum "trunk_2" {
+                value 24;
+                description "TRUNK_2";
+            }
+            enum "leaf_1" {
+                value 25;
+                description "LEAF_1";
+            }
+            enum "leaf_2" {
+                value 26;
+                description "LEAF_2";
+            }
+            enum "rdp" {
+                value 27;
+                description "RDP";
+            }
+            enum "irtp" {
+                value 28;
+                description "IRTP";
+            }
+            enum "iso_tp4" {
+                value 29;
+                description "ISO_TP4";
+            }
+            enum "netblt" {
+                value 30;
+                description "NETBLT";
+            }
+            enum "mfe_nsp" {
+                value 31;
+                description "MFE_NSP";
+            }
+            enum "merit_inp" {
+                value 32;
+                description "MERIT_INP";
+            }
+            enum "dccp" {
+                value 33;
+                description "DCCP";
+            }
+            enum "3pc" {
+                value 34;
+                description "3PC";
+            }
+            enum "idpr" {
+                value 35;
+                description "IDPR";
+            }
+            enum "xtp" {
+                value 36;
+                description "XTP";
+            }
+            enum "ddp" {
+                value 37;
+                description "DDP";
+            }
+            enum "idpr_cmtp" {
+                value 38;
+                description "IDPR_CMTP";
+            }
+            enum "tp_plus_plus" {
+                value 39;
+                description "TP_PLUS_PLUS";
+            }
+            enum "il" {
+                value 40;
+                description "IL";
+            }
+            enum "ipv6" {
+                value 41;
+                description "IPv6";
+            }
+            enum "sdrp" {
+                value 42;
+                description "SDRP";
+            }
+            enum "ipv6_route" {
+                value 43;
+                description "IPv6_Route";
+            }
+            enum "ipv6_frag" {
+                value 44;
+                description "IPv6_Frag";
+            }
+            enum "idrp" {
+                value 45;
+                description "IDRP";
+            }
+            enum "rsvp" {
+                value 46;
+                description "RSVP";
+            }
+            enum "gres" {
+                value 47;
+                description "GREs";
+            }
+            enum "dsr" {
+                value 48;
+                description "DSR";
+            }
+            enum "bna" {
+                value 49;
+                description "BNA";
+            }
+            enum "esp" {
+                value 50;
+                description "ESP";
+            }
+            enum "ah" {
+                value 51;
+                description "AH";
+            }
+            enum "i_nlsp" {
+                value 52;
+                description "I_NLSP";
+            }
+            enum "swipe" {
+                value 53;
+                description "SWIPE";
+            }
+            enum "narp" {
+                value 54;
+                description "NARP";
+            }
+            enum "mobile_ip" {
+                value 55;
+                description "Mobile IP";
+            }
+            enum "tlsp" {
+                value 56;
+                description "TLSP";
+            }
+            enum "skip" {
+                value 57;
+                description "SKIP";
+            }
+            enum "ipv6_icmp" {
+                value 58;
+                description "IPv6_ICMP";
+            }
+            enum "ipv6_nonxt" {
+                value 59;
+                description "IPv6_NoNxt";
+            }
+            enum "ipv6_opts" {
+                value 60;
+                description "IPv6_Opts";
+            }
+            enum "cftp" {
+                value 62;
+                description "CFTP";
+            }
+            enum "sat_expak" {
+                value 64;
+                description "SAT_EXPAK";
+            }
+            enum "kryptolan" {
+                value 65;
+                description "KRYPTOLAN";
+            }
+            enum "rvd" {
+                value 66;
+                description "RVD";
+            }
+            enum "ippc" {
+                value 67;
+                description "IPPC";
+            }
+            enum "sat_mon" {
+                value 69;
+                description "SAT_MON";
+            }
+            enum "visa" {
+                value 70;
+                description "VISA";
+            }
+            enum "ipcu" {
+                value 71;
+                description "IPCU";
+            }
+            enum "cpnx" {
+                value 72;
+                description "CPNX";
+            }
+            enum "cphb" {
+                value 73;
+                description "CPHB";
+            }
+            enum "wsn" {
+                value 74;
+                description "WSN";
+            }
+            enum "pvp" {
+                value 75;
+                description "PVP";
+            }
+            enum "br_sat_mon" {
+                value 76;
+                description "BR_SAT_MON";
+            }
+            enum "sun_nd" {
+                value 77;
+                description "SUN_ND";
+            }
+            enum "wb_mon" {
+                value 78;
+                description "WB_MON";
+            }
+            enum "wb_expak" {
+                value 79;
+                description "WB_EXPAK";
+            }
+            enum "iso_ip" {
+                value 80;
+                description "ISO_IP";
+            }
+            enum "vmtp" {
+                value 81;
+                description "VMTP";
+            }
+            enum "secure_vmtp" {
+                value 82;
+                description "SECURE_VMTP";
+            }
+            enum "vines" {
+                value 83;
+                description "VINES";
+            }
+            enum "ttp_iptm" {
+                value 84;
+                description "TTP_IPTM";
+            }
+            enum "nsfnet_igp" {
+                value 85;
+                description "NSFNET_IGP";
+            }
+            enum "dgp" {
+                value 86;
+                description "DGP";
+            }
+            enum "tcf" {
+                value 87;
+                description "TCF";
+            }
+            enum "eigrp" {
+                value 88;
+                description "EIGRP";
+            }
+            enum "ospf" {
+                value 89;
+                description "OSPF";
+            }
+            enum "sprite_rpc" {
+                value 90;
+                description "Sprite_RPC";
+            }
+            enum "larp" {
+                value 91;
+                description "LARP";
+            }
+            enum "mtp" {
+                value 92;
+                description "MTP";
+            }
+            enum "ax.25" {
+                value 93;
+                description "AX.25";
+            }
+            enum "os" {
+                value 94;
+                description "OS";
+            }
+            enum "micp" {
+                value 95;
+                description "MICP";
+            }
+            enum "scc_sp" {
+                value 96;
+                description "SCC_SP";
+            }
+            enum "etherip" {
+                value 97;
+                description "ETHERIP";
+            }
+            enum "encap" {
+                value 98;
+                description "ENCAP";
+            }
+            enum "gmtp" {
+                value 100;
+                description "GMTP";
+            }
+            enum "ifmp" {
+                value 101;
+                description "IFMP";
+            }
+            enum "pnni" {
+                value 102;
+                description "PNNI";
+            }
+            enum "pim" {
+                value 103;
+                description "PIM";
+            }
+            enum "aris" {
+                value 104;
+                description "ARIS";
+            }
+            enum "scps" {
+                value 105;
+                description "SCPS";
+            }
+            enum "qnx" {
+                value 106;
+                description "QNX";
+            }
+            enum "a_n" {
+                value 107;
+                description "A_N";
+            }
+            enum "ipcomp" {
+                value 108;
+                description "IPComp";
+            }
+            enum "snp" {
+                value 109;
+                description "SNP";
+            }
+            enum "compaq_peer" {
+                value 110;
+                description "Compaq_Peer";
+            }
+            enum "ipx_in_ip" {
+                value 111;
+                description "IPX_in_IP";
+            }
+            enum "vrrp" {
+                value 112;
+                description "VRRP";
+            }
+            enum "pgm" {
+                value 113;
+                description "PGM";
+            }
+            enum "l2tp" {
+                value 115;
+                description "L2TP";
+            }
+            enum "ddx" {
+                value 116;
+                description "DDX";
+            }
+            enum "iatp" {
+                value 117;
+                description "IATP";
+            }
+            enum "stp" {
+                value 118;
+                description "STP";
+            }
+            enum "srp" {
+                value 119;
+                description "SRP";
+            }
+            enum "uti" {
+                value 120;
+                description "UTI";
+            }
+            enum "smp" {
+                value 121;
+                description "SMP";
+            }
+            enum "sm" {
+                value 122;
+                description "SM";
+            }
+            enum "ptp" {
+                value 123;
+                description "PTP";
+            }
+            enum "is_is" {
+                value 124;
+                description "IS_IS";
+            }
+            enum "fire"{
+                value 125;
+                description "FIRE";
+            }
+            enum "crtp" {
+                value 126;
+                description "CRTP";
+            }
+            enum "crudp" {
+                value 127;
+                description "CRUDP";
+            }
+            enum "sscopmce" {
+                value 128;
+                description "SSCOPMCE";
+            }
+            enum "iplt" {
+                value 129;
+                description "IPLT";
+            }
+            enum "sps" {
+                value 130;
+                description "SPS";
+            }
+            enum "pipe" {
+                value 131;
+                description "PIPE";
+            }
+            enum "sctp" {
+                value 132;
+                description "SCTP";
+            }
+            enum "fc" {
+                value 133;
+                description "FC";
+            }
+            enum "rsvp_e2e_ignore" {
+                value 134;
+                description "RSVP_E2E_IGNORE";
+            }
+            enum "mobility_header"{
+                value 135;
+                description "Mobility Header";
+            }
+            enum "udplite" {
+                value 136;
+                description "UDPLite";
+            }
+            enum "mpls_in_ip" {
+                value 137;
+                description "MPLS_in_IP";
+            }
+            enum "manet" {
+                value 138;
+                description "manet";
+            }
+            enum "hip" {
+                value 139;
+                description "HIP";
+            }
+            enum "shim6" {
+                value 140;
+                description "Shim6";
+            }
+            enum "wesp" {
+                value 141;
+                description "WESP";
+            }
+            enum "roh" {
+                value 142;
+                description "ROH";
+            }
+        }
+        description "ip protocol type";
+    }
+
+    typedef log-level {
+        type enumeration {
+            enum emergency {
+                value "0";
+                description "emergency";
+            }
+            enum alert {
+                value "1";
+                description "alert";
+            }
+            enum critical {
+                value 2;
+                description "critical";
+            }
+            enum error {
+                value 3;
+                description "error";
+            }
+            enum warning {
+                value "4";
+                description "warning";
+            }
+            enum notice {
+                value "5";
+                description "notice";
+            }
+            enum info {
+                value "6";
+                description "info";
+            }
+            enum debug {
+                value "7";
+                description "debug";
+            }
+            enum none {
+                value "8";
+                description "none";
+            }
+
+        }
+        description "Log level";
+    }
+
+    typedef li-protocol-type {
+        type string {
+            length "1..2";
+            pattern 'x1';
+        }
+    }
+
+    typedef li-cert-data {
+        type string {
+            length "1..8192";
+        }
+        description "String with max 8192 length";
+    }
+
+}
