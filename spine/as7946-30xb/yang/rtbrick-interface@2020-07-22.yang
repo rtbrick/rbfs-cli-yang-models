@@ -569,6 +569,7 @@ submodule rtbrick-interface {
             }
 
             container esi {
+                presence "esi";
                 description
                     "Configure Ethernet Segment Identifier for l2 interface";
                 reference
