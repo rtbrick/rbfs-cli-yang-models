@@ -214,6 +214,7 @@ submodule rtbrick-bgp {
     grouping bgp-resolve {
         description "Resolve nexthop related configuration";
         container resolve-nexthop {
+            when '../safi != "flowspec"';
             description "Resolve nexthop related configuration";
             reference
             '{
@@ -246,6 +247,7 @@ submodule rtbrick-bgp {
             }
         }
         container resolve-nexthop-secondary {
+            when '../safi != "flowspec"';
             description "Secondary resolve nexthop related configuration";
             reference
             '{
@@ -474,12 +476,10 @@ grouping bgp-export-label-block {
                 must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
-                    error-message "l2vpn afi can only be configured with
-                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
                 must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
-                    error-message "evpn-vpws and vpls-vpws safi cannot be configured
-                    for default instance";
+                    error-message "evpn-vpws and vpls-vpws safi cannot be configured for default instance";
                 }
                 reference
                 '{
@@ -516,7 +516,7 @@ grouping bgp-export-label-block {
                 type uint16 {
                     range "0..255";
                 }
-                description "Forward packets over multiple paths, <0-255>";
+                description "Forward packets over multiple paths";
                 reference
                 '{
                     "attribute-getter" : {
@@ -571,8 +571,7 @@ grouping bgp-export-label-block {
             }
             leaf sid-index {
                 must '../../../../name != "default" and ../safi = "unicast"' {
-                    error-message "SID index cannot be configured
-                    for default instance or non-unicast address families";
+                    error-message "SID index cannot be configured for default instance or non-unicast address families";
                 }
                 must
                   "count(../../../../../instance/protocol/bgp/address-family[afi=current()/../afi][safi=current()/../safi][sid-index=current()]) = 1" {
@@ -1221,8 +1220,7 @@ grouping bgp-export-label-block {
                 must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
-                    error-message "l2vpn afi can only be configured with
-                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
                 type rtb-bgp-types:pg-safi;
                 description "Type safi";
@@ -1356,7 +1354,7 @@ grouping bgp-export-label-block {
                 type uint8 {
                     range "1..255";
                 }
-                description "Maximum hop count <1-255>";
+                description "Maximum hop count";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1378,7 +1376,7 @@ grouping bgp-export-label-block {
                 type uint32 {
                     range "1..4294967295";
                 }
-                description "Local autonomous system number <1-4294967295>";
+                description "Local autonomous system number";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1416,11 +1414,49 @@ grouping bgp-export-label-block {
                 type uint32 {
                     range "1..4294967295";
                 }
-                description "Peer autonomous system number <1-4294967295>";
+                description "Peer autonomous system number";
                 reference
                 '{
                     "attribute-getter" : {
                         "attribute" : "remote_as"
+                    }
+                }';
+            }
+            leaf validation-filter {
+                type rtb-bgp-types:val-filter;
+                description "Validation filter type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_filter"
+                    }
+                }';
+            }
+            leaf ttl-security {
+                type rtb-bgp-types:enable-disable;
+                must "not(../ebgp-multihop)" {
+                    error-message "ttl-security and ebgp-multihop are mutually exclusive configurations";
+                }
+                description "The Generalized TTL Security Mechanism (GTSM)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_security"
+                    }
+                }';
+            }
+            leaf ttl-maximum-hops {
+                type uint8 {
+                    range "1..254";
+                }
+                must "../ttl-security = 'enable'" {
+                    error-message "TTL security needs to be enabled for configuring TTL maximum hops";
+                }
+                description "Maximum number of hops from the bgp neighbor for TTL Security";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_maximum_hops"
                     }
                 }';
             }
@@ -1571,7 +1607,7 @@ grouping bgp-export-label-block {
                     range "5..65535";
                 }
                 description
-                    "Connect retry timer <5-65535>";
+                    "Connect retry timer";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1587,7 +1623,7 @@ grouping bgp-export-label-block {
                     error-message "Keepalive timer is not configured";
                 }
                 description
-                    "Hold time <0, 3-65535>";
+                    "Hold time";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1603,7 +1639,7 @@ grouping bgp-export-label-block {
                     error-message "Hold-timer is not configured";
                 }
                 description
-                    "Keepalive interval <0-65535>";
+                    "Keepalive interval";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1629,7 +1665,7 @@ grouping bgp-export-label-block {
             leaf internal {
                 type rtb-bgp-types:protocol-pref;
                 description
-                    "Distance value for internal BGP(IBGP) routes <1-255>";
+                    "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1640,7 +1676,7 @@ grouping bgp-export-label-block {
             leaf external {
                 type rtb-bgp-types:protocol-pref;
                 description
-                    "Distance value for external BGP(EBGP) routes <1-255>";
+                    "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1719,7 +1755,7 @@ grouping bgp-export-label-block {
                     range "1..4294967295";
                 }
                 description
-                    "Autonomous system number. [4 bytes]";
+                    "4 byte autonomous system number";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1728,9 +1764,11 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf local-preference {
-                type uint32;
+                type uint32 {
+                    range "0..4294967295";
+                }
                 description
-                    "Local preference associated BGP routes <0-4294967295>";
+                    "Local preference associated BGP routes";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1739,9 +1777,11 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf med {
-                type uint32;
+                type uint32 {
+                    range "0..4294967295";
+                }
                 description
-                    "Multi-exit discriminator(MED) value for BGP routes <0-4294967295>";
+                    "Multi-exit discriminator(MED) value for BGP routes";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1757,6 +1797,22 @@ grouping bgp-export-label-block {
                 '{
                     "attribute-getter" : {
                         "attribute" : "router_id"
+                    }
+                }';
+            }
+            leaf validation-instance {
+                type string {
+                    length "1..64";
+                }
+                description "Validation instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_instance",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
                     }
                 }';
             }

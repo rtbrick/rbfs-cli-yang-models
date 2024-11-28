@@ -14,6 +14,7 @@ submodule rtbrick-network-instance {
 
     include rtbrick-isis;
     include rtbrick-bgp;
+    include rtbrick-validation;
     include rtbrick-bfd;
     include rtbrick-ospf;
     include rtbrick-static;
@@ -282,6 +283,7 @@ submodule rtbrick-network-instance {
                 "Protocol configuration";
                 uses isis-top;
                 uses bgp-top;
+                uses validation-top;
                 uses ldp-top;
                 uses ospf-top;
                 uses pim-top;

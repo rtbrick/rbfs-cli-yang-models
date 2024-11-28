@@ -1220,7 +1220,7 @@ submodule rtbrick-isis {
                 }
                 units "seconds";
                 description
-                    "ISIS neighbor hold interval in range <3,180> seconds, default 30s";
+                    "ISIS neighbor hold interval in seconds, default 30s";
                 reference
                 '{
                     "attribute-getter" : {

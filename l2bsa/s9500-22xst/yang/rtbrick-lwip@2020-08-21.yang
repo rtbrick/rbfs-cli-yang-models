@@ -31,6 +31,10 @@ submodule rtbrick-lwip {
                 value 3;
                 description "Authentication type HMAC-SHA-256-128";
             }
+            enum "AES-128-CMAC-96" {
+                value 4;
+                description "Authentication type AES-128-CMAC-96";
+            }
         }
         description "Authentication type";
     }

@@ -19,6 +19,7 @@ module rtbrick-config {
     include rtbrick-lldp;
     include rtbrick-isis;
     include rtbrick-bgp;
+    include rtbrick-validation;
     include rtbrick-ldp;
     include rtbrick-bfd;
     include rtbrick-ospf;

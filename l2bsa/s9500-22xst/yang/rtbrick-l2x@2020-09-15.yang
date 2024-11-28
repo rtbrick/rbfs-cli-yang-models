@@ -373,6 +373,18 @@ submodule rtbrick-l2x {
             }';
         }
 
+        leaf match-tp-id {
+            type types:vlan-encapsulation-type;
+            description
+                "Match this tpid at the ingress";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_tp_id"
+                }
+            }';
+        }
+
         leaf ingress-outer-vlan {
             type uint16;
             description

@@ -214,6 +214,7 @@ submodule rtbrick-bgp {
     grouping bgp-resolve {
         description "Resolve nexthop related configuration";
         container resolve-nexthop {
+            when '../safi != "flowspec"';
             description "Resolve nexthop related configuration";
             reference
             '{
@@ -246,6 +247,7 @@ submodule rtbrick-bgp {
             }
         }
         container resolve-nexthop-secondary {
+            when '../safi != "flowspec"';
             description "Secondary resolve nexthop related configuration";
             reference
             '{
@@ -474,12 +476,10 @@ grouping bgp-export-label-block {
                 must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
-                    error-message "l2vpn afi can only be configured with
-                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
                 must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
-                    error-message "evpn-vpws and vpls-vpws safi cannot be configured
-                    for default instance";
+                    error-message "evpn-vpws and vpls-vpws safi cannot be configured for default instance";
                 }
                 reference
                 '{
@@ -571,8 +571,7 @@ grouping bgp-export-label-block {
             }
             leaf sid-index {
                 must '../../../../name != "default" and ../safi = "unicast"' {
-                    error-message "SID index cannot be configured
-                    for default instance or non-unicast address families";
+                    error-message "SID index cannot be configured for default instance or non-unicast address families";
                 }
                 must
                   "count(../../../../../instance/protocol/bgp/address-family[afi=current()/../afi][safi=current()/../safi][sid-index=current()]) = 1" {
@@ -722,7 +721,7 @@ grouping bgp-export-label-block {
                 leaf label-base {
                     mandatory true;
                     when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
-                    description "srgb base";
+                    description "SRGB base";
                     type uint32 {
                         range "200001..300000";
                     }
@@ -1221,8 +1220,7 @@ grouping bgp-export-label-block {
                 must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
-                    error-message "l2vpn afi can only be configured with
-                    evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
                 type rtb-bgp-types:pg-safi;
                 description "Type safi";
@@ -1421,6 +1419,44 @@ grouping bgp-export-label-block {
                 '{
                     "attribute-getter" : {
                         "attribute" : "remote_as"
+                    }
+                }';
+            }
+            leaf validation-filter {
+                type rtb-bgp-types:val-filter;
+                description "Validation filter type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_filter"
+                    }
+                }';
+            }
+            leaf ttl-security {
+                type rtb-bgp-types:enable-disable;
+                must "not(../ebgp-multihop)" {
+                    error-message "ttl-security and ebgp-multihop are mutually exclusive configurations";
+                }
+                description "The Generalized TTL Security Mechanism (GTSM)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_security"
+                    }
+                }';
+            }
+            leaf ttl-maximum-hops {
+                type uint8 {
+                    range "1..254";
+                }
+                must "../ttl-security = 'enable'" {
+                    error-message "TTL security needs to be enabled for configuring TTL maximum hops";
+                }
+                description "Maximum number of hops from the bgp neighbor for TTL Security";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_maximum_hops"
                     }
                 }';
             }
@@ -1761,6 +1797,22 @@ grouping bgp-export-label-block {
                 '{
                     "attribute-getter" : {
                         "attribute" : "router_id"
+                    }
+                }';
+            }
+            leaf validation-instance {
+                type string {
+                    length "1..64";
+                }
+                description "Validation instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_instance",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
                     }
                 }';
             }

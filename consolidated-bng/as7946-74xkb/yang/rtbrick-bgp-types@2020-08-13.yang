@@ -378,4 +378,22 @@ module rtbrick-bgp-types {
         }
         description "Protocol preference";
     }
+
+    typedef val-filter {
+        type enumeration {
+            enum disable {
+                value "0";
+                description "Strict validation";
+            }
+            enum loose {
+                value "1";
+                description "Loose validation";
+            }
+            enum strict {
+                value "2";
+                description "Validation disable";
+            }
+        }
+        description "Validation Filters";
+    }
 }

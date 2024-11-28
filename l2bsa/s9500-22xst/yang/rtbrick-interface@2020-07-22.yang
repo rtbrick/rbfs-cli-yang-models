@@ -150,6 +150,22 @@ submodule rtbrick-interface {
                 value 5;
                 description "4x10G";
             }
+            enum "4x25G" {
+                value 6;
+                description "4x25G";
+            }
+            enum "4x1G" {
+                value 7;
+                description "4x1G";
+            }
+            enum "10x10G" {
+                value 8;
+                description "10x10G";
+            }
+            enum "2x50G" {
+                value 9;
+                description "2x50G";
+            }
         }
         description "breakout data type";
     }
@@ -686,10 +702,10 @@ submodule rtbrick-interface {
                     }
                     must '(.!= "push") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
                         error-message "Push is a single vlan operation";
-                    }                    
+                    }
                     must '(.!= "swap") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
                         error-message "Swap is a single vlan operation";
-                    } 
+                    }
                     must '(.!="pop-swap") or ((../vlan-id))' {
                         error-message "Vlan Id is mandatory for pop-swap vlan operation";
                     }
@@ -760,7 +776,7 @@ submodule rtbrick-interface {
                     }
                     must '(../vlan-operation)' {
                         error-message "Vlan-operation is mandatory";
-                    }                    
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -816,10 +832,10 @@ submodule rtbrick-interface {
                     }
                     must '(.!= "push") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
                         error-message "Push is a single vlan operation";
-                    }                    
+                    }
                     must '(.!= "swap") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
                         error-message "Swap is a single vlan operation";
-                    } 
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -884,7 +900,7 @@ submodule rtbrick-interface {
                     }
                     must '(../vlan-operation)' {
                         error-message "Vlan-operation is mandatory";
-                    }   
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -1116,6 +1132,9 @@ submodule rtbrick-interface {
                         }
                     }
                 }';
+                must 'not(contains(../../name, "lo-"))' {
+                    error-message "class-of-service cannot be configured for loopback interface";
+                }
             }
             container unnumbered {
                     description
@@ -1376,6 +1395,9 @@ submodule rtbrick-interface {
                         }
                     }
                 }';
+                must 'not(contains(../name, "lo-"))' {
+                    error-message "class-of-service cannot be configured for loopback interface";
+                }
             }
             leaf forward-error-correction {
                 type type-fec-type;
@@ -1444,6 +1466,30 @@ submodule rtbrick-interface {
                             }
                         }
                  }';
+            }
+            container breakout {
+                description "Configure breakout for physical interface";
+                presence breakout;
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.interface.physical.config",
+                        "type" :  "ifp_config_table",
+                        "inherit-attribute" : [ "ifp_name" ]
+                    }
+                }';
+                leaf map
+                {
+                    type type-breakout-mode;
+                    description
+                        "Configure breakout for the interface";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "breakout_mode"
+                            }
+                        }';
+                }
             }
             uses subinterface-top;
         }  // list interface

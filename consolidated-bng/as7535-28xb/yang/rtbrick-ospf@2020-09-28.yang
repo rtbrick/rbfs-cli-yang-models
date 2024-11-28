@@ -156,7 +156,7 @@ submodule rtbrick-ospf {
                     range "1..65534";
                 }
                 description
-                    "OSPF interface hello interval <1-65534>, default: 10";
+                    "OSPF interface hello interval, default: 10";
                 reference
                 '{
                     "attribute-getter" : {
@@ -169,7 +169,7 @@ submodule rtbrick-ospf {
                     range "4..65535";
                 }
                 description
-                    "OSPF interface dead interval <4-65535>, default: 40";
+                    "OSPF interface dead interval, default: 40";
                 reference
                 '{
                     "attribute-getter" : {
@@ -215,7 +215,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "OSPF interface hello interval <1-65535>, default: 10";
+                    "OSPF interface hello interval, default: 10";
                 reference
                 '{
                     "attribute-getter" : {
@@ -228,7 +228,7 @@ submodule rtbrick-ospf {
                     range "4..262140";
                 }
                 description
-                    "OSPF interface dead interval <4-262140>, default: 40";
+                    "OSPF interface dead interval, default: 40";
                 reference
                 '{
                     "attribute-getter" : {
@@ -486,7 +486,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "OSPF interface metric <1-65535>, default: 10000";
+                    "OSPF interface metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
@@ -499,7 +499,7 @@ submodule rtbrick-ospf {
                     range "0..255";
                 }
                 description
-                    "OSPF interface router priority <1-255>, default: 1";
+                    "OSPF interface router priority, default: 1";
                 reference
                 '{
                     "attribute-getter" : {
@@ -613,7 +613,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "OSPF interface metric <1-65535>, default: 10000";
+                    "OSPF interface metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
@@ -626,7 +626,7 @@ submodule rtbrick-ospf {
                     range "0..255";
                 }
                 description
-                    "OSPF interface router priority <1-255>, default: 1";
+                    "OSPF interface router priority, default: 1";
                 reference
                 '{
                     "attribute-getter" : {
@@ -748,7 +748,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "Area scope default metric <1-65535>, default: 10000";
+                    "Area scope default metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
@@ -834,7 +834,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "Area scope default metric <1-65535>, default: 10000";
+                    "Area scope default metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1164,7 +1164,7 @@ submodule rtbrick-ospf {
                     range "0..31";
                 }
                 description
-                    "Instance identifier <0-31>, default: 0";
+                    "Instance identifier, default: 0";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1201,7 +1201,7 @@ submodule rtbrick-ospf {
                     range "1..255";
                 }
                 description
-                    "Maximum ECMP paths to be calulcated value <1-255>, default: 16";
+                    "Maximum ECMP paths to be calulcated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1214,7 +1214,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "Instance scope default metric <1-65535>, default: 10000";
+                    "Instance scope default metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1282,7 +1282,7 @@ submodule rtbrick-ospf {
                     range "1..255";
                 }
                 description
-                    "Maximum ECMP paths to be calulcated value <1-255>, default: 16";
+                    "Maximum ECMP paths to be calulcated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1295,7 +1295,7 @@ submodule rtbrick-ospf {
                     range "1..65535";
                 }
                 description
-                    "Instance scope default metric <1-65535>, default: 10000";
+                    "Instance scope default metric, default: 10000";
                 reference
                 '{
                     "attribute-getter" : {
