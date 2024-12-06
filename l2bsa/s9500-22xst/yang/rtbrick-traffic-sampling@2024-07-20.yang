@@ -78,7 +78,8 @@ submodule rtbrick-traffic-sampling {
           '{
                "table-getter": {
                    "table-name" : "global.traffic.sampling.collector.config",
-                   "type"    : "global_traffic_sampling_collector_config"
+                   "type"    : "global_traffic_sampling_collector_config",
+                   "default-attribute" : [ { "num_of_samples" : "1" } ]
                }
            }';
         leaf collector-id {
@@ -144,46 +145,12 @@ submodule rtbrick-traffic-sampling {
                }';
           }
         }
-        leaf interval {
-          description
-            "Interval in seconds after which eventor will send the packets";
-          type uint32 {
-            range "1..4";
-          }
-          must "not(../number-of-samples)" {
-                description "interval and number-of-samples are mutually exclusive";
-                error-message "interval and number-of-samples are mutually exclusive.";
-          }
-          reference
-            '{
-                 "attribute-getter" : {
-                     "attribute" : "interval"
 
-                 }
-             }';
-        }
-        leaf number-of-samples {
-          description
-            "Number of samples in one sflow packet";
-          type uint32 {
-            range "1..6";
-          }
-          must "not(../interval)" {
-                description "number-of-samples and interval are mutually exclusive";
-                error-message "number-of-samples and interval are mutually exclusive.";
-          }
-          reference
-            '{
-                 "attribute-getter" : {
-                     "attribute" : "num_of_samples"
-                 }
-             }';
-        }
         leaf sampling-rate {
           description
             "Sampling rate(1/sampling-rate)";
           type uint32 {
-            range "1..1000000000";
+            range "100..50000";
           }
           reference
             '{

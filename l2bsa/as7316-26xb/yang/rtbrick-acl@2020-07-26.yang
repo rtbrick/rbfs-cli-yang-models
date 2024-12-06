@@ -204,7 +204,7 @@ submodule rtbrick-acl {
             "Configure acl l2 match parameters.";
         container match {
             description
-                "Configuration parameters relating acl l2 matchi.";
+                "Configuration parameters relating acl l2 match.";
             reference
             '{
                 "table-getter": {
@@ -312,7 +312,7 @@ submodule rtbrick-acl {
             leaf inner-tag-protocol-id {
                 type uint16;
                 description
-                    "Configure acl l2 inner tpid match.";
+                    "Configure acl l2 inner TPID match.";
                 reference
                 '{
                     "attribute-getter" : {
@@ -323,7 +323,7 @@ submodule rtbrick-acl {
             leaf outer-tag-protocol-id {
                 type uint16;
                 description
-                    "Configure acl l2 outer tpid match.";
+                    "Configure acl l2 outer TPID match.";
                 reference
                 '{
                     "attribute-getter" : {
@@ -537,7 +537,7 @@ submodule rtbrick-acl {
                     range "0 .. 63";
                 }
                 description
-                    "Configure ipv4 dscp value";
+                    "Configure ipv4 DSCP value";
                 reference
                 '{
                     "attribute-getter" : {

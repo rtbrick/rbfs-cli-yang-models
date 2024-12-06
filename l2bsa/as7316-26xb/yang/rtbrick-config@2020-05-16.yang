@@ -92,12 +92,12 @@ module rtbrick-config {
 		choice get_commit_path {
 		    mandatory true;
 		    description
-			"Get the commit_path either by roolback-id or
+			"Get the commit_path either by rollback-id or
 			commit-id";
 		    leaf id {
 			type int32;
 			description
-			    "Roll backwards to  a coniguration by n steps
+			    "Roll backwards to  a configuration by n steps
 			    specified by the rollback-id";
 		    }
 		    leaf commit_id {
@@ -187,7 +187,7 @@ module rtbrick-config {
             leaf tbl_count {
                 mandatory true;
                 type int32;
-                description "Number of config tables modified in the previos commit";
+                description "Number of config tables modified in the previous commit";
             }
         }
     }

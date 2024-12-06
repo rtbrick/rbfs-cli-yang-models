@@ -550,7 +550,7 @@ grouping bgp-export-label-block {
             leaf allow-missing-export-policy {
                 when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
-                description "Enable or disable advertisment when export policy is not configured";
+                description "Enable or disable advertisement when export policy is not configured";
                 reference
                 '{
                     "attribute-getter" : {

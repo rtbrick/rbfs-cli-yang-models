@@ -71,7 +71,7 @@ submodule rtbrick-time-series {
              pattern '.*:.*';
              length "1..128";
         }
-        description "A BDS keyvalue string";
+        description "A BDS key-value string";
     }
 
     typedef prometheus-label-key {
@@ -94,7 +94,7 @@ submodule rtbrick-time-series {
         type enumeration {
             enum false {
                 value "0";
-                description "Dont return negate";
+                description "Don't return negate";
             }
             enum true {
                 value "1";
