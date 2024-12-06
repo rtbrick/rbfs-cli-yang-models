@@ -1,0 +1,1829 @@
+submodule rtbrick-bgp {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+    import rtbrick-bgp-types {
+        prefix "rtb-bgp-types";
+    }
+
+    organization "RtBrick";
+
+    contact
+      "Authors: Ankit (ankit@rtbrick.com)
+                kuldeep (kuldeep@rtbrick.com)";
+
+    description
+        "This module describes a YANG model for BGP configuration.
+    Though the model is inspired from openconfig-bgp, it is tailored
+    for Rtbrick. This Model has same configuration level as
+    openconfig-bgp however the sub-hierarchical levels may differ.
+
+    This model supports the following BGP configuration level
+    hierarchy:
+
+      BGP
+        |
+        +-> [ Global BGP configuration ]
+          +-> AFI / SAFI global
+            +-> Redistribute
+          +-> Peer group
+            +-> AFI / SAFI [ per-AFI overrides ]
+          +-> Peer";
+
+    revision "2020-01-13" {
+      description
+        "First revision of BGP configuration";
+      reference
+        "None";
+
+    }
+
+
+
+    grouping bgp-policy {
+        description "Policy name";
+        leaf-list policy {
+            type string {
+                length "1..64";
+            }
+            max-elements 10;
+            ordered-by user;
+            description "Chain of policies";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "policy_name"
+                }
+            }';
+        }
+    }
+
+    grouping bgp-bfd {
+        description "BGP BFD peer grouping";
+        container bfd {
+            presence bfd;
+            description "BGP BFD configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_peer_table_tmpl_get",
+                    "type" :  "bgp.peer_config_table",
+                    "inherit-attribute":["peer_ipv4_address", "source_ipv4_address"]
+                }
+            }';
+            leaf admin-status {
+                type rtb-types:boolean-type;
+                description "BFD status";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_status"
+                    }
+                }';
+            }
+            leaf profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "profile",
+                        "expansion-getter" : {
+                            "package":"bgp",
+                            "method" : "bgp_get_bfd_profile_name"
+                        }
+                    }
+                }';
+            }
+        }
+    }
+    grouping bgp-bfd-pg {
+        description "BGP BFD peer group grouping";
+        container bfd {
+            presence bfd;
+            description "BGP BFD configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_table_tmpl_get",
+                    "type" :  "bgp.pg_config_table",
+                    "inherit-attribute":["pg_name"]
+                }
+            }';
+            leaf admin-status {
+                type rtb-types:boolean-type;
+                description "BFD status";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_status"
+                    }
+                }';
+            }
+            leaf profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "profile",
+                        "expansion-getter" : {
+                            "package":"bgp",
+                            "method" : "bgp_get_bfd_profile_name"
+                        }
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-pg-name {
+        description "BGP peer group name";
+        leaf peer-group {
+            type string {
+                length "1..64";
+            }
+            mandatory true;
+            description "BGP peer group name";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "peer_group_name"
+                }
+            }';
+        }
+    }
+
+    grouping bgp-deactivate {
+        description "BGP peer deactivate";
+        leaf deactivate {
+            type rtb-types:boolean-type;
+            description "BGP peer deactivate";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "deactivate"
+                }
+            }';
+        }
+    }
+
+    grouping bgp-redistribute {
+        description "Redistribution related configuration";
+        list redistribute {
+            when '../afi != "l2vpn" and ../safi != "vpn-unicast" and ../safi != "vpn-multicast"';
+            key "source";
+            description "Redistribution related configuration";
+            reference 
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_redistribute_table_tmpl_get",
+                    "type" :  "protocolinfra.redistribution_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf source {
+                type rtb-bgp-types:rib-source;
+                description "Source protocol";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "source"
+                    }
+                }';
+            }
+            uses bgp-policy;
+        }
+    }
+
+    grouping bgp-resolve {
+        description "Resolve nexthop related configuration";
+        container resolve-nexthop {
+            when '../safi != "flowspec"';
+            description "Resolve nexthop related configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Afi of the table to resolve the nexthop";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "nh_resolve_afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-bgp-types:resolve-safi;
+                description "Safi of the table to resolve the nexthop";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "nh_resolve_safi"
+                    }
+                }';
+            }
+        }
+        container resolve-nexthop-secondary {
+            when '../safi != "flowspec"';
+            description "Secondary resolve nexthop related configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Secondary afi of the table to resolve the nexthop";
+                must "../../resolve-nexthop/afi" {
+                    error-message "configuration of primary resolve-afi is mandatory";
+                }
+                must "../safi" {
+                    error-message "configuration of resolve-safi-secondary is mandatory";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "nh_resolve_secondary_afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-bgp-types:resolve-safi;
+                description "Secondary safi of the table to resolve the nexthop";
+                must "../../resolve-nexthop/safi" {
+                    error-message "configuration of primary resolve-safi is mandatory";
+                }
+                must "../../resolve-nexthop/safi != ." {
+                    error-message "configuration of primary and secondary nexthop resolution should not be same";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "nh_resolve_secondary_safi"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-export-afi-safi-route {
+        description "Stitching two address family configuration";
+        container export {
+            description "Stitching two address family configuration";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description "Destination instance to stitch and redistribute";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_instance",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Destination AFI to stitch and redistribute ";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-bgp-types:safi;
+                description "Destination Safi to stitch and redistribute";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_destination_safi"
+                    }
+                }';
+            }
+        }
+    }
+
+grouping bgp-export-label-block {
+        description "Segment routing global block related configuration";
+        container export-label-block {
+            when '../afi = "l2vpn" or ../safi = "vpn-unicast"';
+            description "Stitching label block";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf base {
+                type uint32 {
+                    range "300001..400000";
+                }
+                must "../range" {
+                    error-message "configure/un-configure Stitching label base and range";
+                }
+                description "Stitching Label base (greater than 15)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_base"
+                    }
+                }';
+            }
+            leaf range {
+                type uint32;
+                must "../base" {
+                    error-message "configure/un-configure Stitching label base and range";
+                }
+                description "Stitching Label range";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_range"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-srgb {
+        description "Segment routing global block related configuration";
+        container srgb {
+            when '../afi != "l2vpn"';
+            description "Segment routing global block";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table",
+                    "inherit-attribute":["afi", "safi"]
+                }
+            }';
+            leaf base {
+                type uint32 {
+                    range "16..16777215";
+                }
+                must "../range" {
+                    error-message "configure/un-configure SRGB base and range";
+                }
+                description "SRGB base (greater than 15)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_base"
+                    }
+                }';
+            }
+            leaf range {
+                type uint32;
+                must "../base" {
+                    error-message "configure/un-configure SRGB base and range";
+                }
+                description "SRGB range";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "srgb_range"
+                    }
+                }';
+            }
+            leaf index {
+                type uint32 {
+                    range "0..4294967294";
+                }
+                description "SRGB segment index";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "sid_index"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-address-family {
+        description "BGP address family related configuration";
+        list address-family {
+            key "afi safi";
+            description "BGP address family related configuration";
+            reference 
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_af_table_tmpl_get",
+                    "type" :  "bgp.af_config_table"
+                }
+            }';
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Type afi";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-bgp-types:safi;
+                description "Type safi";
+                must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
+                != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
+                (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                }
+                must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
+                    error-message "evpn-vpws and vpls-vpws safi cannot be configured for default instance";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "safi"
+                    }
+                }';
+            }
+            container default-information {
+                when '../afi != "l2vpn"';
+                description "Default route information";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_af_table_tmpl_get",
+                        "type" :  "bgp.af_config_table",
+                        "inherit-attribute":["afi", "safi"]
+                    }
+                }';
+                leaf originate {
+                    type rtb-types:boolean-type;
+                    description "Originate default route";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "default_originate"
+                        }
+                    }';
+                }
+            }
+            leaf download-count {
+                when '../afi != "l2vpn"';
+                type uint16 {
+                    range "0..255";
+                }
+                description "Forward packets over multiple paths";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "download_count"
+                    }
+                }';
+            }
+            leaf multipath {
+                when '../afi != "l2vpn"';
+                type uint16 {
+                    range "0..255";
+                }
+                description "Load sharing among multiple BGP paths number";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "multipath"
+                    }
+                }';
+            }
+            leaf retain-route-target {
+                type rtb-bgp-types:enable-disable;
+                description "Retain vpn routes of all route target, default: enable";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "retain_route_target_all"
+                    }
+                }';
+            }
+            leaf allow-missing-export-policy {
+                when '../afi != "l2vpn"';
+                type rtb-types:boolean-type;
+                description "Enable or disable advertisment when export policy is not configured";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "allow_missing_export_policy"
+                    }
+                }';
+            }
+            leaf export-filter {
+                when '../safi = "vpls-vpws" or ../safi = "vpls"';
+                description "Apply remote site id based filters";
+                type rtb-bgp-types:export-filter;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_filter"
+                    }
+                }';              
+            }
+            leaf sid-index {
+                must '../../../../name != "default" and ../safi = "unicast"' {
+                    error-message "SID index cannot be configured for default instance or non-unicast address families";
+                }
+                must
+                  "count(../../../../../instance/protocol/bgp/address-family[afi=current()/../afi][safi=current()/../safi][sid-index=current()]) = 1" {
+                    error-message "SID needs to be unique for same address family across different instances";
+                }
+
+                description "Index to be used in transit labels";
+                type uint32 {
+                    range "0..4294967294";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "sid_index"
+                    }
+                }';
+            }
+            list interface {
+                when '../afi = "l2vpn" and ../safi != "vpls" and ../safi != "evpn"';
+                key "name";
+                unique "local-service-id";
+                unique "remote-service-id";
+                unique "local-site-id";
+                unique "local-site-id remote-site-id";
+                unique "remote-site-id";
+                description "Enabling VPWS/vpls-vpws on an interface";
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libbgpyang.so",
+                            "symbol": "bgp_yang_l2vpn_table_tmpl_get",
+                            "type" :  "bgp_l2vpn_intf_config_table"
+                        }
+                    }';
+                leaf name {
+                    type rtb-types:logical-interface-type;
+                    description "Interface name on which VPWS/vpls-vpws has to be enabled";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "interface_name",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" : "ifm_interface_layer2_name_expander_from_instance"
+                                }
+                            }
+                        }';
+                }
+                leaf local-service-id {
+                    mandatory true;
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Local service Id";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../remote-service-id' {
+                        error-message "Remote service ID must be configured";
+                    }
+                    must '../remote-service-id != .' {
+                        error-message "Local and Remote service ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[local-site-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "local_service_id"
+                            }
+                        }';
+                }
+                leaf remote-service-id {
+                    mandatory true;
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Remote service Id";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../local-service-id' {
+                        error-message "Local service ID must be configured";
+                    }
+                    must '../local-service-id != .' {
+                        error-message "Local and Remote service ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[remote-site-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remote_service_id"
+                            }
+                        }';
+                }
+                leaf local-site-id {
+                    mandatory true;
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "Local site ID";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../remote-site-id' {
+                        error-message "Remote site ID must be configured";
+                    }
+                    must '../remote-site-id != .' {
+                        error-message "Local and Remote site ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[local-service-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[remote-site-id=current()]) = 0' {
+                        error-message "Local site ID is already used as remote site ID in another interface";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "local_site_id"
+                            }
+                        }';
+                }
+                leaf remote-site-id {
+                    mandatory true;
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "Remote site ID";
+                    type uint16 {
+                        range "1..65535";
+                    }
+                    must '../local-site-id' {
+                        error-message "Local site ID must be configured";
+                    }
+                    must '../local-site-id != .' {
+                        error-message "Local and Remote site ID should not be same";
+                    }
+                    must 'count(../../../address-family/interface[remote-service-id=current()]) = 0' {
+                        error-message "Same ID cannot be used for service and site ID";
+                    }
+                    must 'count(../../interface[local-site-id=current()]) = 0' {
+                        error-message "Remote site ID is already used as local site ID in another interface";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remote_site_id"
+                            }
+                        }';
+                }
+                leaf label-base {
+                    mandatory true;
+                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    description "SRGB base";
+                    type uint32 {
+                        range "200001..300000";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "srgb_base"
+                            }
+                        }';
+                }
+                leaf sid-index {
+                    when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
+                    description "Index to be used in transit labels";
+                    type uint32;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "sid_index"
+                            }
+                        }';
+                }
+                leaf control-word {
+                    description "Enable control word";
+                    type rtb-bgp-types:l2-control-flags;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "l2_control_flags"
+                            }
+                        }';
+                }
+            }
+            uses bgp-resolve;
+            uses bgp-srgb;
+            uses bgp-redistribute;
+            uses bgp-export-afi-safi-route;
+            uses bgp-export-label-block;
+        }
+    }
+
+    grouping bgp-peer {
+        description "BGP peer configuration commands";
+        container peer {
+            description "BGP peer configuration commands";
+            list interface {
+                key "name";
+                description "Enabling BGP on an interface";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_peer_table_tmpl_get",
+                        "type" :  "bgp.peer_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Interface name on which BGP has to be enabled";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "interface_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
+                        }
+                    }';
+                }
+                leaf authentication-id {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Authentication Tuple Identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "auth_id"
+                        }
+                    }';
+                }
+                uses bgp-pg-name;
+                uses bgp-deactivate;
+            }
+            list ipv4 {
+                key "peer-address update-source";
+                description "Ipv4 address";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_peer_table_tmpl_get",
+                        "type" :  "bgp.peer_config_table"
+                    }
+                }';
+                leaf peer-address {
+                    type inet:ipv4-address-no-zone;
+                    description "Peer address to be used in the TCP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv4_address"
+                        }
+                    }';
+                }
+                leaf update-source {
+                    type inet:ipv4-address-no-zone;
+                    description "Source address to be used in the TCP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "source_ipv4_address"
+                        }
+                    }';
+                }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
+                        }
+                    }';
+                }
+                leaf authentication-id {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Authentication Tuple Identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "auth_id"
+                        }
+                    }';
+                }
+                uses bgp-pg-name;
+                uses bgp-deactivate;
+                uses bgp-bfd;
+            }
+            list ipv6 {
+                key "peer-address update-source";
+                description "Ipv6 address";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_peer_table_tmpl_get",
+                        "type" :  "bgp.peer_config_table"
+                    }
+                }';
+                leaf peer-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Peer address to be used in the TCP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv6_address"
+                        }
+                    }';
+                }
+                leaf update-source {
+                    type inet:ipv6-address-no-zone;
+                    description "Source address to be used in the TCP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "source_ipv6_address"
+                        }
+                    }';
+                }
+                leaf allow-as-in {
+                    type uint8 {
+                        range "1..10";
+                    }
+                    description "Instances of the local-AS number to be found in incoming AS-path attributes";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "allow_as_in"
+                        }
+                    }';
+                }
+                leaf authentication-id {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Authentication Tuple Identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "auth_id"
+                        }
+                    }';
+                }
+                uses bgp-pg-name;
+                uses bgp-deactivate;
+                //uses bgp-bfd;
+            }
+        }
+    }
+
+    grouping bgp-pg-af-default-information {
+        description "Default route information related configuration";
+        container default-information {
+            when '../afi != "l2vpn"';
+            description "Default route information";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
+                }
+            }';
+            leaf originate {
+                type rtb-types:boolean-type;
+                description "Send originated default route to peer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "default_originate"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-max-prefix-limit {
+        description "Max prefix limit related configuration";
+        container prefix-limit {
+            when '../afi != "l2vpn"';
+            description "Max prefix limit";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
+                }
+            }';
+            leaf count {
+                type uint32 {
+                    range "1..4294967295";
+                }
+                description "Max prefix limit count";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "max_prefix_limit"
+                    }
+                }';
+            }
+            leaf idle-timeout {
+                type uint16 {
+                    range "1..2400";
+                }
+                must "../count" {
+                    error-message "Prefix limit count should be configured to set idle timeout";
+                }
+                description "Idle time after max limit is reached(in minutes)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "idle_timeout"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-pg-af-policy {
+        description "Policy related configuration";
+        container policy {
+            description "Apply policy to the peer";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
+                }
+            }';
+            leaf-list import {
+                type rtb-types:policy-name-type;
+                max-elements 10;
+                ordered-by user;
+                description "Import policy name (max 64 characters)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "import_route_map"
+                    }
+                }';
+            }
+            leaf-list export {
+                type rtb-types:policy-name-type;
+                max-elements 10;
+                ordered-by user;
+                description "Export policy name (max 64 characters)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "export_route_map"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-pg-af-update-nexthop {
+        description "Update-nexthop related configuration";
+        container update-nexthop {
+            description "Updating the nexthop for updates advertised";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
+                }
+            }';
+            choice address-type {
+                description "Choice between ipv4 and ipv6 addresses";
+                case ipv4 {
+                    leaf ipv4-address {
+                        type rtb-types:router-id-type;
+                        description "Ipv4 nexthop IP address";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "v4_nexthop"
+                            }
+                        }';
+                    }
+                }
+                case ipv6 {
+                    leaf ipv6-address {
+                        type rtb-types:non-reserved-ipv6-address-no-zone;
+                        description "Ipv6 nexthop IP address";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "v6_nexthop"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+    }
+
+    grouping bgp-pg-af-add-path {
+        description "BGP additional path related configuration";
+        container add-path {
+            description "Negotiate additional paths capabilities with the peer";
+            reference
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
+                }
+            }';
+            leaf path-count {
+                type uint8 {
+                    range "1..128";
+                }
+                description "Additional path count";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "addpath_count"
+                    }
+                }';
+            }
+            leaf option {
+                type rtb-bgp-types:add-path-opt;
+                description "Additional path options";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "addpath_flag"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-pg-address-family-attributes{
+        leaf extended-nexthop {
+            type rtb-types:boolean-type;
+            description "Enable extended nexthop capability";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "extended_nexthop"
+                }
+            }';
+        }
+        leaf nexthop-self {
+            type rtb-types:boolean-type;
+            description "Propagate nexthop self for paths advertised";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop_self"
+                }
+            }';
+        }
+        leaf nexthop-unchanged {
+            type rtb-types:boolean-type;
+            description "Propagate next hop unchanged for paths advertised";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "nexthop_unchanged"
+                }
+            }';
+        }
+        leaf remove-private-as {
+            type rtb-types:boolean-type;
+            description "Enable removal of private AS numbers from BGP advertisements";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "remove_private_as"
+                }
+            }';
+        }
+        leaf send-label {
+            when '../afi != "l2vpn"';
+            type rtb-types:boolean-type;
+            description "Advertise labels for unicast address prefixes";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "send_label"
+                }
+            }';
+        }
+        uses bgp-max-prefix-limit;
+        uses bgp-pg-af-default-information;
+        uses bgp-pg-af-policy;
+        uses bgp-pg-af-update-nexthop;
+        uses bgp-pg-af-add-path;
+    }
+
+    grouping bgp-pg-address-family {
+        description "BGP peer group address family specific configuration commands";
+        list address-family {
+            key "afi safi";
+            description "BGP peer group address family specific configuration commands";
+            reference 
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_af_table_tmpl_get",
+                    "type" :  "bgp.pg_af_config_table",
+                    "inherit-attribute":["instance_name", "pg_name"]
+                }
+            }';
+            leaf afi {
+                type rtb-bgp-types:afi;
+                description "Type afi";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "afi"
+                    }
+                }';
+            }
+            leaf safi {
+                must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
+                != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
+                (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
+                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                }
+                type rtb-bgp-types:pg-safi;
+                description "Type safi";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "safi"
+                    }
+                }';
+            }
+            leaf route-reflect-client {
+                type rtb-types:boolean-type;
+                description "Configure a peer as route reflector client";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "route_reflect_client"
+                    }
+                }';
+            }
+            uses bgp-pg-address-family-attributes {
+                when 'safi != "flowspec"';
+            }
+            leaf-list peer-default-route {
+                type rtb-types:string64;
+                must "../../../../../name != ." {
+                    error-message "Peer default route in same instance is not supported";
+                }
+                must "count(../../../../../../instance[not(name = current()/../../../../../name)]/protocol/bgp/peer-group/address-family/peer-default-route[. = current()]) = 0" {
+                    error-message "Peer default route can be installed from only one source instance";
+                }
+                must '../afi != "l2vpn"' {
+                    error-message "Peer default route is not supported for l2vpn afi.";
+                }
+                must '../safi = "unicast" or ../safi = "labeled-unicast"' {
+                    error-message "Peer default route is only supported for unicast and labeled-unicast safi.";
+                }
+                description "Add a default route in the instance";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "peer_default_rt_insts",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            list export-rib {
+                must '../afi != "l2vpn"' {
+                    error-message "Export rib is not supported for l2vpn afi.";
+                }
+                must '../safi = "unicast" or ../safi = "labeled-unicast"' {
+                    error-message "Export rib is only supported for unicast and labeled-unicast safi.";
+                }
+                key "instance";
+                description "BGP route leak configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_export_rib_table_tmpl_get",
+                        "type" :  "bgp.pg_export_rib_config_table",
+                        "inherit-attribute":["instance_name", "afi", "safi", "pg_name"],
+                        "default-attribute" : [ { "install_fib" : "0" } ]
+                    }
+                }';
+                leaf instance {
+                    type rtb-types:string64;
+                    must "../../../../../../name != ." {
+                        error-message "Export rib to same instance is not supported";
+                    }
+                    must
+                    "count(../../../../../../../instance[not(name = current()/../../../../../../name)]/protocol/bgp/peer-group/address-family/export-rib[instance=current()]) = 0" {
+                        error-message "Routes from two different instance can't be exported to single instance";
+                    }
+                    description "Destination instance";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "dest_instance",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"ifm_instance_name_expander"
+                            }
+                        }
+                    }';
+                }
+                uses bgp-policy;
+            }
+        }
+    }
+
+    grouping bgp-peer-group {
+        description "BGP peer group configuration commands";
+        list peer-group {
+            key "pg-name";
+            description "BGP peer group configuration";
+            reference 
+            '{
+                "table-getter": {
+                    "library": "libbgpyang.so",
+                    "symbol": "bgp_yang_pg_table_tmpl_get",
+                    "type" :  "bgp.pg_config_table"
+                }
+            }';
+            leaf pg-name {
+                type string {
+                    length "1..64";
+                }
+                description "Peer group name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "pg_name"
+                    }
+                }';
+            }
+            leaf any-as {
+                type rtb-types:boolean-type;
+                description "Enabling dynamic AS negotiation";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "any_as"
+                    }
+                }';
+            }
+            leaf ebgp-multihop {
+                type uint8 {
+                    range "1..255";
+                }
+                description "Maximum hop count";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl"
+                    }
+                }';
+            }
+            leaf link-local-nexthop-only {
+                type rtb-types:boolean-type;
+                description "Link local nexthop only capability";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "link_local_nh_only"
+                    }
+                }';
+            }
+            leaf local-as {
+                type uint32 {
+                    range "1..4294967295";
+                }
+                description "Local autonomous system number";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "local_as"
+                    }
+                }';
+            }
+            leaf no-prepend {
+                type rtb-types:boolean-type;
+                must "../local-as" {
+                    error-message "Local-as is not configured";
+                }
+                description "No prepend of local AS for advertisement from the peer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "no_prepend_local_as"
+                    }
+                }';
+            }
+            leaf replace-as {
+                type rtb-types:boolean-type;
+                must "../local-as" {
+                    error-message "Local-as is not configured";
+                }
+                description "Prepend only local AS for advertisement to the peer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "replace_local_as"
+                    }
+                }';
+            }
+            leaf remote-as {
+                type uint32 {
+                    range "1..4294967295";
+                }
+                description "Peer autonomous system number";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "remote_as"
+                    }
+                }';
+            }
+            leaf validation-filter {
+                type rtb-bgp-types:val-filter;
+                description "Validation filter type";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_filter"
+                    }
+                }';
+            }
+            leaf ttl-security {
+                type rtb-bgp-types:enable-disable;
+                must "not(../ebgp-multihop)" {
+                    error-message "ttl-security and ebgp-multihop are mutually exclusive configurations";
+                }
+                description "The Generalized TTL Security Mechanism (GTSM)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_security"
+                    }
+                }';
+            }
+            leaf ttl-limit {
+                type uint8 {
+                    range "1..255";
+                }
+                must "../ttl-security = 'enable'" {
+                    error-message "TTL security needs to be enabled for configuring TTL limit";
+                }
+                description "Minimum TTL value of packets from the bgp neighbor for TTL Security";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ttl_limit"
+                    }
+                }';
+            }
+            uses bgp-pg-address-family;
+            uses bgp-bfd-pg;
+        }
+    }
+
+    grouping bgp-bestroute-selection {
+        description "BGP best route selection related configuration";
+        container bestroute-selection {
+            description "Change the default best route selection criteria";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.bgp.instance.config",
+                    "type" :  "bgp.instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf always-compare-med {
+                type rtb-types:boolean-type;
+                description
+                    "Always compare MED during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "always_compare_med"
+                    }
+                }';
+            }
+            leaf ignore-local-preference {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore local preference during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_local_pref"
+                    }
+                }';
+            }
+            leaf ignore-as-path {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore as path during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_as_path"
+                    }
+                }';
+            }
+            leaf ignore-route-source {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore route-source during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_route_src"
+                    }
+                }';
+            }
+            leaf ignore-origin {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore origin during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_origin"
+                    }
+                }';
+            }
+            leaf ignore-med {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore med during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_med"
+                    }
+                }';
+            }
+            leaf ignore-route-type {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore route-type during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_route_type"
+                    }
+                }';
+            }
+            leaf ignore-router-id {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore router-id during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_router_id"
+                    }
+                }';
+            }
+            leaf ignore-cluster-length {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore cluster-length during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_cluster_len"
+                    }
+                }';
+            }
+            leaf ignore-peer-ip {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore peer-ip during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_peer_ip"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-timers {
+        description "BGP timers";
+        container timer {
+            description "Setting BGP timers";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.bgp.instance.config",
+                    "type" :  "bgp.instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf connect-retry {
+                type uint16 {
+                    range "5..65535";
+                }
+                description
+                    "Connect retry timer";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "connect_time"
+                    }
+                }';
+            }
+            leaf hold-time {
+                type uint16 {
+                    range "0..65535";
+                }
+                must "../keepalive" {
+                    error-message "Keepalive timer is not configured";
+                }
+                description
+                    "Hold time";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "holddown_time"
+                    }
+                }';
+            }
+            leaf keepalive {
+                type uint16 {
+                    range "0..65535";
+                }
+                must "../hold-time" {
+                    error-message "Hold-timer is not configured";
+                }
+                description
+                    "Keepalive interval";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "keepalive_time"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-protocol-preference {
+        description "Protocol preference related configuration";
+        container protocol-preference {
+            description "Protocol preference";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.bgp.instance.config",
+                    "type" :  "bgp.instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf internal {
+                type rtb-bgp-types:protocol-pref;
+                description
+                    "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "protocol_preference"
+                    }
+                }';
+            }
+            leaf external {
+                type rtb-bgp-types:protocol-pref;
+                description
+                    "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ebgp_protocol_preference"
+                    }
+                }';
+            }
+        }
+    }
+
+    grouping bgp-top {
+        description
+            "This grouping define top-level BGP model data.";
+
+        container bgp {
+            description "Protocol bgp configuration";
+            reference 
+            '{
+                "table-getter": {
+                    "table-name": "global.bgp.instance.config",
+                    "type" :  "bgp.instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf cluster-id {
+                type rtb-types:router-id-type;
+
+                description
+                    "BGP cluster identifier (ipv4 format: A.B.C.D)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "cluster_id"
+                    }
+                }';
+            }
+            leaf domain-name {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "BGP domain name (max 64 characters)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "domain_name"
+                    }
+                }';
+            }
+            leaf enforce-first-as {
+                type rtb-bgp-types:enable-disable;
+                description
+                    "Enforce the first AS for EBGP routes, default: enable";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "enforce_first_as"
+                    }
+                }';
+            }
+            leaf hostname {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "BGP host name (max 64 characters)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "host_name"
+                    }
+                }';
+            }
+            leaf local-as {
+                type uint32 {
+                    range "1..4294967295";
+                }
+                description
+                    "4 byte autonomous system number";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "local_as"
+                    }
+                }';
+            }
+            leaf local-preference {
+                type uint32 {
+                    range "0..4294967295";
+                }
+                description
+                    "Local preference associated BGP routes";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "local_preference"
+                    }
+                }';
+            }
+            leaf med {
+                type uint32 {
+                    range "0..4294967295";
+                }
+                description
+                    "Multi-exit discriminator(MED) value for BGP routes";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "med"
+                    }
+                }';
+            }
+            leaf router-id {
+                type rtb-types:router-id-type;
+                description
+                    "BGP router identifier (ipv4 format: A.B.C.D)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "router_id"
+                    }
+                }';
+            }
+            leaf validation-instance {
+                type string {
+                    length "1..64";
+                }
+                description "Validation instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "validation_instance",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" :"ifm_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            /* bestroute-selection is not supported  */
+            //uses bgp-bestroute-selection;
+
+            uses bgp-protocol-preference;
+            uses bgp-timers;
+            uses bgp-address-family;
+            uses bgp-peer;
+            uses bgp-peer-group;
+        }
+    }
+}
