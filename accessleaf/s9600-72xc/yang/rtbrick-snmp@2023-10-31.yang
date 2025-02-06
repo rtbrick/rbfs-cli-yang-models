@@ -1,0 +1,549 @@
+submodule rtbrick-snmp {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    include rtbrick-inband;
+    organization
+      "Rtbrick";
+    contact
+      "Author : Rohit Kumar (rohit@rtbrick.com)";
+    description
+      "This sub-module contains the YANG structure for the SNMP configuration.
+       instance
+           +-> {instance-name}
+               +-> protocol
+                   +-> snmp
+                       +-> community
+                       +-> user-profile 
+                       +-> view
+                       +-> trap
+                          +-> trap-receiver
+      ";
+    revision 2023-10-31 {
+        description "First revision";
+        reference "None";
+    }
+
+    /* Typedefs */
+    typedef snmp-version {
+        type enumeration {
+            enum 2c {
+                value "0";
+                description "SNMP version 2c";
+            }
+            enum 3 {
+                value "1";
+                description "SNMP version 3";
+            }
+        }
+        description "SNMP version";
+    }
+
+    typedef snmp-access-mode {
+        type enumeration {
+            enum ReadOnly {
+                value "0";
+                description "Read only";
+            }
+        }
+        description "SNMP access mode";
+    }
+
+    typedef snmp-protocol {
+        type enumeration  {
+            enum  udp {
+                value "0";
+                description "UDP";
+            }
+            enum  tcp {
+                value "1";
+                description "TCP";
+            }
+         }
+    }
+
+    /* Typedefs */
+    typedef snmp-auth-level {
+        type enumeration {
+            enum AuthPriv {
+                value "0";
+                description "User authentication and privacy, i.e. data will be encrypted with the privacy secret";
+            }
+            enum AuthNoPriv {
+                value "1";
+                description "User authentication, no privacy, i.e. data is transmitted in plain text";
+            }
+            enum NoAuthNoPriv {
+                value "2";
+                description "No user authentication; no privacy, i.e. data transmitted in plain text";
+            }
+        }
+        description "SNMP Authentication level";
+    }
+
+    typedef snmp-auth-protocol {
+        type enumeration {
+            enum NoAuth {
+                value "0";
+                description "No Authentication";
+            }
+            enum  MD5 {
+                value "1";
+                description "MD5";
+            }
+            enum SHA {
+                value "2";
+                description "SHA";
+            }
+            enum SHA224 {
+                value "3";
+                description "SHA224";
+            }
+            enum SHA256 {
+                value "4";
+                description "SHA256";
+            }
+            enum SHA384 {
+                value "5";
+                description "SHA384";
+            }
+            enum SHA512 {
+                value "6";
+                description "SHA512";
+            }
+        }
+        description "SNMP Authentication Protocol";
+    }
+
+    typedef snmp-privacy-protocol {
+        type enumeration {
+            enum NoPriv {
+                value "0";
+                description "No Privacy Protocol";
+            }
+            enum  DES {
+                value "1";
+                description "DES";
+            }
+            enum AES {
+                value "2";
+                description "AES";
+            }
+            enum AES192 {
+                value "3";
+                description "AES192";
+            }
+            enum AES256 {
+                value "4";
+                description "AES256";
+            }
+            enum AES192C {
+                value "5";
+                description "AES192C";
+            }
+            enum AES256C {
+                value "6";
+                description "AES256C";
+            }
+        }
+        description "SNMP Privacy Protocol";
+    }
+
+    grouping snmp-top {
+        description "This grouping define top-level SNMP config model data.";
+        container snmp {
+            description "SNMP Configuration";
+            reference 
+            '{
+                "table-getter": {
+                    "type" :  "snmp_instance_config_table",
+                    "table-name" : "global.snmp.instance.config",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf version {
+                description "SNMP version";
+                type snmp-version;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "version"
+                    }
+                }';
+            }
+            leaf engine-id {
+                description "Unique SNMP engine ID";
+                must '../version = "3"' {
+                    error-message "Engine ID is only available in SNMP version 3";
+                }
+                type string {
+                     length "1..27";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "engine_id"
+                    }
+                }';
+            }
+            list view {
+                description "SNMP View";
+                key "name";
+                reference 
+                '{
+                    "table-getter": {
+                        "type" :  "snmp_view_config_table",
+                        "table-name" : "global.snmp.view.config",
+                        "inherit-attribute":["instance_name"]
+                    }
+                }';
+                leaf name {
+                    description "Mark the instance to be management instance";
+                    type rtb-types:string128;
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "view_name"
+                        }
+                    }';
+                }
+                leaf-list instance {
+                    description "List of instances that are part of the return value";
+                    must '(not(../../../../../inband-management/instance/name) and ../../../../name = "default") or (../../../../name = /config:inband-management/instance/name)' {
+                        error-message "Instance list only make sense for inband instance or default instance only if inband is not configured";
+                    }
+                    type rtb-types:string64;
+                    /*type leafref {
+                        path "/config:instance/name";
+                    }*/
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "instance",
+                            "expansion-getter" : {
+                                "package":"rib",
+                                "method" :"rib_instance_name_expander"
+                            }
+                        }
+                    }';
+                }
+                leaf-list include {
+                    description "List of oids that are included in the view";
+                    type rtb-types:string128;
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "include_oid"
+                        }
+                    }';
+                }
+            }
+            list community {
+                description "SNMP Community";
+                must '../version = "2c"' {
+                    error-message "Community is only available in SNMP version 2c";
+                }
+                key "name";
+                reference 
+                    '{
+                        "table-getter": {
+                            "type" :  "snmp_community_config_table",
+                            "table-name" : "global.snmp.community.config",
+                            "inherit-attribute":["instance_name"],
+                            "default-attribute" : [ { "access_mode" : "ReadOnly" }]
+                        }
+                    }';
+                leaf name {
+                    description "Community Name";
+                    type rtb-types:string64;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "community_name"
+                            }
+                        }';
+                }
+                leaf access-mode {
+                    description "Access Mode";
+                    type snmp-access-mode;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "access_mode"
+                            }
+                        }';
+                }
+                leaf-list view {
+                    description "A list of view identifiers";
+                    type leafref {
+                        path "../../view/name";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "view",
+                                "expansion-getter" : {
+                                    "package":"hostconfd",
+                                    "method" : "snmp_view_expander"
+                                }
+                            }
+                        }';
+                }
+            } 
+            list user-profile {
+                description "SNMP User profile";
+                must '../version = "3"' {
+                    error-message "User profile is only available in SNMP version 3";
+                }
+                key "name";
+                reference 
+                    '{
+                        "table-getter": {
+                            "type" :  "snmp_user_profile_config_table",
+                                "table-name" : "global.snmp.user.profile.config",
+                                "inherit-attribute":["instance_name"]
+                        }
+                    }';
+                leaf name {
+                    description "User profile name";
+                    type rtb-types:string128;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "user_profile_name"
+                            }
+                        }';
+                }
+                leaf password-plain-text {
+                    description "SNMP user password in plain text";
+                    must '../security-level = "AuthPriv" or ../security-level = "AuthNoPriv"' {
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
+                    }
+                    type string {
+                        length "1..64";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "encrypted_password",
+                                "plain-text-password" : true,
+                                "secret-text-leaf-name" : "password-encrypted-text"
+                            }
+                        }';
+                }
+                leaf password-encrypted-text {
+                    description "SNMP user password in encrypted text";
+                    must '../security-level = "AuthPriv" or ../security-level = "AuthNoPriv"' {
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
+                    }
+                    type rtb-types:secret-string-type;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "encrypted_password"
+                            }
+                        }';
+                }
+                leaf privacy-password-plain-text {
+                    description "SNMP privacy password in plain text";
+                    must '../security-level = "AuthPriv"' {
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
+                    }
+                    type string {
+                        length "1..64";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "encrypted_privacy_secret",
+                                "plain-text-password" : true,
+                                "secret-text-leaf-name" : "privacy-password-encrypted-text"
+                            }
+                        }';
+                }
+                leaf privacy-password-encrypted-text {
+                    description "SNMP privacy password in encrypted text";
+                    must '../security-level = "AuthPriv"' {
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
+                    }
+                    type rtb-types:secret-string-type;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "encrypted_privacy_secret"
+                            }
+                        }';
+                }
+                leaf security-level {
+                    description "SNMPv3 security level";
+                    type snmp-auth-level;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "security_level"
+                            }
+                        }';
+                }
+                leaf authentication-protocol { 
+                    description "SNMP Authentication Protocol";
+                    type snmp-auth-protocol;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "auth_protocol"
+                            }
+                        }';
+                }
+                leaf privacy-protocol { 
+                    description "SNMP Privacy Protocol";
+                    type snmp-privacy-protocol;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "privacy_protocol"
+                            }
+                        }';
+                }
+                leaf-list view { 
+                    description "SNMP view list";
+                    type leafref {
+                        path "../../view/name";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "view",
+                                "expansion-getter" : {
+                                    "package":"hostconfd",
+                                    "method" : "snmp_view_expander"
+                                }
+                            }
+                        }';
+                }
+            }
+            list trap {
+                description "SNMP Trap";
+                key "name";
+                reference 
+                    '{
+                        "table-getter": {
+                            "type" :  "snmp_trap_config_table",
+                                "table-name" : "global.snmp.trap.config",
+                                "inherit-attribute":["instance_name"]
+                        }
+                    }';
+                leaf name {
+                    description "Trap name";
+                    type rtb-types:string64;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "trap_name"
+                            }
+                        }';
+                }
+                leaf-list include {
+                    description "List of oids that are included in the view";
+                    type rtb-types:string128;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "include_oid"
+                            }
+                        }';
+                }
+                leaf community {
+                    description "Community used to apply on the trap notification";
+                    must '../../version = "2c"' {
+                        error-message "User profile is only available in SNMP version 3";
+                    }
+                    type leafref {
+                        path "../../community/name";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "community_name",
+                                "expansion-getter" : {
+                                    "package":"hostconfd",
+                                    "method" : "snmp_community_expander"
+                                }
+                            }
+                        }';
+                }
+                leaf user-profile {
+                    description "User profile that is used for authentication against the trap receiver";
+                    must '../../version = "3"' {
+                        error-message "User profile is only available in SNMP version 3";
+                    }
+                    type leafref {
+                        path "../../user-profile/name";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "user_profile_name",
+                            "expansion-getter" : {
+                                "package":"hostconfd",
+                                "method" : "snmp_user_profile_expander"
+                            }
+                        }
+                    }';
+                }
+                list trap-receiver {
+                    description "SNMP trap receiver";
+                    key "address";
+                    reference 
+                    '{
+                        "table-getter": {
+                            "type" :  "snmp_trap_receiver_config_table",
+                            "table-name" : "global.snmp.trap.receiver.config",
+                            "inherit-attribute":["instance_name", "trap_name"]
+                        }
+                    }';
+                    leaf address {
+                        description "Trap name";
+                        type rtb-types:string512;
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "address"
+                            }
+                        }';
+                    }
+                    leaf protocol {
+                        description "Trap Receiver Protocol";
+                        type snmp-protocol;
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "protocol"
+                            }
+                        }';
+                    }
+                    leaf remote-engine-id {
+                        description "Engine ID for trap receiver";
+                        must '../../../version = "3"' {
+                            error-message "Remote engine ID is only available in SNMP version 3";
+                        }
+                        type string {
+                             length "1..27";
+                        }
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "remote_engine_id"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+    }
+}

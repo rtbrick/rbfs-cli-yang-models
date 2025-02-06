@@ -1,0 +1,1120 @@
+submodule rtbrick-system {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+
+    include rtbrick-platform-profile;
+
+    organization
+      "Rtbrick";
+    contact
+      "Author : Navaneeth Y V (navaneethyv@rtbrick.com)
+                Bhishma Acharya (bhishma@rtbrick.com) ";
+    description
+      "This sub-module contains the YANG structure for the system configuration hierarchy.
+       system
+           +-> { ntp }
+               +-> { ntp config}
+           +-> {authorization}
+             +-> { authorization config }
+           +-> {license}
+             +-> { license config }
+           +-> {host}
+             +-> { host config }
+           +-> {user}
+             +-> { user config }
+           +-> {secure-managment-status}
+           +-> {time-zone}
+           +-> {load-last-config}
+           +-> {platform-management}
+           +-> {platform-profile}
+      ";
+
+    revision 2021-04-21 {
+        description "First revision";
+        reference "None";
+    }
+
+    /* Type definitions */
+    typedef sm-permission-type {
+        type enumeration  {
+            enum  -/-/- {
+                value "0";
+                description "No permission";
+            }
+            enum  -/-/delete {
+                value "1";
+                description "Delete permission";
+            }
+            enum  -/read/- {
+                value "2";
+                description "Read permission";
+            }
+            enum  -/read/delete {
+                value "3";
+                description "Read and delete permission";
+            }
+            enum  create/-/- {
+                value "4";
+                description "Create permission";
+            }
+            enum  create/-/delete {
+                value "5";
+                description "Create and delete permission";
+            }
+            enum  create/read/- {
+                value "6";
+                description "Create and read permission";
+            }
+            enum  create/read/delete {
+                value "7";
+                description "Create read and delete permission";
+            }
+        }
+    }
+
+    typedef sm-resource-type {
+        type enumeration  {
+            enum  object {
+                value "0";
+                description "BDS object";
+            }
+            enum  table {
+                value "1";
+                description "BDS table";
+            }
+         }
+    }
+
+    typedef sm-tacacs-client-type {
+        type enumeration  {
+            enum  inband {
+                value "0";
+                description "In band connectivity";
+            }
+            enum  out-of-band {
+                value "1";
+                description "Out of band connectivity";
+            }
+         }
+    }
+    typedef smgmt-string {
+        type string  {
+            length "1..128";
+            pattern
+              '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
+        }
+    }
+    typedef ipmi-interface {
+        type enumeration  {
+            enum  lan {
+                value "0";
+                description "IMPI lan interface";
+            }
+         }
+    }
+    typedef ipmi-mode {
+        type enumeration  {
+            enum  static {
+                value "0";
+                description "Static mode";
+            }
+            enum  dhcp {
+                value "1";
+                description "DHCP mode";
+            }
+         }
+    }
+
+    typedef watchdog-type {
+        type enumeration  {
+            enum  CPU {
+                value "0";
+                description "CPU watchdog";
+            }
+         }
+    }
+    typedef watchdog-action {
+        type enumeration  {
+            enum  no-action {
+                value "0";
+                description "No action is performed on the device";
+            }
+            enum  hard-reset {
+                value "1";
+                description "Hard-reset the device";
+            }
+            enum  shutdown {
+                value "2";
+                description "shutdown the device";
+            }
+            enum  power-cycle {
+                value "3";
+                description "Power-cycle the device";
+            }
+         }
+    }
+
+    typedef log-alias-type {
+        type enumeration  {
+            enum  gelf {
+                value "0";
+                description "Graylog server";
+            }
+            enum  syslog {
+                value "1";
+                description "Syslog server";
+            }
+         }
+    }
+
+    typedef log-alias-network {
+        type enumeration  {
+            enum  http {
+                value "0";
+                description "HTTP";
+            }
+            enum  udp {
+                value "1";
+                description "UDP";
+            }
+            enum  tcp {
+                value "2";
+                description "TCP";
+            }
+         }
+    }
+
+    grouping ntp-top {
+        description "NTP configurations";
+        container ntp {
+            description "NTP configuration";
+            list server {
+                key "server-name";
+                unique "ipv4-address";
+                description "NTP server configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbds.so",
+                        "symbol" : "bds_autogen_cli_ntp_cmd_config",
+                        "type"   : "global_ntp_config_tbl"
+                    }
+                }';
+                leaf server-name {
+                    type string {
+                        length "1..253";
+                    }
+                    description "Name of the  NTP server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ntp_server_id"
+                        }
+                    }';
+
+                }
+                leaf ipv4-address {
+                    type  rtb-types:router-id-type;
+                    description "NTP server IPv4 address";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ntp_server_ipv4"
+                        }
+                    }';
+                }
+                leaf domain-name {
+                    type string {
+                        length "1..253";
+                        pattern
+                            '((([a-zA-Z0-9_]([a-zA-Z0-9\-_]){0,61})?[a-zA-Z0-9]\.)*'
+                            + '([a-zA-Z0-9_]([a-zA-Z0-9\-_]){0,61})?[a-zA-Z0-9]\.?)'
+                            + '|\.';
+                    }
+                    description "Domain-name of the NTP server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ntp_server_dns"
+                        }
+                    }';
+                }
+                leaf minpoll {
+                    type  uint8 {
+                        range "3..17";
+                    }
+                    description "NTP minimum poll interval (3-17), as a power of 2 in seconds";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "min_poll"
+                        }
+                    }';
+                }
+                leaf maxpoll {
+                    type  uint8 {
+                        range "3..17";
+                    }
+                    must '. > ../minpoll' {
+                        error-message "Max poll interval should always be greater than min poll interval";
+                    }
+                    description "NTP maximum poll interval (3-17), as a power of 2 in seconds";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "max_poll"
+                        }
+                    }';
+                }
+                must '(not(./maxpoll) and not(./minpoll)) or (./minpoll and ./maxpoll)'{
+                    error-message "Minpoll and maxpoll has to be always configured together";
+                }
+            }
+        }
+    }
+
+    grouping lum-top {
+        description "Grouping for local user management";
+        list user {
+            key "username";
+            description "Linux user configuration";
+            reference
+            '{
+                "table-getter": {
+                    "type" :  "lum_config_table",
+                    "table-name" : "global.local_user_management.table",
+                    "notification-type" : "table-change",
+                    "notification-interval": 500
+                }
+            }';
+            leaf username {
+                type smgmt-string;
+                mandatory true;
+                description "User name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "username"
+                    }
+                }';
+            }
+            must 'username != "root" and username != "wheel" and username != "admin" and username != "sudo" '{
+                error-message "User name can't be root, wheel, admin, and sudo";
+            }
+            leaf-list role {
+                type smgmt-string;
+                description "User role";
+                must '../username != "supervisor" and ../username != "operator" and ../username != "reader" '{
+                    error-message "Role can not be configured for pre-defined user supervisor, operator, and reader";
+                }
+                must '. != "root" and . != "wheel" and . != "admin" and . != "sudo" '{
+                   error-message "Role can't be root, wheel, admin, and sudo";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "role",
+                        "expansion-getter" : {
+                            "package":"bds",
+                            "method" :"bds_lum_role_expander"
+                        }
+                    }
+                }';
+            }
+            leaf display-name{
+                type rtb-types:string128;
+                description "User display name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "display_name"
+                    }
+                }';
+            }
+            leaf shell{
+                type rtb-types:string128;
+                mandatory true;
+                description "Shell";
+                must '(not(../role) or ../role = "supervisor" or ../role = "operator") or . != "/bin/bash" '{
+                    error-message "User with role other than operator and supervisor can not configure /bin/bash shell";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "shell",
+                        "expansion-getter" : {
+                            "package":"bds",
+                            "method" : "bds_lum_shell_expander"
+                        }
+                    }
+                }';
+            }
+            leaf password-plain-text {
+                type string {
+                    length "1..240";
+                }
+                description "Local user password in plain text";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "encrypted_password",
+                        "plain-text-password" : true,
+                        "secret-text-leaf-name" : "password-hashed-text"
+                    }
+                }';
+            }
+            leaf password-hashed-text {
+                type rtb-types:secret-string-type;
+                description "Local user hashed password";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "encrypted_password"
+                    }
+                }';
+            }
+            leaf-list ssh-pub-key{
+                type string {
+                    length "1..8192";
+                }
+                max-elements 5;
+                description "SSH public key";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ssh_pub_key"
+                    }
+                }';
+            }
+            leaf no-cli-access {
+                type rtb-types:boolean-type;
+                description "No cli access to user";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "no_cli_access"
+                    }
+                }';
+            }
+            leaf no-sudo-password {
+                type rtb-types:boolean-type;
+                description "No sudo password";
+                must '../username = "supervisor" or ../role = "supervisor" '{
+                    error-message "no-sudo-password can only be configured for supervisor user or user with supervisor role";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "no_sudo_password"
+                    }
+                }';
+            }
+          }
+    }
+
+    grouping cmd-auth-params {
+        description "Grouping of authentication parameters";
+        leaf-list allow-cmds {
+            type rtb-types:string128;
+            description "List of allow commands regular expression";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "allow-cmds"
+                }
+            }';
+        }
+        leaf-list deny-cmds {
+            type rtb-types:string128;
+            description "List of deny commands regular expression";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "deny-cmds"
+                }
+            }';
+        }
+    }
+    grouping rbac-auth-params {
+        description "Grouping of authentication parameters";
+        leaf permission {
+            type sm-permission-type;
+            mandatory true;
+            description "Permission type";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "permission"
+                }
+            }';
+        }
+
+        leaf resource-type {
+            type sm-resource-type;
+            description "Type of the target resource";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "resource_type"
+                }
+            }';
+        }
+
+        leaf resource {
+            type rtb-types:string512;
+            description "Name of the resource as a regular expression";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "resource_regex"
+                }
+            }';
+        }
+
+    }
+
+    grouping secure-management-top {
+        description "Secure management configurations";
+        container authorization {
+            description "Authorization configuration";
+            list tacacs {
+                key "ipv4-address type";
+                description "TACACS server configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbds.so",
+                        "symbol" : "bds_autogen_cli_secure_authorization_tacacs_config",
+                        "type"   : "global_tacacs_config_tbl"
+                    }
+                }';
+                leaf ipv4-address {
+                    type inet:ipv4-address;
+                    description "IPv4 address of the TACACS server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_server_ip"
+                        }
+                    }';
+
+                }
+                leaf type {
+                    type sm-tacacs-client-type;
+                    description "Connectivity type";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_client_type"
+                        }
+                    }';
+                }
+                leaf secret-plain-text {
+                    type string {
+                        length "1..240";
+                    }
+                    description "Secret password in plain text for the tacacs server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_server_secret_encrypted",
+                            "plain-text-password" : true,
+                            "secret-text-leaf-name" : "secret-encrypted-text"
+                        }
+                    }';
+                }
+                leaf secret-encrypted-text {
+                    type rtb-types:secret-string-type;
+                    mandatory true;
+                    description "Secret password in encrypted text for the TACACS server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_server_secret_encrypted"
+                        }
+                    }';
+                }
+                leaf port {
+                    type inet:port-number;
+                    description "Port number of the TACACS server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "tacacs_server_port"
+                        }
+                    }';
+                }
+            }
+
+
+            container lawful {
+                description "Lawful authorization configuration";
+                list role {
+                    key "name";
+                    reference
+                    '{
+                        "table-getter" : {
+                            "library": "libbds.so",
+                            "symbol" : "bds_autogen_cli_secure_authorization_lawful_config",
+                            "type"   : "authorization_config_table"
+                        }
+                    }';
+                    leaf name {
+                        type smgmt-string;
+                        description "Authorization role name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "role"
+                            }
+                        }';
+                    }
+                    must 'name != "root" and name != "wheel" and name != "admin" and name != "sudo" '{
+                            error-message "Role can't be root, wheel, admin, and sudo";
+                    }
+                    list rbac-permission {
+                        key "resource-type resource";
+                        reference
+                        '{
+                            "table-getter" : {
+                                "library": "libbds.so",
+                                "symbol" : "bds_autogen_cli_secure_rest_authorization_lawful_config",
+                                "type"   : "rbac_authorization_config_table",
+                                "inherit-attribute": [ "role" ]
+
+                            }
+                        }';
+                        uses rbac-auth-params;
+                    }
+                    container cmd-permission {
+                        description "Global authorization configuration";
+                        reference
+                        '{
+                            "table-getter" : {
+                                "library": "libbds.so",
+                                "symbol" : "bds_autogen_cli_secure_cli_authorization_lawful_config",
+                                "type"   : "cmd_authorization_config_table",
+                                "inherit-attribute": [ "role" ]
+                            }
+                        }';
+                        uses cmd-auth-params;
+                    }
+                }
+
+            }
+
+            container global {
+                description "Global authorization configuration";
+                list role {
+                    key "name";
+                    reference
+                    '{
+                        "table-getter" : {
+                            "library": "libbds.so",
+                            "symbol" : "bds_autogen_cli_secure_authorization_global_config",
+                            "type"   : "authorization_config_table"
+                        }
+                    }';
+                    leaf name {
+                        type smgmt-string;
+                        description "Authorization role name";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "role"
+                                }
+                            }';
+                    }
+                    must 'name != "root" and name != "wheel" and name != "admin" and name != "sudo" '{
+                            error-message "Role can't be root, wheel, admin, and sudo";
+                    }
+                    list rbac-permission {
+                        key "resource-type resource";
+                        reference
+                        '{
+                            "table-getter" : {
+                                "library": "libbds.so",
+                                "symbol" : "bds_autogen_cli_secure_rest_authorization_global_config",
+                                "type"   : "rbac_authorization_config_table",
+                                "inherit-attribute": [ "role" ]
+
+                            }
+                        }';
+                        uses rbac-auth-params;
+                    }
+                    container cmd-permission {
+                        description "Global authorization configuration";
+                        reference
+                        '{
+                            "table-getter" : {
+                                "library": "libbds.so",
+                                "symbol" : "bds_autogen_cli_secure_cli_authorization_global_config",
+                                "type"   : "cmd_authorization_config_table",
+                                "inherit-attribute": [ "role" ]
+                            }
+                        }';
+                        uses cmd-auth-params;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping system {
+        description "Grouping for system-level configuration";
+        container system {
+            presence
+                "Not mandatory";
+            description "Rtbrick system configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "secure.global.system.table.config",
+                    "type"   : "system_config_table",
+                    "default-attribute" : [ { "configuration_name" : "rtbrick"} ]
+                }
+            }';
+            leaf load-last-config {
+                type rtb-types:boolean-type;
+                description "Load the last sane configuration automatically on bootup";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "load_last_config"
+                    }
+                }';
+            }
+            leaf time-zone {
+                type rtb-types:time-zone-type;
+                description "The system's time format";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "system_time_type"
+                    }
+                }';
+            }
+            leaf secure-management-status {
+                type rtb-types:boolean-type;
+                description "Secure management status";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "secure_management_status"
+                    }
+                }';
+            }
+            leaf config-description {
+                type rtb-types:string1024;
+                description "System's configuration description";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "config_description"
+                    }
+                }';
+            }
+            list license {
+                key "license-key";
+                description "License configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "local.rtbrick.license.config",
+                        "type"   : "license_config_table"
+                    }
+                }';
+                leaf license-key {
+                    description "License key string";
+                    type rtb-types:string512;
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "license_string"
+                        }
+                    }';
+                }
+            }
+
+            container host {
+                presence "Optional";
+                description "System host information";
+                reference
+                '{
+                    "table-getter": {
+                        "type"   : "global_rtbrick_hostname_tbl",
+                        "table-name" : "global.rtbrick.hostname.config",
+                        "notification-type" : "table-change",
+                        "notification-interval": 500,
+                        "default-attribute" : [ {"system_hostname" : "rtbrick"} ]
+                    }
+                }';
+                leaf element-name {
+                    type rtb-types:string128;
+                    description "Element name of the system";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "element_name"
+                        }
+                    }';
+                }
+                leaf pod-name {
+                    type rtb-types:string128;
+                    description "The pod name to which the element belongs to";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "rtbrick_podname"
+                        }
+                    }';
+                }
+                leaf role {
+                    type rtb-types:element-role-type;
+                    description "Element Role";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "element_role"
+                        }
+                    }';
+                }
+                leaf heartbeat-interval {
+                    type uint32;
+                    description "CTRLD heartbeat interval";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "heartbeat_interval"
+                        }
+                    }';
+                }
+                leaf-list nameserver {
+                    type inet:ip-address;
+                    max-elements 3;
+                    description "DNS name server";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nameserver"
+                        }
+                    }';
+                }
+                list log-alias {
+                    key "name";
+                    description "Log alias endpoint configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "liblog.so",
+                             "symbol" : "log_autogen_cli_alias_config_table",
+                             "type"   : "log_alias_config_table"
+                        }
+                    }';
+                    leaf name {
+                        type rtb-types:string128;
+                        description "Log alias name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "name"
+                            }
+                        }';
+                    }
+                    list endpoint {
+                        key "address";
+                        description "Log alias endpoint configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "liblog.so",
+                                 "symbol" : "log_autogen_cli_alias_endpoint_config_table",
+                                 "type"   : "log_alias_config_table",
+                                 "inherit-attribute": [ "name" ],
+                                 "default-attribute" : [ { "log_level" : "notice" }, {"queue_size" : "200" } ]
+
+                            }
+                        }';
+                        leaf address {
+                            type rtb-types:string512;
+                            description "Plugin address Ex: Gelf: http://11.1.1.1:1102/gelf Syslog: 10.1.1.1:8008";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "address"
+                                }
+                            }';
+                        }
+                        leaf type {
+                            type log-alias-type;
+                            mandatory true;
+                            description "Log alias server type";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "type"
+                                }
+                            }';
+                        }
+                        leaf network {
+                            mandatory true;
+                            type log-alias-network;
+                            description "Log alias endpoint port";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "network"
+                                }
+                            }';
+                        }
+                        must "(type = 'gelf' and network = 'http') or (type = 'syslog' and network != 'http')" {
+                            error-message "Gelf alias's network should be http and syslog alias's network should be either udp or tcp";
+                        }
+                        leaf level {
+                            type rtb-types:log-level;
+                            description "Log level for the alias";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "log_level"
+                                }
+                            }';
+                        }
+                        leaf queue-size {
+                            type uint32 {
+                                range "0..500";
+                            }
+                            description "Queue size that will be used for the fanout";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "queue_size"
+                                }
+                            }';
+                        }
+                    }
+                }
+            }
+
+            uses secure-management-top;
+            uses ntp-top;
+            uses lum-top;
+            uses platform-profile-top;
+            container platform-management {
+                description "Platform management configuration";
+                container ipmi {
+                    description " Intelligent platform management interface configuration";
+                    list interface {
+                        key "id";
+                        description "IPMI interface configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                 "type"   : "ipmi_interface_config_table",
+                                 "table-name" : "global.ipmi.interface.config",
+                                 "notification-type" : "table-change",
+                                 "notification-interval": 500
+                            }
+                        }';
+                        leaf id {
+                            type uint16;
+                            description "IPMI interface ID";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "interface-id"
+                                }
+                            }';
+                        }
+                        leaf type {
+                            type ipmi-interface;
+                            description "IPMI interface type";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "type"
+                                }
+                            }';
+                        }
+                        leaf mode {
+                            type ipmi-mode;
+                            description "IPMI interface mode";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "mode"
+                                }
+                            }';
+                        }
+                        container address-family {
+                            description "IPMI interface address family";
+                            container ipv4 {
+                                description "IPMI interface IPv4 address family";
+                                reference
+                                '{
+                                    "table-getter": {
+                                        "library": "libbds.so",
+                                        "type"   : "ipmi_interface_config_table",
+                                        "table-name" : "global.ipmi.interface.config",
+                                        "notification-type" : "table-change",
+                                        "notification-interval": 500,
+                                        "inherit-attribute": [ "interface-id" ]
+                                    }
+                                }';
+                                leaf prefix4 {
+                                    type inet:ipv4-prefix;
+                                    description "IPMI IPv4 prefix";
+                                    reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "prefix4"
+                                        }
+                                    }';
+                                }
+                                leaf gateway-address {
+                                    type inet:ipv4-address;
+                                    description "IPMI gateway address";
+                                    reference
+                                    '{
+                                        "attribute-getter" : {
+                                            "attribute" : "gateway-address"
+                                        }
+                                    }';
+                                }
+                            }
+                        }
+                    }
+                    list user {
+                        key "id";
+                        description "IPMI user configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "type"   : "ipmi_user_config_table",
+                                "table-name" : "global.ipmi.user.config",
+                                "notification-type" : "table-change",
+                                "notification-interval": 500
+                            }
+                        }';
+                        leaf id {
+                            type uint16;
+                            description "IPMI user ID";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "user-id"
+                                }
+                            }';
+                        }
+                        leaf password-plain-text {
+                            type string {
+                                length "1..240";
+                            }
+                            description "IPMI user password in plain text";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "encrypted-password",
+                                    "plain-text-password" : true,
+                                    "secret-text-leaf-name" : "password-encrypted-text"
+                                }
+                            }';
+                        }
+                        leaf password-encrypted-text {
+                            type rtb-types:secret-string-type;
+                            mandatory true;
+                            description "IPMI user password in encrypted text";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "encrypted-password"
+                                }
+                            }';
+                        }
+                    }
+                }
+                list watchdog {
+                    key "type";
+                    description "Watchdog configuration";
+                    reference
+                    '{
+                        "table-getter": {
+                            "library": "libbds.so",
+                             "symbol" : "bds_autogen_cli_watchdog_config",
+                             "type"   : "watchdog_config_table"
+                        }
+                    }';
+                    leaf type {
+                        type watchdog-type;
+                        description "Watchdog type";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "watchdog_type"
+                            }
+                        }';
+                    }
+                    leaf action {
+                        type watchdog-action;
+                        description "Watchdog action";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "action"
+                            }
+                        }';
+                    }
+                    leaf interval {
+                        type uint32 {
+                            range "300..3600";
+                        }
+                        units "seconds";
+                        description "Watchdog timer interval in seconds";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "interval"
+                            }
+                        }';
+                    }
+                }
+                container fail2ban {
+                    description "fail2ban configuration to be able to whitelist some ip-addresses";
+                    reference
+                    '{
+                        "table-getter": {
+                             "type"   : "fail2ban_config_table",
+                             "table-name" : "global.fail2ban.config",
+                             "notification-type" : "table-change",
+                             "notification-interval": 500,
+                             "default-attribute" : [ { "config_name" : "fail2ban"} ]
+                        }
+                    }';
+                    leaf-list ignore-ip {
+                        type inet:ip-address-and-prefix;
+                        description "List of IPs to be whitelisted by fail2ban";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ignore_ip"
+                            }
+                        }';
+                    }
+                }
+            }
+        }
+    }
+
+    uses system;
+}

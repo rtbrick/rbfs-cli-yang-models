@@ -1,0 +1,88 @@
+submodule rtbrick-access-dhcpv6-server {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Ayana Chembra (ayanac@rtbrick.com)";
+    description
+      "This sub-module contains yang structure for
+       DHCPv6 server configurations.";
+    revision 2023-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping access-dhcpv6-server {
+        description "Global access DHCPv6 server configuration";
+        list dhcpv6-server {
+            key "server-name";
+            description "Global DHCP server configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.access.dhcpv6.server.config",
+                    "type"    : "dhcpv6_server_config_table"
+                }
+            }';
+            leaf server-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Name of the DHCP server";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "dhcp_server_name"
+                    }
+                }';
+            }
+            leaf address {
+                type inet:ipv6-address;
+                description "DHCP server address";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "dhcp_server_ipv6_address"
+                    }
+                }';
+            }
+            leaf source-address {
+                type inet:ipv6-address;
+                description "Source address used for DHCP packets";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "local_source_ipv6_address"
+                    }
+                }';
+            }
+            leaf routing-instance {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Instance name from which DHCP server is reachable";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "instance",
+                        "expansion-getter" : {
+                            "package":"subsMgmt",
+                            "method" :"access_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+        }
+    }
+}

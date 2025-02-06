@@ -1,0 +1,77 @@
+ module rtbrick-igmp-types {
+    yang-version 1.1;
+    prefix rtb-igmp-types;
+    namespace
+    "urn:config:rtbrick:igmp:types";
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    organization "rtbrick";
+
+    contact
+    "bhishma@rtbrick.com";
+
+    description
+      "This module contains general data type definitions for use in IGMP YANG
+    model";
+
+    revision "2020-09-09" {
+        description "First revision of IGMP types configuration";
+        reference "None";
+
+    }
+
+    typedef igmp-version {
+        type enumeration {
+            enum IGMPv1 {
+                value "1";
+                description "IGMP version 1";
+            }
+            enum IGMPv2 {
+                value "2";
+                description "IGMP version 2";
+            }
+            enum IGMPv3 {
+                value "3";
+                description "IGMP version 3";
+            }
+        }
+        description "IGMP version";
+    }
+
+    typedef igmp-filter-action {
+        type enumeration {
+            enum permit {
+                value "1";
+                description "Permit the filter match";
+            }
+            enum deny {
+                value "2";
+                description "Deny the filter match";
+            }
+        }
+        description "IGMP filter action types";
+    }
+
+    typedef ipv4-multicast-group-address {
+      type inet:ipv4-address {
+        pattern '(2((2[4-9])|(3[0-9]))\.).*';
+      }
+      description
+        "This type represents an IPv4 multicast group address,
+       which is in the range from 224.0.0.0 to 239.255.255.255.";
+      reference
+        "RFC1112: host extensions for IP Multicasting";
+
+    }
+
+    typedef ipv4-multicast-source-address {
+      type inet:ipv4-address;
+      description
+        "Multicast source IPv4 address type";
+    }
+
+}  // module rtbrick-igmp-types
+
