@@ -202,7 +202,7 @@ submodule rtbrick-address-translation {
                 }';
                 leaf ageing-timeout {
                     type uint32 {
-                        range "120..86400";
+                        range "60..86400";
                     }
                     description "NAT inactivity timeout";
                     default "300";
@@ -210,6 +210,19 @@ submodule rtbrick-address-translation {
                     '{
                         "attribute-getter" : {
                             "attribute" : "ageing_timeout_tcp"
+                        }
+                    }';
+                }
+                leaf control-plane-ageing-timeout {
+                    type uint32 {
+                        range "5..120";
+                    }
+                    description "NAT TCP Control timeout ";
+                    default "10";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ageing_timeout_tcp_ctrl"
                         }
                     }';
                 }

@@ -91,6 +91,50 @@ submodule rtbrick-acl {
         description "Layer2 service identifier meta-data";
     }
 
+    typedef type-trap-id {
+        type enumeration {
+            enum "nat" {
+                value 32;
+                description "NAT Trap action";
+            }
+        }
+        description "trap data type";
+    }
+
+    typedef type-tcp-control {
+        type enumeration {
+            enum "fin" {
+                value 1;
+                description "TCP FIN flag";
+            }
+            enum "syn" {
+                value 2;
+                description "TCP SYN flag";
+            }
+            enum "rst" {
+                value 4;
+                description "TCP RST flag";
+            }
+            enum "ack" {
+                value 16;
+                description "TCP ACK flag";
+            }
+            enum "fin-ack" {
+                value 17;
+                description "TCP FIN-ACK flags";
+            }
+            enum "syn-ack" {
+                value 18;
+                description "TCP SYN-ACK flags";
+            }
+            enum "rst-ack" {
+                value 20;
+                description "TCP RST-ACK flags";
+            }
+        }
+        description "trap data type";
+    }
+
     grouping acl-match-interface-attributes {
         description
             "Configure acl interface match parameters.";
@@ -483,6 +527,17 @@ submodule rtbrick-acl {
                             "attribute" : "match_mpls_traffic"
                         }
                     }';
+            }
+            leaf tcp-control {
+                type type-tcp-control;
+                description
+                    "Configure TCP Control Flags.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_tcp_ctrl_flags"
+                    }
+                }';
             }
             leaf destination-l4-port {
                 type uint16;
@@ -1149,6 +1204,17 @@ submodule rtbrick-acl {
                                 '{
                                     "attribute-getter" : {
                                         "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                            leaf trap {
+                                type type-trap-id;
+                                description
+                                    "Configure action, trap.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "trap_id"
                                     }
                                 }';
                             }
