@@ -89,7 +89,7 @@ submodule rtbrick-logging {
             description "Log configuration";
             list bd {
                 key "bd-name";
-                description "BDS log bd's log configuration";
+                description "BDS daemon log configuration";
                 reference
                 '{
                     "table-getter": {
@@ -118,7 +118,7 @@ submodule rtbrick-logging {
                 }
                 list module {
                     key "module-name";
-                    description "BDS log bd's module configuration";
+                    description "BDS module log configuration";
                     reference
                     '{
                         "table-getter": {
@@ -147,7 +147,7 @@ submodule rtbrick-logging {
                     }
                     list group {
                         key "group-name";
-                        description "BDS log bd's module log-group configuration";
+                        description "BDS log group configuration";
                         reference
                         '{
                             "table-getter": {
@@ -206,7 +206,7 @@ submodule rtbrick-logging {
                 }
                 list group {
                     key "group-name";
-                    description "BDS log module log-group configuration";
+                    description "BDS log group configuration";
                     reference
                     '{
                         "table-getter": {
@@ -236,9 +236,10 @@ submodule rtbrick-logging {
                 }
             }
             container system {
+                description "Linux system log configuration";
                 list facility {
                     key "facility-name";
-                    description "Linux system log plugin configuration";
+                    description "Linux syslog facilities plugin configuration";
                     reference
                     '{
                         "table-getter": {
@@ -250,7 +251,7 @@ submodule rtbrick-logging {
                     }';
                     leaf facility-name {
                         type facility-type;
-                        description "System facility";
+                        description "Syslog facility name";
                         reference
                         '{
                             "attribute-getter" : {
@@ -260,7 +261,7 @@ submodule rtbrick-logging {
                     }
                     container  plugin-alias {
                         presence plugin-alias;
-                        description "Linux system log plugin alias configuration";
+                        description "Plugin alias configuration";
                         reference
                         '{
                             "table-getter": {

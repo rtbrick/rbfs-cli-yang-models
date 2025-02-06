@@ -85,6 +85,10 @@ submodule rtbrick-policy {
                 value "11";
                 description "Operation to stop executing policy and return permit";
             }
+            enum goto-next-policy {
+                value "12";
+                description "Operation to continue executing next policy in chain";
+            }
         }
         description "Operation enum";
     }
@@ -378,7 +382,7 @@ submodule rtbrick-policy {
             }
             leaf-list value {
                 type string {
-                    length "1..64";
+                    length "1..1024";
                 }
                 ordered-by user;
                 description "Value against which mentioned attribute-type data will be judged";

@@ -1,6 +1,6 @@
 submodule rtbrick-inband {
     yang-version 1.1;
-  
+
     belongs-to rtbrick-config {
        prefix config;
     }
@@ -10,13 +10,13 @@ submodule rtbrick-inband {
     }
 
     organization "Rtbrick";
-  
+
     contact
       "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
-  
+
     description
       "This module defines configuration data related to network inband config";
-  
+
     revision "2020-07-22" {
       description
         "First revision of inband configuration";
@@ -37,8 +37,7 @@ submodule rtbrick-inband {
                 reference
                     '{
                         "table-getter": {
-                            "library" : "libcmdifmd.so",
-                            "symbol"  : "ifm_yang_get_inband_mgmt_cfg_tbl_templ",
+                            "table-name": "global.instance.inband.mgmt.config",
                             "type"    : "inband_mgmt_global_instance_config_table"
                         }
                     }';

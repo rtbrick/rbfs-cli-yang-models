@@ -14,6 +14,7 @@ submodule rtbrick-network-instance {
 
     include rtbrick-isis;
     include rtbrick-bgp;
+    include rtbrick-validation;
     include rtbrick-bfd;
     include rtbrick-ospf;
     include rtbrick-static;
@@ -60,8 +61,10 @@ submodule rtbrick-network-instance {
                     "inherit-attribute":["instance_name", "afi", "safi"]
                 }
             }';
-            leaf import {
+            leaf-list import {
                 type types:policy-name-type;
+                max-elements 10;
+                ordered-by user;
                 description "Import policy name (max 64 characters)";
                 reference
                 '{
@@ -70,8 +73,10 @@ submodule rtbrick-network-instance {
                     }
                 }';
             }
-            leaf export {
+            leaf-list export {
                 type types:policy-name-type;
+                max-elements 10;
+                ordered-by user;
                 description "Export policy name (max 64 characters)";
                 reference
                 '{
@@ -278,6 +283,7 @@ submodule rtbrick-network-instance {
                 "Protocol configuration";
                 uses isis-top;
                 uses bgp-top;
+                uses validation-top;
                 uses ldp-top;
                 uses ospf-top;
                 uses pim-top;

@@ -5,7 +5,6 @@ module rtbrick-config {
 
     // System management
     include rtbrick-system;
-    include rtbrick-daemon-options;
     include rtbrick-inband;
     include rtbrick-resmon;
     include rtbrick-logging;
@@ -20,6 +19,7 @@ module rtbrick-config {
     include rtbrick-lldp;
     include rtbrick-isis;
     include rtbrick-bgp;
+    include rtbrick-validation;
     include rtbrick-ldp;
     include rtbrick-bfd;
     include rtbrick-ospf;
@@ -44,7 +44,7 @@ module rtbrick-config {
     include rtbrick-snmp;
     //include rtbrick-static;
     include rtbrick-address-translation;
-
+    include rtbrick-traffic-sampling;
     // Services
     include rtbrick-l2x;
     include rtbrick-access;

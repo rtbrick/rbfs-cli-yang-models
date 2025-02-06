@@ -23,7 +23,7 @@ function commitGit() {
 }
 function loadData() {
    # Use jq to iterate over each item in the array directly
-   rtb-image list -v "$VERSION" -f lxd -O json \
+   sudo rtb-image list -v "$VERSION" -f lxd -O json \
      | jq -c '.[] | select(.Platform != "all" and .Platform != "virtual")' \
      | while IFS= read -r item; do
      uuid=$(echo "$item" | jq -r '.UUID')

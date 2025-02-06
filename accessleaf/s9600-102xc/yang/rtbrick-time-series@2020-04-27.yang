@@ -131,8 +131,7 @@ submodule rtbrick-time-series {
             reference
             '{
                 "table-getter": {
-                    "library": "libbds.so",
-                    "symbol" : "time_series_autogen_cli_global_metric_cfg_tbl_tmpl_get",
+                    "table-name": "global.time-series.metric.config",
                     "type"   : "time_series_metric_config_table"
                 }
             }';
@@ -149,8 +148,8 @@ submodule rtbrick-time-series {
             }
             leaf table-name {
                 type string{
-		    length "1..128";
-		}
+                    length "1..128";
+                }
                 mandatory true;
                 description "Table Name";
                 reference
@@ -205,8 +204,8 @@ submodule rtbrick-time-series {
             leaf index-name {
                 when "../bds-type='index-metric'";
                 type string {
-		    length "1..64";
-		}
+                    length "1..64";
+                }
                 description "Table Index name, for index-metrics";
                 reference
                 '{
@@ -217,8 +216,8 @@ submodule rtbrick-time-series {
             }
             leaf description {
                 type string {
-		    length "1..256";
-		}
+                    length "1..256";
+                }
                 mandatory true;
                 description "Description for this metric";
                 reference
@@ -235,8 +234,7 @@ submodule rtbrick-time-series {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libbds.so",
-                        "symbol": "time_series_autogen_cli_global_filter_metric_cfg_tbl_tmpl_get",
+                        "table-name": "global.time-series.filter.metric.config",
                         "type" :  "time_series_filter_metric_config_table",
                         "inherit-attribute": [ "metric-name" ]
                     }
@@ -244,8 +242,8 @@ submodule rtbrick-time-series {
 
                 leaf match-attribute-name {
                     type string {
-			length "1..128";
-		    }
+                        length "1..128";
+                    }
                     mandatory true;
                     description "Matching attribute name for this filter";
                     reference
@@ -257,37 +255,37 @@ submodule rtbrick-time-series {
                 }
                 leaf match-attribute-value {
                     type string {
-			length "1..128";
-		    }
+                        length "1..128";
+                    }
                     mandatory true;
                     description "Matching attribute value for this filter";
                     reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "match-attribute-value"
-                        }
-                    }';
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-attribute-value"
+                            }
+                        }';
                 }
                 leaf match-type {
                     type bds-match-type;
                     mandatory true;
                     description "Match type [regular-expression or exact]";
                     reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "match-type"
-                        }
-                    }';
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-type"
+                            }
+                        }';
                 }
                 leaf match-negate {
                     type match-negate-type;
                     description "Match-negate [True or False]";
                     reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "match-negate"
-                        }
-                    }';
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "match-negate"
+                            }
+                        }';
                 }
             }
 
@@ -295,19 +293,18 @@ submodule rtbrick-time-series {
                 key "attribute-name";
                 description "Metric filter configuration";
                 reference
-                '{
-                    "table-getter": {
-                        "library": "libbds.so",
-                        "symbol": "time_series_autogen_cli_global_attribute_cfg_tbl_tmpl_get",
-                        "type" :  "time_series_attribute_config_table",
-                        "inherit-attribute": [ "metric-name" ]
-                    }
-                }';
+                    '{
+                        "table-getter": {
+                                "table-name": "global.time-series.attribute.config",
+                                "type" :  "time_series_attribute_config_table",
+                                "inherit-attribute": [ "metric-name" ]
+                        }
+                    }';
 
                 leaf attribute-name {
                     type string {
-		        length "1..128";
-		    }
+                        length "1..128";
+                    }
                     mandatory true;
                     description "Attribute that needs to be rendered as a metric";
                     reference
@@ -323,8 +320,7 @@ submodule rtbrick-time-series {
                     reference
                     '{
                         "table-getter": {
-                            "library": "libbds.so",
-                            "symbol": "time_series_autogen_cli_global_label_cfg_tbl_tmpl_get",
+                            "table-name": "global.time-series.label.config",
                             "type" :  "time_series_label_config_table",
                             "inherit-attribute": [ "metric-name", "attribute-name" ]
                         }
@@ -343,8 +339,8 @@ submodule rtbrick-time-series {
                     }
                     leaf label-value {
                         type string {
-			    length "1..128";
-			}
+                            length "1..128";
+                        }
                         mandatory true;
                         description "Value of the label";
                         reference
@@ -356,136 +352,14 @@ submodule rtbrick-time-series {
                     }
                     leaf label-type {
                         type string {
-			    length "1..128";
-			}
+                            length "1..128";
+                        }
                         mandatory true;
                         description "Label type can be dynamic/static";
                         reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "label-type"
-                            }
-                        }';
-                    }
-                    list filter{
-                        key "match-attribute-name";
-                        description "Attribute filter configuration";
-                        reference
-                        '{
-                            "table-getter": {
-                                "library": "libbds.so",
-                                "symbol":  "time_series_autogen_cli_global_filter_label_cfg_tbl_tmpl_get",
-                                "type" :   "time_series_filter_label_config_table",
-                                "inherit-attribute": [ "metric-name","attribute-name","label-key" ]
-                            }
-                        }';
-
-                        leaf match-attribute-name {
-                            type string {
-				length "1..128";
-			    }
-                            mandatory true;
-                            description "Matching attribute name for this filter";
-                            reference
-                            '{
-                                "attribute-getter" : {
-                                    "attribute" : "match-attribute-name"
-                                }
-                            }';
-                        }
-                        leaf match-attribute-value {
-                            type string {
-				length "1..128";
-			    }
-                            mandatory true;
-                            description "Matching attribute value for this filter";
-                            reference
-                            '{
-                                "attribute-getter" : {
-                                    "attribute" : "match-attribute-value"
-                                }
-                            }';
-                        }
-                        leaf match-type {
-                            type bds-match-type;
-                            mandatory true;
-                            description "Match type [regular-expression or exact]";
-                            reference
-                            '{
-                                "attribute-getter" : {
-                                    "attribute" : "match-type"
-                                }
-                            }';
-                        }
-                        leaf match-negate {
-                            type match-negate-type;
-                            description "Match-negate [True or False]";
-                            reference
-                            '{
-                                "attribute-getter" : {
-                                    "attribute" : "match-negate"
-                                }
-                            }';
-                        }
-                    }
-                }
-                list filter{
-                    key "match-attribute-name";
-                    description "Attribute filter configuration";
-                    reference
-                    '{
-                        "table-getter": {
-                            "library": "libbds.so",
-                            "symbol":  "time_series_autogen_cli_global_filter_attribute_cfg_tbl_tmpl_get",
-                            "type" :  "time_series_filter_attribute_config_table",
-                            "inherit-attribute": [ "metric-name", "attribute-name" ]
-                        }
-                    }';
-
-                    leaf match-attribute-name {
-                        type string {
-			    length "1..128";
-			}
-                        mandatory true;
-                        description "Matching attribute name for this filter";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "match-attribute-name"
-                            }
-                        }';
-                    }
-                    leaf match-attribute-value {
-                        type string {
-			    length "1..128";
-			}
-                        mandatory true;
-                        description "Matching attribute value for this filter";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "match-attribute-value"
-                            }
-                        }';
-                    }
-                    leaf match-type {
-                        type bds-match-type;
-                        mandatory true;
-                        description "Match type [regular-expression or exact]";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "match-type"
-                            }
-                        }';
-                    }
-                    leaf match-negate {
-                        type match-negate-type;
-                        description "Match-negate [True or False]";
-                        reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "match-negate"
                             }
                         }';
                     }
@@ -499,15 +373,14 @@ submodule rtbrick-time-series {
             reference
             '{
                 "table-getter": {
-                    "library": "libbds.so",
-                    "symbol" : "time_series_autogen_cli_global_alert_cfg_tbl_tmpl_get",
+                    "table-name": "global.time-series.alert.config",
                     "type"   : "time_series_alert_config_table"
                 }
             }';
             leaf name {
                 type string {
-		    length "1..128";
-		}
+                    length "1..128";
+                }
                 mandatory true;
                 description "Name of the alert";
                 reference
@@ -519,8 +392,8 @@ submodule rtbrick-time-series {
             }
             leaf group {
                 type string {
-		    length "1..128";
-		}
+                    length "1..128";
+                }
                 mandatory true;
                 description "Group of the alert";
                 reference
@@ -561,8 +434,8 @@ submodule rtbrick-time-series {
             }
             leaf expr{
                 type string {
-		    length "1..512";
-		}
+                    length "1..512";
+                }
                 mandatory true;
                 description "PromQL Alert evaluation expression for execution of this alert";
                 reference
@@ -575,7 +448,7 @@ submodule rtbrick-time-series {
             leaf level {
                 type string {
                     pattern  '[0-7]';
-		    length "1..128";
+                    length "1..128";
                 }
                 mandatory true;
                 description "Explicit annotation label level [0 to 7]";
@@ -588,8 +461,8 @@ submodule rtbrick-time-series {
             }
             leaf summary {
                 type string {
-		    length "1..128";
-		}
+                    length "1..128";
+                }
                 mandatory true;
                 description "Explicit annotation label summary";
                 reference
@@ -601,8 +474,8 @@ submodule rtbrick-time-series {
             }
             leaf description {
                 type string {
-		    length "1..256";
-		}
+                    length "1..256";
+                }
                 mandatory true;
                 description "Alert description";
                 reference

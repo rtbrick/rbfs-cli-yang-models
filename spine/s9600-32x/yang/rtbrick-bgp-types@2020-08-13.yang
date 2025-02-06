@@ -222,6 +222,10 @@ module rtbrick-bgp-types {
                 value "11";
                 description "ppp routes";
             }
+            enum arp-nd {
+                value "15";
+                description "arp-nd routes";
+            }
             enum ipoe {
                 value "17";
                 description "ipoe routes";
@@ -373,5 +377,23 @@ module rtbrick-bgp-types {
             range "1..255";
         }
         description "Protocol preference";
+    }
+
+    typedef val-filter {
+        type enumeration {
+            enum disable {
+                value "0";
+                description "Strict validation";
+            }
+            enum loose {
+                value "1";
+                description "Loose validation";
+            }
+            enum strict {
+                value "2";
+                description "Validation disable";
+            }
+        }
+        description "Validation Filters";
     }
 }

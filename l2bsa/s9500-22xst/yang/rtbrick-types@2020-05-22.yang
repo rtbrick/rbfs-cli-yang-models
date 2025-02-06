@@ -352,6 +352,7 @@ module rtbrick-types {
           length "1..64";
           pattern
               'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
+              + '|ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])#([0-3])'
               + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
               + '|lag-([0-9]|[1-9][0-9])|all';
       }
@@ -702,9 +703,9 @@ module rtbrick-types {
                 value 54;
                 description "NARP";
             }
-            enum "mobile ip" {
+            enum "mobile_ip" {
                 value 55;
-                description "MOBILE IP";
+                description "Mobile IP";
             }
             enum "tlsp" {
                 value 56;
@@ -726,17 +727,9 @@ module rtbrick-types {
                 value 60;
                 description "IPv6_Opts";
             }
-            enum "any_host_internal_protocol" {
-                value 61;
-                description "Any host internal protocol";
-            }
             enum "cftp" {
                 value 62;
                 description "CFTP";
-            }
-            enum "any_local_network" {
-                value 63;
-                description "Any local network";
             }
             enum "sat_expak" {
                 value 64;
@@ -753,10 +746,6 @@ module rtbrick-types {
             enum "ippc" {
                 value 67;
                 description "IPPC";
-            }
-            enum "any_distributed_file_system" {
-                value 68;
-                description "Any distributed file system";
             }
             enum "sat_mon" {
                 value 69;
@@ -878,10 +867,6 @@ module rtbrick-types {
                 value 98;
                 description "ENCAP";
             }
-            enum "any_private_encryption_scheme"{
-                value 99;
-                description "Any private encryption scheme";
-            }
             enum "gmtp" {
                 value 100;
                 description "GMTP";
@@ -937,10 +922,6 @@ module rtbrick-types {
             enum "pgm" {
                 value 113;
                 description "PGM";
-            }
-            enum "any_0_hop_protocol"{
-                value 114;
-                description "Any 0_hop protocol";
             }
             enum "l2tp" {
                 value 115;

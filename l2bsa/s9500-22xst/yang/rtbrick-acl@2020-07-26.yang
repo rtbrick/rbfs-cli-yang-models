@@ -80,6 +80,17 @@ submodule rtbrick-acl {
         description "ACL data type";
     }
 
+    typedef type-meta-data {
+        type enumeration {
+            enum "type-1" {
+                value 5;
+                description
+                    "Layer2 service identifier meta-data";
+            }
+        }
+        description "Layer2 service identifier meta-data";
+    }
+
     grouping acl-match-interface-attributes {
         description
             "Configure acl interface match parameters.";
@@ -375,9 +386,44 @@ submodule rtbrick-acl {
                     }
                 }';
             }
-
+            leaf service-inner-vlan-priority {
+                type uint8 {
+                    range "0 .. 7";
+                }
+                description
+                    "Configure service inner vlan priority value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_service_inner_vlan_priority"
+                    }
+                }';
+            }
+            leaf service-outer-vlan-priority {
+                type uint8 {
+                    range "0 .. 7";
+                }
+                description
+                    "Configure layer2 service outer vlan priority value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_service_outer_vlan_priority"
+                    }
+                }';
+            }
+            leaf interface-meta-data {
+                type type-meta-data;
+                description
+                    "Configure layer2 service meta-data value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_interface_meta_data"
+                    }
+                }';
+            }
         }
-
     }
 
     grouping acl-match-l3v4 {

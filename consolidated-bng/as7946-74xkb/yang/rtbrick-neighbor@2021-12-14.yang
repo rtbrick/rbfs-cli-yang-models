@@ -23,8 +23,7 @@ submodule rtbrick-neighbor {
             reference
             '{
                 "table-getter": {
-                    "library" : "libcmdfib.so",
-                    "symbol"  : "fib_cmd_yang_get_neighbor_cfg_tbl_templ",
+                    "table-name": "global.fibd.neighbor.timer.config",
                     "type"    : "neighbor_timer_cfg_table",
                     "default-attribute" : [ { "mode" : "global" } ]
                 }

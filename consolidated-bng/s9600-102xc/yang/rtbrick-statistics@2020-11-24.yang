@@ -64,8 +64,7 @@ submodule rtbrick-statistics {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdfib.so",
-                        "symbol"  : "fib_cmd_yang_get_statistics_cfg_tbl_templ",
+                        "table-name": "global.statistics.config",
                         "type"    : "statistics_config_table"
                     }
                 }';

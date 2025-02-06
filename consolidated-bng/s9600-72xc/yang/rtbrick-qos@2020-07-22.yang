@@ -436,7 +436,7 @@ submodule rtbrick-qos {
         }
         description "protocol trap name type";
     }
- 
+
     typedef service-typedef {
         type enumeration {
             enum "l3-ifl" {
@@ -685,7 +685,7 @@ submodule rtbrick-qos {
                 }';
                 leaf bytes {
                     type uint8 {
-                        range "0 .. 64";
+                        range "0 .. 31";
                     }
                     description
                         "Configure Interface Egress Header Compensation bytes";
@@ -1207,6 +1207,9 @@ submodule rtbrick-qos {
                         }
                     }';
                 }
+                must 'not(./class="class-all") or not(./policer-level="level-none")' {
+                    error-message "Cannot map all classes to policer level-none";
+                }
             }
         } // list class-policer-map-name
     } //grouping qos-class-policer-map-top
@@ -1569,6 +1572,9 @@ submodule rtbrick-qos {
                 }
                 leaf queue-name {
                    type rtb-qos-types:type-qos-string;
+                   must 'count(../../class[queue-name = current()]) <= 1' {
+                       error-message "Class to queue mapping should be unique";
+                   }
                    description
                    "Configure queue profile name";
                    reference
@@ -1783,6 +1789,9 @@ submodule rtbrick-qos {
                         "inherit-attribute" : [ "policer_name" ]
                     }
                 }';
+                must "not(../levels) or (../levels != 1)" {
+                    error-message "'level2-rates' can be configured only if policer levels is 4";
+                }
                 leaf cir {
                     type uint32 {
                          range "0 .. 700000000";
@@ -1873,6 +1882,9 @@ submodule rtbrick-qos {
                         "inherit-attribute" : [ "policer_name" ]
                     }
                 }';
+                must "not(../levels) or (../levels != 1)" {
+                    error-message "'level3-rates' can be configured only if policer levels is 4";
+                }
                 leaf cir {
                     type uint32 {
                          range "0 .. 700000000";
@@ -1963,6 +1975,9 @@ submodule rtbrick-qos {
                         "inherit-attribute" : [ "policer_name" ]
                     }
                 }';
+                must "not(../levels) or (../levels != 1)" {
+                    error-message "'level4-rates' can be configured only if policer levels is 4";
+                }
                 leaf cir {
                     type uint32 {
                          range "0 .. 700000000";
@@ -2043,9 +2058,11 @@ submodule rtbrick-qos {
                 }
             }
             leaf levels {
-                type uint8;
+                type uint8 {
+                    range "1 | 4";
+                }
                 description
-                    "Configure number of policer levels";
+                    "Configure number of policer levels (1 or 4)";
                 reference
                 '{
                     "attribute-getter" : {

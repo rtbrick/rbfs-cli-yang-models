@@ -243,10 +243,10 @@ submodule rtbrick-igmp {
 
     grouping igmp-multicast-options-top {
         description
-        "Top-level grouping containing a list of multicast options.";
+        "Top-level grouping containing a list of multicast options";
         container multicast-options {
         description
-        "container for list of multicast options.";
+        "Container for list of multicast options";
             uses igmp-multicast-options;
         }
     }

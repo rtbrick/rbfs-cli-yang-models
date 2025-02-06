@@ -71,6 +71,17 @@ submodule rtbrick-interface {
         description "l2 interface type data type";
     }
 
+    typedef service-meta-data-typedef {
+        type enumeration {
+            enum "type-1" {
+                value 5;
+                description
+                    "Layer2 service egress meta-data value";
+            }
+        }
+        description "Layer2 service egress meta-data value";
+    }
+
     typedef vlan-operation-typedef {
         type enumeration {
             enum "push" {
@@ -138,6 +149,22 @@ submodule rtbrick-interface {
             enum "4x10G" {
                 value 5;
                 description "4x10G";
+            }
+            enum "4x25G" {
+                value 6;
+                description "4x25G";
+            }
+            enum "4x1G" {
+                value 7;
+                description "4x1G";
+            }
+            enum "10x10G" {
+                value 8;
+                description "10x10G";
+            }
+            enum "2x50G" {
+                value 9;
+                description "2x50G";
             }
         }
         description "breakout data type";
@@ -308,8 +335,7 @@ submodule rtbrick-interface {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_address_port_cfg_tbl_templ",
+                            "table-name": "global.interface.address.config",
                             "type" :  "ifa_config_table",
                             "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
                         }
@@ -379,8 +405,7 @@ submodule rtbrick-interface {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_address_port_cfg_tbl_templ",
+                            "table-name": "global.interface.address.config",
                             "type" :  "ifa_config_table",
                             "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
                         }
@@ -454,8 +479,7 @@ submodule rtbrick-interface {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_static_neighbor_cfg_tbl_templ",
+                            "table-name": "global.static.neighbor.config",
                             "type" :  "static_nbr_cfg_table",
                             "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
                         }
@@ -495,8 +519,7 @@ submodule rtbrick-interface {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_static_neighbor_cfg_tbl_templ",
+                            "table-name": "global.static.neighbor.config",
                             "type" :  "static_nbr_cfg_table",
                             "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
                         }
@@ -544,8 +567,7 @@ submodule rtbrick-interface {
             reference
                 '{
                     "table-getter": {
-                        "library": "libcmdifmd.so",
-                        "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                        "table-name": "global.interface.logical.config",
                         "type" :  "ifl_config_table",
                         "inherit-attribute" : [ "ifp_name" ]
                     }
@@ -563,13 +585,13 @@ submodule rtbrick-interface {
             }
 
             container esi {
+                presence "esi";
                 description
                     "Configure Ethernet Segment Identifier for l2 interface";
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                            "table-name": "global.interface.logical.config",
                             "type" :  "ifl_config_table",
                             "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
                         }
@@ -613,6 +635,18 @@ submodule rtbrick-interface {
                 }';
             }
 
+            leaf service-meta-data {
+                type service-meta-data-typedef;
+                description
+                    "Configure layer2 service egress meta data value";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ifl_meta_data"
+                    }
+                }';
+            }
+
             leaf match-type {
                 type match-typedef;
 
@@ -647,7 +681,6 @@ submodule rtbrick-interface {
                     must '(../../interface-type = "l2vpn-vpws")' {
                         error-message "Configuration supported only for l2vpn-vpws interface";
                     }
-
                     must '((.!= "pop") and (.!= "pop-pop")) or not (../vlan-id)' {
                         error-message "Vlan Id is not allowed for this vlan operation";
                     }
@@ -656,18 +689,29 @@ submodule rtbrick-interface {
                         error-message "Vlan Id is mandatory for this vlan operation";
                     }
 
-                    must '(.!= "push-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                    must '(.!= "push-push") or (../inner-vlan-id)' {
                         error-message "Inner Vlan Id is mandatory for push-push vlan operation";
                     }
 
-                    must '(.!= "swap-push") or ((../vlan-id) and  (../inner-vlan-id))' {
+                    must '(.!= "swap-push") or (../inner-vlan-id)' {
                         error-message "Inner Vlan Id is mandatory for swap-push vlan operation";
                     }
 
-                    must '(.!= "swap-swap") or ((../vlan-id) and  (../inner-vlan-id))' {
+                    must '(.!= "swap-swap") or (../inner-vlan-id)' {
                         error-message "Inner Vlan Id is mandatory for swap-swap vlan operation";
                     }
-
+                    must '(.!= "push") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
+                        error-message "Push is a single vlan operation";
+                    }
+                    must '(.!= "swap") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
+                        error-message "Swap is a single vlan operation";
+                    }
+                    must '(.!="pop-swap") or ((../vlan-id))' {
+                        error-message "Vlan Id is mandatory for pop-swap vlan operation";
+                    }
+                    must '(.!="pop-swap") or not ((../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is not allowed for pop-swap vlan operation";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -708,7 +752,9 @@ submodule rtbrick-interface {
                     must '(../../interface-type = "l2vpn-vpws")' {
                         error-message "Configuration supported only for l2vpn-vpws interface";
                     }
-
+                    must '(../vlan-operation)' {
+                        error-message "Vlan-operation is mandatory";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -725,7 +771,12 @@ submodule rtbrick-interface {
                     must '(../../interface-type = "l2vpn-vpws")' {
                         error-message "Configuration supported only for l2vpn-vpws interface";
                     }
-
+                    must '(../vlan-id)' {
+                        error-message "Vlan-id is mandatory for inner-vlan-id";
+                    }
+                    must '(../vlan-operation)' {
+                        error-message "Vlan-operation is mandatory";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -773,7 +824,18 @@ submodule rtbrick-interface {
                     must '(.!= "swap-swap") or ((../vlan-id) and  (../inner-vlan-id))' {
                         error-message "Inner Vlan Id is mandatory for swap-swap vlan operation";
                     }
-
+                    must '(.!="pop-swap") or ((../vlan-id))' {
+                        error-message "Vlan Id is mandatory for pop-swap vlan operation";
+                    }
+                    must '(.!="pop-swap") or not ((../inner-vlan-id))' {
+                        error-message "Inner Vlan Id is not allowed for pop-swap vlan operation";
+                    }
+                    must '(.!= "push") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
+                        error-message "Push is a single vlan operation";
+                    }
+                    must '(.!= "swap") or ((not (../inner-vlan-id) and (../vlan-id)) or ((../inner-vlan-id) and not (../vlan-id)))' {
+                        error-message "Swap is a single vlan operation";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -814,7 +876,9 @@ submodule rtbrick-interface {
                     must '(../../interface-type = "l2vpn-vpws")' {
                         error-message "Configuration supported only for l2vpn-vpws interface";
                     }
-
+                    must '(../vlan-operation)' {
+                        error-message "Vlan-operation is mandatory";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -831,7 +895,12 @@ submodule rtbrick-interface {
                     must '(../../interface-type = "l2vpn-vpws")' {
                         error-message "Configuration supported only for l2vpn-vpws interface";
                     }
-
+                    must '(../vlan-id)' {
+                        error-message "Vlan-id is mandatory for inner-vlan-id";
+                    }
+                    must '(../vlan-operation)' {
+                        error-message "Vlan-operation is mandatory";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -891,8 +960,7 @@ submodule rtbrick-interface {
                 reference
                     '{
                         "table-getter": {
-                            "library": "libcmdifmd.so",
-                            "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                            "table-name": "global.interface.logical.config",
                             "type" :  "ifl_config_table",
                             "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
                         }
@@ -1025,8 +1093,8 @@ submodule rtbrick-interface {
             }
             leaf vlan-encapsulation {
                 type rtb-types:vlan-encapsulation-type;
-                must "../vlan and ../inner-vlan" {
-                    error-message "Vlan and inner-vlan configuration is mandatory for vlan-encapsulation";
+                must "../vlan" {
+                    error-message "Vlan configuration is mandatory for vlan-encapsulation";
                 }
                 description
                     "Configure sub-interface's outer vlan encapsulation";
@@ -1064,6 +1132,9 @@ submodule rtbrick-interface {
                         }
                     }
                 }';
+                must 'not(contains(../../name, "lo-"))' {
+                    error-message "class-of-service cannot be configured for loopback interface";
+                }
             }
             container unnumbered {
                     description
@@ -1072,8 +1143,7 @@ submodule rtbrick-interface {
                     reference
                         '{
                             "table-getter": {
-                                "library": "libcmdifmd.so",
-                                "symbol": "ifm_yang_get_logical_port_cfg_tbl_templ",
+                            "table-name": "global.interface.logical.config",
                                 "type" :  "ifl_config_table",
                                 "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
                             }
@@ -1094,7 +1164,7 @@ submodule rtbrick-interface {
                             }
                         }';
                     }
-                }
+            }
             uses subinterface-address-config;
             uses subinterface-neighbor-config;
             leaf admin-status
@@ -1138,8 +1208,7 @@ submodule rtbrick-interface {
             reference
             '{
                 "table-getter": {
-                    "library": "libcmdifmd.so",
-                    "symbol": "ifm_yang_get_port_cfg_tbl_templ",
+                    "table-name": "global.interface.physical.config",
                     "type" :  "ifp_config_table"
                 }
             }';
@@ -1326,6 +1395,9 @@ submodule rtbrick-interface {
                         }
                     }
                 }';
+                must 'not(contains(../name, "lo-"))' {
+                    error-message "class-of-service cannot be configured for loopback interface";
+                }
             }
             leaf forward-error-correction {
                 type type-fec-type;
@@ -1380,6 +1452,45 @@ submodule rtbrick-interface {
                     error-message "Holddown cannot be configured for lag interface";
                 }
             }
+            leaf traffic-sampling-profile {
+                type rtb-types:string64;
+                description
+                    "Configure profile string";
+                reference
+                '{
+                        "attribute-getter" : {
+                            "attribute" : "traffic_sampling_profile",
+                            "expansion-getter" : {
+                                 "package":"ifm",
+                                 "method" :"ifm_traffic_sampling_profile_name_expander"
+                            }
+                        }
+                 }';
+            }
+            container breakout {
+                description "Configure breakout for physical interface";
+                presence breakout;
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.interface.physical.config",
+                        "type" :  "ifp_config_table",
+                        "inherit-attribute" : [ "ifp_name" ]
+                    }
+                }';
+                leaf map
+                {
+                    type type-breakout-mode;
+                    description
+                        "Configure breakout for the interface";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "breakout_mode"
+                            }
+                        }';
+                }
+            }
             uses subinterface-top;
         }  // list interface
     }  // grouping interface-top
@@ -1396,8 +1507,7 @@ submodule rtbrick-interface {
                 reference
                 '{
                     "table-getter": {
-                        "library": "libcmdifmd.so",
-                        "symbol": "ifm_yang_get_global_ifmd_cfg_tbl_templ",
+                        "table-name": "global.ifmd.config",
                         "type" :  "global_ifmd_config_table",
                         "default-attribute" : [ { "global_interface_all" : "global-interface-all" } ]
                     }
@@ -1452,8 +1562,7 @@ submodule rtbrick-interface {
             reference
                 '{
                     "table-getter": {
-                        "library": "libcmdifmd.so",
-                        "symbol": "ifm_yang_get_interface_set_member_cfg_tbl_templ",
+                        "table-name": "global.interface.set.member.config",
                         "type" :  "interface_set_member_config_table",
                         "inherit-attribute" : [ "intf_set_name", "ifp_name" ]
                     }
@@ -1489,8 +1598,7 @@ submodule rtbrick-interface {
             reference
             '{
                 "table-getter": {
-                    "library": "libcmdifmd.so",
-                    "symbol": "ifm_yang_get_interface_set_cfg_tbl_templ",
+                    "table-name": "global.interface.set.config",
                     "type" :  "interface_set_config_table",
                     "inherit-attribute" : [ "intf_set_name" ]
                 }
@@ -1527,8 +1635,7 @@ submodule rtbrick-interface {
             reference
                 '{
                     "table-getter": {
-                        "library": "libcmdifmd.so",
-                        "symbol": "ifm_yang_get_interface_set_name_cfg_tbl_templ",
+                        "table-name": "global.interface.set.name.config",
                         "type" :  "interface_set_name_config_table"
                     }
                 }';

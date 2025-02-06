@@ -213,6 +213,7 @@ module ietf-netconf-acm {
      */
 
     container nacm {
+        config false;
         nacm:default-deny-all;
 
         description

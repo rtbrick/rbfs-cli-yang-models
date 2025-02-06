@@ -13,7 +13,7 @@ submodule rtbrick-forwarding-options {
     include rtbrick-fragmentation;
     include rtbrick-subscriber-acl;
     include rtbrick-address-translation;
-
+    include rtbrick-traffic-sampling;
     organization
       "Rtbrick";
     contact
@@ -45,6 +45,7 @@ submodule rtbrick-forwarding-options {
             uses mtu-profile-top;
             uses fragmentation-top;
             uses address-translation-top;
+            uses traffic-sampling-top;
         }
     }
     uses forwarding-options-top;

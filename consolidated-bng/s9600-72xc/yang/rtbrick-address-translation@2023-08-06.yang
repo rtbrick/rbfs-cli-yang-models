@@ -145,17 +145,6 @@ submodule rtbrick-address-translation {
                     }
                 }';
             }
-            leaf port-block-size {
-                type type-port-block-size;
-                description "Number of Ports per block";
-                default "128";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "port_block_size"
-                    }
-                }';
-            }
             container ipv4-address {
                 description "IPv4 address pool configuration";
                 reference
@@ -212,9 +201,11 @@ submodule rtbrick-address-translation {
                     }
                 }';
                 leaf ageing-timeout {
-                    type uint32;
+                    type uint32 {
+                        range "120..86400";
+                    }
                     description "NAT inactivity timeout";
-                    default "600";
+                    default "300";
                     reference
                     '{
                         "attribute-getter" : {
@@ -234,7 +225,9 @@ submodule rtbrick-address-translation {
                     }
                 }';
                 leaf ageing-timeout {
-                    type uint32;
+                    type uint32 {
+                        range "120..86400";
+                    }
                     description "NAT inactivity timeout";
                     default "300";
                     reference
@@ -256,7 +249,9 @@ submodule rtbrick-address-translation {
                     }
                 }';
                 leaf ageing-timeout {
-                    type uint32;
+                    type uint32 {
+                        range "120..86400";
+                    }
                     description "NAT inactivity timeout";
                     default "300";
                     reference
@@ -315,14 +310,21 @@ submodule rtbrick-address-translation {
                 }';
             }
             leaf max-rules {
-                type type-max-rules;
-                default "128";
+                type uint16;
+                must "(. = 64) or (. = 128) or (. = 256) or (. = 512) or (. = 1024) or (. = 2048) or (. = 32768)" {
+                    error-message "Value of max-rules not supported";
+                }
+                default "32768";
                 description
                     "Configure Maximum translations for an interface";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "maximum_rules"
+                        "attribute" : "maximum_rules",
+                        "expansion-getter" : {
+                            "package":"nat",
+                            "method" :"nat_profile_max_rules_expander"
+                        }
                     }
                 }';
             }
@@ -503,6 +505,12 @@ submodule rtbrick-address-translation {
                             }
                         }
                     }';
+                }
+                must 'ip-protocol' {
+                    error-message "Static NAT rules should have ip-protocol configured";
+                }
+                must 'instance' {
+                    error-message "Static NAT rules should have instance configured";
                 }
             }
         }

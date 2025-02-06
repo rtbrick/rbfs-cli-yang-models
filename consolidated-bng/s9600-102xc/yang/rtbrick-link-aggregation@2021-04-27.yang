@@ -37,28 +37,28 @@ submodule rtbrick-link-aggregation {
         type enumeration {
             enum "down" {
                 value 0;
-                description "Not ready to pass packets.";
+                description "Not ready to pass packets";
             }
             enum "up" {
                 value 1;
-                description "Ready to pass packets.";
+                description "Ready to pass packets";
             }
         }
-        description "up/down data type.";
+        description "Up/down data type";
     }
 
     typedef lag-mode {
         type enumeration {
             enum "static" {
                 value 0;
-                description "link-aggregation interface will work in static mode.";
+                description "Link-aggregation interface will work in static mode";
             }
             enum "lacp" {
                 value 1;
-                description "link-aggregation interface will work in lacp mode.";
+                description "Link-aggregation interface will work in lacp mode";
             }
         }
-        description "link-aggregation mode data type.";
+        description "Link-aggregation mode data type";
     }
 
 
@@ -66,14 +66,14 @@ submodule rtbrick-link-aggregation {
         type enumeration {
             enum "active" {
                 value 0;
-                description "Interface is an active member.";
+                description "Interface is an active member";
             }
             enum "passive" {
                 value 1;
-                description "Interface is a passive member.";
+                description "Interface is a passive member";
             }
         }
-        description "Indicates member-interface is active or passive.";
+        description "Indicates member-interface is active or passive";
     }
 
     typedef lacp-timeout {
@@ -83,17 +83,17 @@ submodule rtbrick-link-aggregation {
                 description
                     "Member-interface with long timeout wishes to use long timeouts
                     to detect status of the aggregate, i.e., will expect
-                    less frequent transmissions. Long timeout is 90 seconds.";
+                    less frequent transmissions. Long timeout is 90 seconds";
             }
             enum "short" {
                 value 1;
                 description
                     "Member-interface with SHOR timeout wishes to use short timeouts,
                     i.e., expects frequent transmissions to detect status changes.
-                    Short timeout is 3 seconds.";
+                    Short timeout is 3 seconds";
             }
         }
-        description "The timeout type (short or long) used by the Member-interface.";
+        description "The timeout type (short or long) used by the Member-interface";
     }
 
 
@@ -132,7 +132,7 @@ submodule rtbrick-link-aggregation {
                 }
                leaf description {
                     type rtb-types:string128;
-                    description "Link aggregation interface description.";
+                    description "Link aggregation interface description";
                     reference
                     '{
                         "attribute-getter" : {
@@ -143,7 +143,7 @@ submodule rtbrick-link-aggregation {
                 leaf mode
                 {
                     type lag-mode;
-                    description "Mode of the link aggregation interface, static or lacp. default mode is lacp.";
+                    description "Mode of the link aggregation interface, static or lacp. [Default mode: lacp]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -154,7 +154,7 @@ submodule rtbrick-link-aggregation {
 
                 leaf minimum-link-count {
                     type uint16;
-                    description "Minimum number of active member links required for the link aggregation interface. default valus is 1.";
+                    description "Minimum number of active member links required for the link aggregation interface. [Default value: 1]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -167,7 +167,7 @@ submodule rtbrick-link-aggregation {
                     type uint16 {
                         range "1..65535";
                     }
-                    description "The value for the redundancy group session id range from 1 to 65535.";
+                    description "The value for the redundancy group session id";
                     reference
                     '{
                         "attribute-getter" : {
@@ -179,7 +179,7 @@ submodule rtbrick-link-aggregation {
                 leaf system-id {
                     type rtb-types:rtb-unicast-mac-type;
                     description
-                        "Redundancy System ID of link-aggregation interface.";
+                        "Redundancy System ID of link-aggregation interface";
                     reference
                     '{
                         "attribute-getter" : {
@@ -202,7 +202,7 @@ submodule rtbrick-link-aggregation {
 
                     leaf member-interface-name {
                         type rtb-types:lag-member-interface-type;
-                        description "Link aggregation member interface name.";
+                        description "Link aggregation member interface name";
                         must 'count(../../../../interface[name=current()]/unit) = 0' {
                             error-message "Lag member interface cannot have any logical interface configured";
                         }
@@ -241,7 +241,7 @@ submodule rtbrick-link-aggregation {
                     leaf lacp-mode
                     {
                         type lacp-mode;
-                        description "Indicates member-interface is active or passive. default value is active.";
+                        description "Indicates member-interface is active or passive. [Default value: active]";
                         reference
                         '{
                             "attribute-getter" : {
@@ -252,7 +252,7 @@ submodule rtbrick-link-aggregation {
                     leaf lacp-timeout
                     {
                         type lacp-timeout;
-                        description "The timeout type (short or long) used by the member-interface. default value is short.";
+                        description "The timeout type (short or long) used by the member-interface. [Default value: short]";
                         reference
                         '{
                             "attribute-getter" : {
@@ -265,8 +265,7 @@ submodule rtbrick-link-aggregation {
                         type uint16 {
                             range "1..65535";
                         }
-                        description "The value for the port priority range from 1 to 65535.
-                        The lower the value, the higher the port priority. default value is 255.";
+                        description "The value for the port priority range. The lower the value, the higher the port priority. [Default value: 255]";
                         reference
                         '{
                             "attribute-getter" : {

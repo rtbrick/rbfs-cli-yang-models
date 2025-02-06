@@ -13,7 +13,7 @@ submodule rtbrick-access-access-profile {
     import rtbrick-types {
         prefix "rtb-types";
     }
-
+    include rtbrick-forwarding-options;
     organization
       "RtBrick";
     contact
@@ -665,7 +665,7 @@ submodule rtbrick-access-access-profile {
                     '{
                         "table-getter": {
                             "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "type" : "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -682,6 +682,38 @@ submodule rtbrick-access-access-profile {
                         }';
                     }
                 }
+                container ipoe {
+                    description "Protocol IPoE";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.access.profile.config",
+                            "type" : "access_profile_config_table",
+                            "inherit-attribute": ["access_profile_name"]
+                        }
+                    }';
+                    leaf ip-mtu-profile {
+                        type leafref {
+                            path "../../../../../forwarding-options/mtu-profile/mtu-profile-name";
+                        }
+
+                        must '(../../../../../forwarding-options/mtu-profile[mtu-profile-name=current()]/type = "ip")' {
+                            error-message "IPoE MTU profile not of type IP";
+                        }
+
+                        description "Configure subscriber IP MTU profile";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ipoe_mtu_profile_name",
+                                "expansion-getter" : {
+                                    "package":"subsMgmt",
+                                    "method" :"access_ip_mtu_profile_expander"
+                                }
+                            }
+                        }';
+                    } 
+                }
             }
             container address-family {
                 description "Address-family configuration";
@@ -695,7 +727,6 @@ submodule rtbrick-access-access-profile {
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
-
                     leaf enable {
                         type rtb-types:boolean-type;
                         description "Enable IPv4";

@@ -5,6 +5,10 @@ submodule rtbrick-fragmentation {
         prefix config;
     }
 
+    import clixon-autocli{
+        prefix autocli;
+    }
+
     organization
       "Rtbrick";
 
@@ -45,6 +49,20 @@ submodule rtbrick-fragmentation {
         description "Fragmentation state";
     }
 
+    typedef enable-disable {
+        type enumeration {
+            enum disable {
+                value "0";
+                description "Fragmentation reinjection disabled";
+            }
+            enum enable {
+                value "1";
+                description "Fragmentation reinjection enabled";
+            }
+        }
+        description "Fragmentation reinjection state";
+    }
+
     grouping fragmentation-top {
         description
             "Top-level fragmentation configuration";
@@ -57,8 +75,7 @@ submodule rtbrick-fragmentation {
                 reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdfib.so",
-                        "symbol"  : "fib_cmd_yang_get_fragmentation_cfg_tbl_templ",
+                        "table-name": "global.fragmentation.config",
                         "type"    : "fragmentation_cfg_table",
                         "default-attribute" : [ { "type" : "ipv4"} ]
                     }
@@ -74,6 +91,21 @@ submodule rtbrick-fragmentation {
                             "attribute" : "state"
                         }
                     }';
+                }
+                leaf reinjection {
+                    type enable-disable;
+                    autocli:hide;   
+                    description
+                        "Reinjection of fragmented packets";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "reinjection"
+                        }
+                    }';
+                }
+                must "not(reinjection = 'enable') or state = 'cpu'" {
+                    error-message "Reinjection can be enabled only if state is cpu";
                 }
             }
         }

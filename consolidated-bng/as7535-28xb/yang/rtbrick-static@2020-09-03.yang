@@ -60,10 +60,6 @@ submodule rtbrick-static {
                 value 1;
                 description "This Route should not be installed in hardware.";
             }
-            enum "no-forwarding" {
-                value 2;
-                description "This Route should not be installed in forwarding table";
-            }
         }
         description "RouteOptions data type.";
     }

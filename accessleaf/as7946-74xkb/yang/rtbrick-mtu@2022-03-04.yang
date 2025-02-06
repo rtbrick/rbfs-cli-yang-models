@@ -75,8 +75,7 @@ submodule rtbrick-mtu {
             reference
                 '{
                     "table-getter": {
-                        "library" : "libcmdifmd.so",
-                        "symbol"  : "ifm_yang_get_mtu_profile_tbl_templ",
+                        "table-name": "global.mtu.profile.config",
                         "type"    : "mtu_profile_config_table"
                     }
                 }';
