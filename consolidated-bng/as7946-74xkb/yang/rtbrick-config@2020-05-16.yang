@@ -1,0 +1,194 @@
+module rtbrick-config {
+    yang-version 1.1;
+    namespace "urn:config:rtbrick";
+    prefix config;
+
+    // System management
+    include rtbrick-system;
+    include rtbrick-inband;
+    include rtbrick-resmon;
+    include rtbrick-logging;
+    include rtbrick-time-series;
+    include rtbrick-redundancy;
+    include rtbrick-debuginfo;
+    include rtbrick-platform-profile;
+
+    // Forwarding
+    include rtbrick-interface;
+    include rtbrick-link-aggregation;
+    include rtbrick-lldp;
+    include rtbrick-isis;
+    include rtbrick-bgp;
+    include rtbrick-validation;
+    include rtbrick-ldp;
+    include rtbrick-bfd;
+    include rtbrick-ospf;
+    include rtbrick-static;
+    include rtbrick-igmp;
+    include rtbrick-pim;
+    include rtbrick-lwip;
+    include rtbrick-network-instance;
+    include rtbrick-global-options;
+    include rtbrick-multicast-options;
+    include rtbrick-acl;
+    include rtbrick-subscriber-acl;
+    include rtbrick-mirroring;
+    include rtbrick-qos;
+    include rtbrick-mtu;
+    include rtbrick-forwarding-options;
+    include rtbrick-policy;
+    include rtbrick-statistics;
+    include rtbrick-neighbor;
+    include rtbrick-fragmentation;
+    include rtbrick-authentication;
+    include rtbrick-snmp;
+    //include rtbrick-static;
+    include rtbrick-address-translation;
+    include rtbrick-traffic-sampling;
+    // Services
+    include rtbrick-l2x;
+    include rtbrick-access;
+    include rtbrick-access-aaa-profile;
+    include rtbrick-access-aaa-radius-profile;
+    include rtbrick-access-aaa-radius-server;
+    include rtbrick-access-access-profile;
+    include rtbrick-access-interface-profile;
+    include rtbrick-access-l2tp-pool;
+    include rtbrick-access-l2tp-profile;
+    include rtbrick-access-pool;
+    include rtbrick-access-service-profile;
+    include rtbrick-access-user-profile;
+    include rtbrick-access-dhcp-relay;
+    include rtbrick-access-dhcp-server;
+    include rtbrick-access-l2bsa;
+    include rtbrick-access-dhcpv6-server;
+
+    include rtbrick-lawful-interception;
+
+    organization
+      "Rtbrick";
+    contact
+      "Authors: Ankit Kumar Sinha (ankit@rtbrick.com)
+                Navaneeth Y V (navaneethyv@rtbrick.com)";
+    description
+      "This is the Rtbrick main YANG module file.
+      All the other YANG files will be registered as submodules to this file.";
+
+    revision 2020-05-16 {
+        description
+          "This is the first revision of the Rtbrick YANG file.
+          It defines the root module of the Rtbrick configuration,
+          applications need to add their submodule here with an include statement.";
+        reference "None";
+    }
+
+    rpc rollback {
+	    description
+		"The <rollback> operation loads a configuration that
+		is backwards n steps specified by a rollback-id or
+		commit-id.";
+
+	    input {
+		choice get_commit_path {
+		    mandatory true;
+		    description
+			"Get the commit_path either by roolback-id or
+			commit-id";
+		    leaf id {
+			type int32;
+			description
+			    "Roll backwards to  a coniguration by n steps
+			    specified by the rollback-id";
+		    }
+		    leaf commit_id {
+                type string {
+                    length "0..256";
+                }
+			description
+			    "Rollback to configuration indicated by the specified
+			    commit-id";
+		    }
+		}
+	    }
+	    output {
+		leaf commit_hash{
+            type string {
+                length "0..256";
+            }
+		    description
+			"Commit hash corresponding to the rollback-id or commit-id sent";
+		}
+		leaf commit_path{
+            type string {
+                length "0..256";
+            }
+		    description
+			"Commit hash corresponding to the rollback-id or commit-id sent";
+		}
+	    }
+    }
+
+    rpc set_message {
+        description
+            "RPC for setting the commit message for a particular commit";
+
+        input {
+            leaf commit_id {
+                mandatory true;
+                type string {
+                    length "0..256";
+                }
+                description
+                    "Commit hash that identifies a particular commit";
+            }
+            leaf message {
+                mandatory true;
+                type string {
+                    length "0..256";
+                }
+                description
+                    "String describing the configurations done in
+                    particular commit";
+            }
+        }
+    }
+
+    rpc generate_cmd_log {
+        description
+            "RPC for logging the command executed through CLI";
+        input {
+            leaf cmd {
+                mandatory true;
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String containing the executed command";
+            }
+        }
+    }
+
+    rpc get_restconf_dbg_level {
+        description "RPC for retrieving the restconf debug level set via cli logging infra in confd";
+
+        output {
+            leaf level {
+                mandatory true;
+                type int32;
+                description "Log level set in Confd via CLI for clixon-restconf logging";
+            }
+        }
+    }
+
+    rpc get_committed_table_count {
+        description "RPC for getting the number of config tables modified by the previous successful commit";
+
+        output {
+            leaf tbl_count {
+                mandatory true;
+                type int32;
+                description "Number of config tables modified in the previos commit";
+            }
+        }
+    }
+}
