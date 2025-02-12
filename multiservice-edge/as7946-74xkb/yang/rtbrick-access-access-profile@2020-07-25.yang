@@ -52,9 +52,6 @@ submodule rtbrick-access-access-profile {
             enum relay {
                 value "1";
             }
-            enum proxy {
-                value "2";
-            }
         }
         description "DHCP mode";
     }

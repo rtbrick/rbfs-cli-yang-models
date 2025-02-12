@@ -11,6 +11,7 @@ function prepareGit() {
   git pull
   rm -rf accessleaf
   rm -rf consolidated-bng
+  rm -rf multiservice-edge
   rm -rf l2bsa
   rm -rf spine
 }
