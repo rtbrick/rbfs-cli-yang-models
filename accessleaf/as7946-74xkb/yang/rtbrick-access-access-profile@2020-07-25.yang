@@ -13,6 +13,9 @@ submodule rtbrick-access-access-profile {
     import rtbrick-types {
         prefix "rtb-types";
     }
+    import clixon-autocli{
+        prefix autocli;
+    }
     include rtbrick-forwarding-options;
     organization
       "RtBrick";
@@ -54,6 +57,21 @@ submodule rtbrick-access-access-profile {
             }
         }
         description "DHCP mode";
+    }
+
+    typedef proxy-arp-mode {
+        type enumeration {
+            enum disabled {
+                value "0";
+            }
+            enum subscriber {
+                value "1";
+            }
+            enum any {
+                value "2";
+            }
+        }
+        description "Proxy ARP mode";
     }
 
     grouping access-access-profile {
@@ -143,7 +161,7 @@ submodule rtbrick-access-access-profile {
                             type uint16 { 
                                 range "1..65535";
                             }
-                            description "Session protection minimum uptime in seconds <1-65535>";
+                            description "Session protection minimum uptime in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -155,7 +173,7 @@ submodule rtbrick-access-access-profile {
                             type uint8 { 
                                 range "1..255";
                             }
-                            description "Session protection minimum lockout time in seconds <1-255>";
+                            description "Session protection minimum lockout time in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -167,7 +185,7 @@ submodule rtbrick-access-access-profile {
                             type uint16 { 
                                 range "1..65535";
                             }
-                            description "Session protection maximum lockout time in seconds <1-65535>";
+                            description "Session protection maximum lockout time in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -180,7 +198,7 @@ submodule rtbrick-access-access-profile {
                         type uint16 { 
                             range "1..65535";
                         }
-                        description "Maximum outstanding PPPoE sessions <1-65535>";
+                        description "Maximum outstanding PPPoE sessions";
                         reference
                         '{
                             "attribute-getter" : {
@@ -225,7 +243,7 @@ submodule rtbrick-access-access-profile {
                             type uint16 { 
                                 range "1280..1500";
                             }
-                            description "Maximum local MRU <1280-1500>";
+                            description "Maximum local MRU";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -237,7 +255,7 @@ submodule rtbrick-access-access-profile {
                             type uint16 { 
                                 range "1280..1500";
                             }
-                            description "Maximum local MTU <1280-1500>";
+                            description "Maximum local MTU";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -257,9 +275,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf echo-interval {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Echo interval in seconds <1-255>";
+                            description "Echo interval in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -269,9 +287,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf echo-max-retransmit {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Echo maximum retries <1-255>";
+                            description "Echo maximum retries";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -293,7 +311,7 @@ submodule rtbrick-access-access-profile {
                             type uint8 { 
                                 range "1..255";
                             }
-                            description "Retransmit interval in seconds <1-255>";
+                            description "Retransmit interval in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -305,7 +323,7 @@ submodule rtbrick-access-access-profile {
                             type uint8 { 
                                 range "1..255";
                             }
-                            description "Maximum retries <1-255>";
+                            description "Maximum retries";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -315,9 +333,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf config-nak-max {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Max configure-reject/nak <1-255>";
+                            description "Max configure-reject/nak";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -358,9 +376,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf retransmit-interval {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Retransmit interval in seconds <1-255>";
+                            description "Retransmit interval in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -370,9 +388,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf retransmit-max {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Maximum retries <1-255>";
+                            description "Maximum retries";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -382,9 +400,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf config-nak-max {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Max configure-reject/nak <1-255>";
+                            description "Max configure-reject/nak";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -438,8 +456,10 @@ submodule rtbrick-access-access-profile {
                             }';
                         } 
                         leaf retransmit-interval {
-                            type uint8;
-                            description "Retransmit interval in seconds <1-255>";
+                            type uint8 { 
+                                range "1..255";
+                            }
+                            description "Retransmit interval in seconds";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -449,9 +469,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf retransmit-max {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Maximum retries <1-255>";
+                            description "Maximum retries";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -461,9 +481,9 @@ submodule rtbrick-access-access-profile {
                         } 
                         leaf config-nak-max {
                             type uint8 { 
-                                range "1..max";
+                                range "1..255";
                             }
-                            description "Max configure-reject/nak <1-255>";
+                            description "Max configure-reject/nak";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -495,9 +515,9 @@ submodule rtbrick-access-access-profile {
                     } 
                     leaf interval {
                         type uint8 { 
-                            range "1..max";
+                            range "1..255";
                         }
-                        description "Interval in seconds <1-255>";
+                        description "Interval in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -506,8 +526,10 @@ submodule rtbrick-access-access-profile {
                         }';
                     } 
                     leaf lifetime {
-                        type uint32;
-                        description "Lifetime in seconds <0-4294967295>";
+                        type uint32 { 
+                            range "0..4294967295";
+                        }
+                        description "Lifetime in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -516,8 +538,10 @@ submodule rtbrick-access-access-profile {
                         }';
                     } 
                     leaf preferred-lifetime {
-                        type uint32;
-                        description "Preferred lifetime in seconds <0-4294967295>";
+                        type uint32 { 
+                            range "0..4294967295";
+                        }
+                        description "Preferred lifetime in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -558,9 +582,9 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf lease-time {
                         type uint32 { 
-                            range "1..max";
+                            range "1..4294967295";
                         }
-                        description "DHCP lease time in seconds <1-4294967295>";
+                        description "DHCP lease time in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -617,9 +641,9 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf lifetime {
                         type uint32 {
-                            range "30..max";
+                            range "30..4294967295";
                         }
-                        description "Lifetime in seconds <30-4294967295>";
+                        description "Lifetime in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -629,9 +653,9 @@ submodule rtbrick-access-access-profile {
                     } 
                     leaf preferred-lifetime {
                         type uint32 {
-                            range "30..max";
+                            range "30..4294967295";
                         }
-                        description "Preferred lifetime in seconds <30-4294967295>";
+                        description "Preferred lifetime in seconds";
                         reference
                         '{
                             "attribute-getter" : {
@@ -788,11 +812,22 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf proxy-arp-enable {
                         type rtb-types:boolean-type;
+                        autocli:hide;
                         description "Enable Proxy ARP";
                         reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "proxy_arp_enabled"
+                            }
+                        }';
+                    }
+                    leaf proxy-arp {
+                        type proxy-arp-mode;
+                        description "Enable Proxy ARP mode";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "proxy_arp_mode"
                             }
                         }';
                     }

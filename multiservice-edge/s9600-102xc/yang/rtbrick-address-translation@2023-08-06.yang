@@ -323,21 +323,13 @@ submodule rtbrick-address-translation {
                 }';
             }
             leaf max-rules {
-                type uint16;
-                must "(. = 64) or (. = 128) or (. = 256) or (. = 512) or (. = 1024) or (. = 2048) or (. = 32768)" {
-                    error-message "Value of max-rules not supported";
-                }
-                default "32768";
+                type type-max-rules;
                 description
                     "Configure Maximum translations for an interface";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "maximum_rules",
-                        "expansion-getter" : {
-                            "package":"nat",
-                            "method" :"nat_profile_max_rules_expander"
-                        }
+                        "attribute" : "maximum_rules"
                     }
                 }';
             }

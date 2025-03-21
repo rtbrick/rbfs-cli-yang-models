@@ -174,6 +174,9 @@ submodule rtbrick-link-aggregation {
                             "attribute" : "rd_session_id"
                         }
                     }';
+                    must "not(../../interface[redundancy-session-id = current()]/interface-name != current()/../interface-name)" {
+                        error-message "Redundancy session ID must be unique across all interfaces.";
+                    }
                 }
 
                 leaf system-id {
@@ -223,9 +226,6 @@ submodule rtbrick-link-aggregation {
                         }
                         must 'count(../../../../link-aggregation/interface/member-interface[member-interface-name=current()]) = 1' {
                                 error-message "Member interface name has to be unique across all lags";
-                        }
-                        must 'not(../../../../interface[name=current()]/holddown = "enable")' {
-                            error-message "Lag member interface cannot have holddown enabled";
                         }
                         reference
                         '{

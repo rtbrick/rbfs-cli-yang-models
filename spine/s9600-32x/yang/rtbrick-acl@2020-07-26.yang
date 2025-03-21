@@ -97,6 +97,10 @@ submodule rtbrick-acl {
                 value 32;
                 description "NAT Trap action";
             }
+            enum "default" {
+                value 35;
+                description "No Action";
+            }
         }
         description "trap data type";
     }
@@ -656,6 +660,10 @@ submodule rtbrick-acl {
                             "attribute" : "destination_ipv4_local"
                         }
                     }';
+            }
+
+            must 'not(tcp-control) or (ip-protocol = "tcp")' {
+                error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }
         }
 

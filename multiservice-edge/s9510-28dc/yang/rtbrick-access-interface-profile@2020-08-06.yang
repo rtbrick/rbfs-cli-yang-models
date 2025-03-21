@@ -10,6 +10,7 @@ submodule rtbrick-access-interface-profile {
         prefix "rtb-types";
     }
 
+    include rtbrick-link-aggregation;
     organization
       "RtBrick";
     contact
@@ -142,22 +143,25 @@ submodule rtbrick-access-interface-profile {
             }';
         }
         leaf redundancy-session-id {
-            type uint32 { 
-                range "1..4294967295";
+            type uint16 {
+                range "1..65535";
             }
-            description "Redundancy session id for this interface <1-4294967295>";
+            description "Redundancy session ID for this interface";
             reference
             '{
                 "attribute-getter" : {
                     "attribute" : "rd_session_id"
                 }
             }';
+            must '. = ../../../../link-aggregation/interface[interface-name = current()/../interface-name]/redundancy-session-id = current()' {
+                    error-message "Redundancy session ID must be same for lag-interface and access-interface";
+            }
         }
         leaf pppoe-pado-delay {
             type uint8 { 
                 range "1..255";
             }
-            description "PPPoE PADO delay in seconds <1-255>";
+            description "PPPoE PADO delay in seconds";
             reference
             '{
                 "attribute-getter" : {
@@ -169,7 +173,7 @@ submodule rtbrick-access-interface-profile {
             type uint16 { 
                 range "1..600";
             }
-            description "DHCPv4/v6 minimum elapsed time in seconds <1-255>";
+            description "DHCPv4/v6 minimum elapsed time in seconds";
             reference
             '{
                 "attribute-getter" : {
@@ -237,7 +241,7 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Outer VLAN min <1-4094>";
+                    description "Outer VLAN min";
                     reference
                     '{
                         "attribute-getter" : {
@@ -249,11 +253,22 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Outer VLAN max <1-4094>";
+                    description "Outer VLAN max";
                     reference
                     '{
                         "attribute-getter" : {
                             "attribute" : "outer_vlan_max"
+                        }
+                    }';
+                }
+                leaf outer-vlan-encapsulation {
+                    type rtb-types:vlan-encapsulation-type;
+                    description
+                    "Outer VLAN encapsulation";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "outer_vlan_encapsulation"
                         }
                     }';
                 }
@@ -287,7 +302,7 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Outer VLAN min <1-4094>";
+                    description "Outer VLAN min";
                     reference
                     '{
                         "attribute-getter" : {
@@ -299,7 +314,7 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Outer VLAN max <1-4094>";
+                    description "Outer VLAN max";
                     reference
                     '{
                         "attribute-getter" : {
@@ -322,7 +337,7 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Inner VLAN min <1-4094>";
+                    description "Inner VLAN min";
                     reference
                     '{
                         "attribute-getter" : {
@@ -334,7 +349,7 @@ submodule rtbrick-access-interface-profile {
                     type uint16 { 
                         range "1..4094";
                     }
-                    description "Inner VLAN max <1-4094>";
+                    description "Inner VLAN max";
                     reference
                     '{
                         "attribute-getter" : {

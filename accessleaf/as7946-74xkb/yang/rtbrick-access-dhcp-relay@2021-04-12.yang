@@ -103,7 +103,7 @@ submodule rtbrick-access-dhcp-relay {
                 type uint16 { 
                     range "1..600";
                 }
-                description "DHCP minimum elapsed time in seconds <1-255>";
+                description "DHCP minimum elapsed time in seconds";
                 reference
                 '{
                     "attribute-getter" : {

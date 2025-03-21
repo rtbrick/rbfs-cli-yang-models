@@ -192,6 +192,30 @@ submodule rtbrick-snmp {
                     }
                 }';
             }
+            leaf location {
+                description "The physical location of this node";
+                type string {
+                     length "1..512";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "location"
+                    }
+                }';
+            }
+            leaf contact {
+                description "The contact person for this node, together with information how to contact this person";
+                type string {
+                     length "1..512";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "contact"
+                    }
+                }';
+            }
             list view {
                 description "SNMP View";
                 key "name";

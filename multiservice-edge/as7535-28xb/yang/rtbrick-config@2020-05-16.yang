@@ -191,4 +191,18 @@ module rtbrick-config {
             }
         }
     }
+
+    rpc commit_warning {
+        description "RPC for setting the warning message associated with a commit";
+
+        output {
+            leaf warning-message {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "Warning message related to the committed configuration";
+            }
+        }
+    }
 }

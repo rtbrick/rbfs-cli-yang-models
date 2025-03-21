@@ -38,6 +38,19 @@ submodule rtbrick-platform-profile {
         description "Platform Profiles";
     }
 
+    typedef ipoe-mode-type {
+        type enumeration  {
+            enum  standby-forwarding {
+                value "1";
+                description "Active-Active mode";
+            }
+            enum  standby-non-forwarding {
+                value "2";
+                description "Active-Standby mode";
+            }
+        }
+    }
+
     grouping platform-profile-config {
         description
             "Grouping for platform-profile model";
@@ -90,8 +103,19 @@ submodule rtbrick-platform-profile {
                             }
                         }
                     }';
-                }
+            }
 
+            leaf ipoe-mode {
+                description "High availability ipoe operation mode";
+                type ipoe-mode-type;
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipoe_mode"
+                        }
+                    }';
+
+            }
             }
         }
     }

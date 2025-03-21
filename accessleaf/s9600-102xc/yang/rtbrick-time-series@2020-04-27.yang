@@ -115,7 +115,6 @@ submodule rtbrick-time-series {
                 description "Return negate";
             }
         }
-        default false;
     }
 
     /* Time series hierarchy */
@@ -126,12 +125,11 @@ submodule rtbrick-time-series {
             "table-getter": {
                 "table-name": "global.time-series.config",
                 "type"   : "time_series_global_config_table",
-                "default-attribute" : [ {"configuration_name" : "rtbrick" } ]
+                "default-attribute" : [ {"configuration_name" : "rtbrick" }, {"time-series-history-enable" : "disable"} ]
             }
         }';
         leaf history-status {
             type rtb-types:enable-disable-type;
-            default 'disable';
             description "TSDB query history status";
             reference
             '{
@@ -254,7 +252,8 @@ submodule rtbrick-time-series {
                     "table-getter": {
                         "table-name": "global.time-series.filter.metric.config",
                         "type" :  "time_series_filter_metric_config_table",
-                        "inherit-attribute": [ "metric-name" ]
+                        "inherit-attribute": [ "metric-name" ],
+                        "default-attribute": [{"match-negate" : "false"}]
                     }
                 }';
 

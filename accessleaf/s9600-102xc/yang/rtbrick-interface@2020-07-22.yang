@@ -331,7 +331,7 @@ submodule rtbrick-interface {
                     }';
                 must 'not(contains(../../../name, "lo-"))' {
                     error-message "Link-local address cannot be configured for loopback interface";
-                }                
+                }
             }
             list ipv4
             {
@@ -498,8 +498,8 @@ submodule rtbrick-interface {
 
                 leaf address4 {
                     type inet:ipv4-address;
-                    must "../mac" {
-                        error-message "mac address is mandatory if neighbor ipv4 is configured";
+                    must "((../mac) or (../dynamic = 'true'))" {
+                        error-message "mac address or dynamic mac configuration is mandatory if neighbor ipv4 is configured";
                     }
                     description
                         "Configure ipv4 address";
@@ -509,18 +509,37 @@ submodule rtbrick-interface {
                                 "attribute" : "address4"
                             }
                      }';
+                } 
+                choice mac-config {
+                    case static {
+                        description 
+                            "Configure MAC address of neighbor statically or dynamically.";
+                        leaf mac {
+                            type ietfyang:mac-address;
+                            description
+                                "Configure mac address of neighbor";
+                            reference
+                            '{
+                                    "attribute-getter" : {
+                                        "attribute" : "mac_address"
+                                    }
+                            }';
+                        }
+                    }
+                    case dynamic {
+                        leaf dynamic {
+                            type rtb-types:boolean-true;
+                            description "Dynamic MAC address configuration.";
+                            reference
+                            '{
+                                    "attribute-getter" : {
+                                        "attribute" : "dynamic"
+                                    }
+                            }';
+                        }
+                    }                        
                 }
-                leaf mac {
-                    type ietfyang:mac-address;
-                    description
-                        "Configure mac address of neighbor";
-                    reference
-                    '{
-                            "attribute-getter" : {
-                                "attribute" : "mac_address"
-                            }
-                     }';
-                }
+
             }
             list ipv6
             {
@@ -538,8 +557,8 @@ submodule rtbrick-interface {
 
                 leaf address6 {
                     type inet:ipv6-address;
-                    must "../mac" {
-                        error-message "mac address is mandatory if neighbor ipv6 is configured";
+                    must "((../mac) or (../dynamic = 'true'))" {
+                        error-message "mac address or dynamic mac configuration is mandatory if neighbor ipv6 is configured";
                     }
                     description
                         "Configure ipv6 address";
@@ -550,16 +569,34 @@ submodule rtbrick-interface {
                             }
                      }';
                 }
-                leaf mac {
-                    type ietfyang:mac-address;
-                    description
-                        "Configure mac address of neighbor";
-                    reference
-                    '{
-                            "attribute-getter" : {
-                                "attribute" : "mac_address"
-                            }
-                     }';
+                choice mac-config {
+                    case static {
+                        description 
+                            "Configure MAC address of neighbor statically or dynamically.";
+                        leaf mac {
+                            type ietfyang:mac-address;
+                            description
+                                "Configure mac address of neighbor";
+                            reference
+                            '{
+                                    "attribute-getter" : {
+                                        "attribute" : "mac_address"
+                                    }
+                            }';
+                        }
+                    }
+                    case dynamic {
+                        leaf dynamic {
+                            type rtb-types:boolean-true;
+                            description "Dynamic MAC address configuration.";
+                            reference
+                            '{
+                                    "attribute-getter" : {
+                                        "attribute" : "dynamic"
+                                    }
+                            }';
+                        }
+                    }                        
                 }
             }
         }  // list neighbor
@@ -997,6 +1034,25 @@ submodule rtbrick-interface {
                         }
                     }';
                 }
+                leaf profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "NAT profile";
+                    must '../direction="local"' {
+                        error-message "NAT profile can be configured only if direction is 'local'";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nat_profile_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"ifm_nat_profile_name_expander"
+                            }
+                        }
+                    }';
+                }
             }
             leaf ipv4-mtu-profile {
                 type rtb-types:string64;
@@ -1149,7 +1205,6 @@ submodule rtbrick-interface {
                 }
             }
             container unnumbered {
-	            presence unnumbered;
                     description
                         "Configure un-numbered loopback interface";
 
@@ -1178,6 +1233,10 @@ submodule rtbrick-interface {
                         }';
                     }
             }
+            must '(count(address/ipv4) = 0 and count(address/ipv6) = 0) or count(unnumbered/interface) = 0' {
+                error-message "Unnumbered ifl cannot be configured with an address";
+            } 
+
             uses subinterface-address-config;
             uses subinterface-neighbor-config;
             leaf admin-status
@@ -1203,7 +1262,7 @@ submodule rtbrick-interface {
                         }
                     }';
             }
-            must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
+            must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
                 error-message "Invalid parameters configured on logical interface";
             }
         }  // list subinterface
@@ -1433,9 +1492,6 @@ submodule rtbrick-interface {
                         "attribute" : "holddown"
                     }
                 }';
-                must 'not(contains(../name, "lag-"))' {
-                    error-message "Holddown cannot be configured for lag interface";
-                }
             }
             leaf holddown-down-delay {
                 type type-holddown-timer;
@@ -1447,9 +1503,6 @@ submodule rtbrick-interface {
                         "attribute" : "holddown_down"
                     }
                 }';
-                must 'not(contains(../name, "lag-"))' {
-                    error-message "Holddown cannot be configured for lag interface";
-                }
             }
             leaf holddown-up-delay {
                 type type-holddown-timer;
@@ -1461,9 +1514,6 @@ submodule rtbrick-interface {
                         "attribute" : "holddown_up"
                     }
                 }';
-                must 'not(contains(../name, "lag-"))' {
-                    error-message "Holddown cannot be configured for lag interface";
-                }
             }
             leaf traffic-sampling-profile {
                 type rtb-types:string64;

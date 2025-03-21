@@ -97,6 +97,14 @@ submodule rtbrick-qos {
                 value 21;
                 description "dhcp";
             }
+            enum "arp" {
+                value 23;
+                description "arp";
+            }
+            enum "nd" {
+                value 24;
+                description "nd";
+            }
         }
         description "protocol name type";
     }
@@ -527,10 +535,16 @@ submodule rtbrick-qos {
     }
 
     grouping qos-classifier-top {
+
         description
             "Top-level grouping for QoS classifier model";
         list classifier {
             key 'classifier-name';
+
+            must 'not((count(./match-type[match-type="ieee-802.1"]) > 0) and (count(./match-type[match-type="ieee-802.1-inner"]) > 0))' {
+                error-message "Match Type 'ieee-802.1' and 'ieee-802.1-inner' are not supported in a classifier";
+            }
+
             description
                 "Configure traffic classifier";
             reference
@@ -576,6 +590,10 @@ submodule rtbrick-qos {
                         enum "ieee-802.1" {
                             value 3;
                             description "ieee-802.1";
+                        }
+                        enum "ieee-802.1-inner" {
+                            value 4;
+                            description "ieee-802.1-inner";
                         }
                         enum "exp" {
                             value 5;

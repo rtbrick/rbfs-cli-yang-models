@@ -541,9 +541,9 @@ submodule rtbrick-ldp {
 
     grouping ldp-peer {
         description
-            "This grouping defines LDP peer related configuration";
-        container peer {
-            description "LDP peer related configuration";
+            "This grouping defines LDP session related configuration";
+        container session {
+            description "LDP session related configuration";
             list ipv4 {
                 key "address";
                 description "ipv4 address";
@@ -710,7 +710,7 @@ submodule rtbrick-ldp {
             }
             uses ldp-timer;
             uses ldp-loop-detection;
-            //uses ldp-targeted-neighbor;
+            uses ldp-targeted-neighbor;
             uses ldp-interface;
             uses igp-synchronization;
             uses source-address;

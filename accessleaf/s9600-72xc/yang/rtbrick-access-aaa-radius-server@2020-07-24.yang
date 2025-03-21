@@ -117,7 +117,7 @@ submodule rtbrick-access-aaa-radius-server {
                 type uint16 { 
                     range "1..65535";
                 }
-                description "Maximum RADIUS requests per second <1-65535>";
+                description "Maximum RADIUS requests per second";
                 reference
                 '{
                     "attribute-getter" : {
@@ -149,7 +149,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "RADIUS server authentication port <1-65535>";
+                    description "RADIUS server authentication port";
                     reference
                     '{
                         "attribute-getter" : {
@@ -161,7 +161,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint8 { 
                         range "1..255";
                     }
-                    description "Maximum retries for authentication requests <1-255>";
+                    description "Maximum retries for authentication requests";
                     reference
                     '{
                         "attribute-getter" : {
@@ -173,7 +173,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "Authentication request timeout in seconds <1-65535>";
+                    description "Authentication request timeout in seconds";
                     reference
                     '{
                         "attribute-getter" : {
@@ -185,7 +185,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "Maximum number of outstanding authentication requests <1-65535>";
+                    description "Maximum number of outstanding authentication requests";
                     reference
                     '{
                         "attribute-getter" : {
@@ -218,7 +218,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "RADIUS server accounting port <1-65535>";
+                    description "RADIUS server accounting port";
                     reference
                     '{
                         "attribute-getter" : {
@@ -230,7 +230,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint8 { 
                         range "1..255";
                     }
-                    description "Maximum retries for accounting request packets <1-255>";
+                    description "Maximum retries for accounting request packets";
                     reference
                     '{
                         "attribute-getter" : {
@@ -242,7 +242,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "Accounting request timeout in seconds <1-65535>";
+                    description "Accounting request timeout in seconds";
                     reference
                     '{
                         "attribute-getter" : {
@@ -254,7 +254,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "Maximum number of outstanding accounting requests <1-65535>";
+                    description "Maximum number of outstanding accounting requests";
                     reference
                     '{
                         "attribute-getter" : {
@@ -287,7 +287,7 @@ submodule rtbrick-access-aaa-radius-server {
                     type uint16 { 
                         range "1..65535";
                     }
-                    description "Local RADIUS CoA port <1-65535>";
+                    description "Local RADIUS CoA port";
                     reference
                     '{
                         "attribute-getter" : {

@@ -299,8 +299,10 @@ submodule rtbrick-access-aaa-radius-profile {
                     }';
                 }
                 leaf accounting-backup-max {
-                    type uint32;
-                    description "Max backup accounting hold time in seconds <1-4294967295>";
+                    type uint32 {
+                        range "1..4294967295";
+                    }
+                    description "Max backup accounting hold time in seconds";
                     reference
                     '{
                         "attribute-getter" : {

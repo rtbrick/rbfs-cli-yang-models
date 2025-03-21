@@ -746,6 +746,56 @@ submodule rtbrick-system {
                     }';
                 }
             }
+            container authentication{
+                presence "Not mandatory";
+                description "Authentication Configuration";
+                container ssh{
+                    presence "Not mandatory";
+                    description "Secure Shell Daemon";
+                    reference '{
+                            "table-getter": {
+                            "table-name" : "global.sshd.config",
+                            "type" : "sshd_config_table",
+                            "default-attribute" : [ { "configuration_name" : "rtbrick"}],
+                            "notification-type" : "table-change",                    
+                            "notification-interval": 500  
+                        }
+                    }';
+                    leaf password-authentication{
+                        type rtb-types:boolean-type;
+                        default "true";
+                        description "Enables or disables password-based authentication, set to 'false' to enforce key-based authentication for enhanced security.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "password_authentication"
+                            }
+                        }';
+                    }
+                    leaf client-alive-interval{
+                        type uint16;
+                        default 30;
+                        description "Sets the interval (in seconds) for sending keepalive messages to the client to prevent idle disconnections.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "client_alive_interval"
+                            }
+                        }';
+                    }
+                    leaf client-alive-count-max{
+                        type uint16;
+                        default 5;
+                        description "Defines the maximum number of unanswered keepalive messages before terminating the connection.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "client_alive_count_max"
+                            }
+                        }';
+                    }
+                }
+            }
 
             container host {
                 presence "Optional";

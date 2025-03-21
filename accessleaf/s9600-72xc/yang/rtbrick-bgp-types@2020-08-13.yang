@@ -4,7 +4,7 @@ module rtbrick-bgp-types {
     "urn:config:rtbrick:bgp:types";
     prefix rtb-bgp-types;
 
-    organization 
+    organization
         "RtBrick";
 
     contact
@@ -229,6 +229,10 @@ module rtbrick-bgp-types {
             enum ipoe {
                 value "17";
                 description "ipoe routes";
+            }
+            enum nat {
+                value "22";
+                description "nat routes";
             }
         }
         description "RIB source type";

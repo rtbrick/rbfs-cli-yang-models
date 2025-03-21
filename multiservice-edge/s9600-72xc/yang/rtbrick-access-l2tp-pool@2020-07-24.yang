@@ -123,7 +123,7 @@ submodule rtbrick-access-l2tp-pool {
                 type uint16 { 
                     range "0..65535";
                 }
-                description "Preference <0-65535>";
+                description "Preference";
                 reference
                 '{
                     "attribute-getter" : {
@@ -135,7 +135,7 @@ submodule rtbrick-access-l2tp-pool {
                 type uint16 { 
                     range "1..65535";
                 }
-                description "Session limit <1-65535>";
+                description "Session limit";
                 reference
                 '{
                     "attribute-getter" : {
