@@ -3082,7 +3082,6 @@ submodule rtbrick-qos {
 
                 leaf codepoint {
                     type uint8;
-                    mandatory true;
                     description
                         "Configure codepoint value";
                     reference
@@ -3091,6 +3090,86 @@ submodule rtbrick-qos {
                             "attribute" : "codepoint"
                         }
                     }';
+                }
+                list ifl {
+                    key "ifl";
+                    description
+                        "Configure ifl name";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.hostpath.outbound.interface.config",
+                            "type"    : "qos_global_hostpath_outbound_interface_config_table",
+                            "inherit-attribute" : ["protocol","remark_type"]
+                        }
+                    }';   
+                    leaf ifl {
+                        type rtb-types:logical-interface-type;
+                        description
+                            "Configure ifl name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ifl",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                                }
+                            }
+                        }';                        
+                    }   
+                    leaf codepoint {
+                        type uint8;
+                        mandatory true;
+                        description
+                            "Configure codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "codepoint"
+                            }
+                        }';
+                    }
+                }
+                list ifp {
+                    key "ifp";
+                    description
+                        "Configure ifp name";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.hostpath.outbound.interface.config",
+                            "type"    : "qos_global_hostpath_outbound_interface_config_table",
+                            "inherit-attribute" : ["protocol","remark_type"]
+                        }
+                    }';   
+                    leaf ifp {
+                        type rtb-types:interface-type;
+                        description
+                            "Configure ifp name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ifp",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                                }                            
+                            }
+                        }';                        
+                    }   
+                    leaf codepoint {
+                        type uint8;
+                        mandatory true;
+                        description
+                            "Configure codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "codepoint"
+                            }
+                        }';
+                    }       
                 }
             }
         }
