@@ -1,0 +1,295 @@
+submodule rtbrick-access-l2tp-profile {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+    description
+      "This sub-module contains yang structure for
+       access L2TPv2 profile.";
+    revision 2020-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    typedef selection-algorithm {
+        type enumeration {
+            enum BALANCED {
+                value "0";
+                description "BALANCED ";
+	        }
+            enum RANDOM {
+                value "1";
+                description "RANDOM ";
+	        }
+        }
+        description "L2TP tunnel selection algorithm";
+    }
+    typedef pon-access-line-version {
+        type enumeration {
+            enum DISABLED {
+                value "0";
+                description "Disabled ";
+	        }
+            enum DRAFT-LIHAWI-00 {
+                value "1";
+                description "draft-lihawi-ancp-protocol-access-extension-00 ";
+	        }
+            enum DRAFT-LIHAWI-04 {
+                value "2";
+                description "draft-lihawi-ancp-protocol-access-extension-04 ";
+	        }
+        }
+        description "PON Access Line Information Version";
+    }
+
+    grouping access-l2tp-profile {
+        description "Global access L2TPv2 profile configuration";
+        
+        list l2tp-profile {
+            key "profile-name";
+            description "Global L2TPv2 profile configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.access.l2tp.profile.config",
+                    "type"    : "l2tp_profile_config_table"
+                }
+            }';                                                      
+            leaf profile-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Name of the L2TP profile";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "name"
+                    }
+                }';
+            }
+            leaf receive-window {
+                type uint16 { 
+                    range "1..256";
+                }
+                description "L2TP tunnel receive window";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "receive_window"
+                    }
+                }';
+            }
+            leaf session-limit {
+                type uint16 { 
+                    range "1..65535";
+                }
+                description "L2TP tunnel session limit";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "session_limit"
+                    }
+                }';
+            } 
+            leaf retransmit-interval {
+                type uint32 { 
+                    range "1..30";
+                }
+                description "L2TP tunnel retransmission interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "retransmit_interval"
+                    }
+                }';
+            } 
+            leaf hello-interval {
+                type uint32 { 
+                    range "0..86400";
+                }
+                description "L2TP tunnel hello interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "hello_interval"
+                    }
+                }';
+            } 
+            leaf idle-timeout-interval {
+                type uint32 { 
+                    range "0..4294966";
+                }
+                description "L2TP tunnel idle timeout interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "idle_timeout_interval"
+                    }
+                }';
+            } 
+            leaf dead-timeout-interval {
+                type uint32 { 
+                    range "1..4294966";
+                }
+                description "L2TP tunnel dead timeout interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "dead_timeout_interval"
+                    }
+                }';
+            } 
+            leaf inactive-timeout-interval {
+                type uint32 { 
+                    range "1..4294966";
+                }
+                description "L2TP tunnel inactive timeout interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "inactive_timeout_interval"
+                    }
+                }';
+            } 
+            leaf request-timeout-interval {
+                type uint32 { 
+                    range "1..30";
+                }
+                description "L2TP session request timeout interval in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "request_timeout_interval"
+                    }
+                }';
+            } 
+            leaf request-retries {
+                type uint16 { 
+                    range "1..600";
+                }
+                description "L2TP session request retries";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "request_retry_count"
+                    }
+                }';
+            } 
+            leaf selection-algorithm {
+                type selection-algorithm;
+                description "L2TP tunnel selection algorithm";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "selection_algorithm"
+                    }
+                }';
+            } 
+            leaf hide-authentication {
+                type rtb-types:boolean-type;
+                description "Hide L2TP tunnel authentication";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "hide_authentication"
+                    }
+                }';
+            } 
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description "Instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "instance",
+                        "expansion-getter" : {
+                            "package":"subsMgmt",
+                            "method" :"access_instance_name_expander"
+                        }
+                    }
+                }';
+            } 
+            leaf pool-name {
+                type string {
+                    length "1..64";
+                }
+                description "L2TP tunnel pool name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "lns_pool_name"
+                    }
+                }';
+            } 
+            leaf client-name {
+                type string {
+                    length "1..64";
+                }
+                description "Default value for L2TP tunnel client name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "client_name"
+                    }
+                }';
+            } 
+            leaf client-ipv4 {
+                type inet:ipv4-address;
+                description "Default value for L2TP tunnel client IPv4 address";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "client_ipv4"
+                    }
+                }';
+            } 
+            leaf service-label {
+                type rtb-types:mpls-label;
+                description "MPLS service label";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "service_label"
+                    }
+                }';
+            } 
+            leaf connect-speed-update {
+                type rtb-types:boolean-type;
+                description "Enable L2TP Connect-Speed-Update-Notification (CSUN)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "connect_speed_update_enabled"
+                    }
+                }';
+            } 
+            leaf pon-access-line-version {
+                type pon-access-line-version;
+                description "PON Access Line Information Version";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "pon_access_line_version"
+                    }
+                }';
+            }
+        }
+    }
+}
