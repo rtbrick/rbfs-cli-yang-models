@@ -53,6 +53,20 @@ submodule rtbrick-time-series {
         description "Prometheus metric types";
     }
 
+    typedef label-type {
+        type enumeration {
+            enum static {
+                value "0";
+                description "Static";
+            }
+            enum dynamic {
+                value "1";
+                description "Dynamic";
+            }
+        }
+        description "Prometheus label types";
+    }
+
     typedef bds-metric-type {
         type enumeration {
             enum index-metric {
@@ -71,7 +85,7 @@ submodule rtbrick-time-series {
              pattern '.*:.*';
              length "1..128";
         }
-        description "A BDS keyvalue string";
+        description "A BDS key-value string";
     }
 
     typedef prometheus-label-key {
@@ -94,14 +108,13 @@ submodule rtbrick-time-series {
         type enumeration {
             enum false {
                 value "0";
-                description "Dont return negate";
+                description "Don't return negate";
             }
             enum true {
                 value "1";
                 description "Return negate";
             }
         }
-        default false;
     }
 
     /* Time series hierarchy */
@@ -112,12 +125,12 @@ submodule rtbrick-time-series {
             "table-getter": {
                 "table-name": "global.time-series.config",
                 "type"   : "time_series_global_config_table",
-                "default-attribute" : [ {"configuration_name" : "rtbrick" } ]
+                "default-attribute" : [ {"configuration_name" : "rtbrick" }, {"time-series-history-enable" : "disable"} ]
             }
         }';
         leaf history-status {
             type rtb-types:enable-disable-type;
-            description "TSDB history status";
+            description "TSDB query history status";
             reference
             '{
                 "attribute-getter" : {
@@ -228,7 +241,10 @@ submodule rtbrick-time-series {
                 }';
             }
 
-            list filter{
+            list filter {
+                must '../bds-type !="index-metric"' {
+                    error-message "Invalid config: filter is not valid for index metric";
+                }
                 key "match-attribute-name";
                 description "Metric filter configuration";
                 reference
@@ -236,7 +252,8 @@ submodule rtbrick-time-series {
                     "table-getter": {
                         "table-name": "global.time-series.filter.metric.config",
                         "type" :  "time_series_filter_metric_config_table",
-                        "inherit-attribute": [ "metric-name" ]
+                        "inherit-attribute": [ "metric-name" ],
+                        "default-attribute": [{"match-negate" : "false"}]
                     }
                 }';
 
@@ -258,7 +275,7 @@ submodule rtbrick-time-series {
                         length "1..128";
                     }
                     mandatory true;
-                    description "Matching attribute value for this filter";
+                    description "Matching attribute value for this filter (regex pattern should be as per POSIX standard)";
                     reference
                         '{
                             "attribute-getter" : {
@@ -291,7 +308,7 @@ submodule rtbrick-time-series {
 
             list attribute {
                 key "attribute-name";
-                description "Metric filter configuration";
+                description "Metric attribute configuration";
                 reference
                     '{
                         "table-getter": {
@@ -330,6 +347,9 @@ submodule rtbrick-time-series {
                         type prometheus-label-key;
                         mandatory true;
                         description "Key for the label";
+                        must '. != "element_name" and . != "pod_name" and . != "bd_name"'{
+                            error-message "User configured label key shouldn't be same as default label key";
+                        }
                         reference
                         '{
                             "attribute-getter" : {
@@ -351,9 +371,7 @@ submodule rtbrick-time-series {
                         }';
                     }
                     leaf label-type {
-                        type string {
-                            length "1..128";
-                        }
+                        type label-type;
                         mandatory true;
                         description "Label type can be dynamic/static";
                         reference
@@ -374,7 +392,9 @@ submodule rtbrick-time-series {
             '{
                 "table-getter": {
                     "table-name": "global.time-series.alert.config",
-                    "type"   : "time_series_alert_config_table"
+                    "type"   : "time_series_alert_config_table",
+                    "notification-type" : "table-change",
+                    "notification-interval": 500
                 }
             }';
             leaf name {

@@ -467,6 +467,7 @@ submodule rtbrick-policy {
                 type string {
                     length "1..64";
                 }
+                ordered-by user;
                 description "Value which is used for performing the operation on the mentioned attribute-type";
                 reference
                 '{

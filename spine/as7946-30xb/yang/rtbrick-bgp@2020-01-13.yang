@@ -54,7 +54,9 @@ submodule rtbrick-bgp {
             type string {
                 length "1..64";
             }
-            max-elements 10;
+            must "count(../policy) <= 10"{
+                error-message "Maximum of 10 polices are supported in a policy chain";
+            }
             ordered-by user;
             description "Chain of policies";
             reference
@@ -185,7 +187,7 @@ submodule rtbrick-bgp {
     grouping bgp-redistribute {
         description "Redistribution related configuration";
         list redistribute {
-            when '../afi != "l2vpn"';
+            when '../afi != "l2vpn" and ../safi != "vpn-unicast" and ../safi != "vpn-multicast"';
             key "source";
             description "Redistribution related configuration";
             reference 
@@ -550,7 +552,7 @@ grouping bgp-export-label-block {
             leaf allow-missing-export-policy {
                 when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
-                description "Enable or disable advertisment when export policy is not configured";
+                description "Enable or disable advertisement when export policy is not configured";
                 reference
                 '{
                     "attribute-getter" : {
@@ -590,7 +592,7 @@ grouping bgp-export-label-block {
                 }';
             }
             list interface {
-                when '../afi = "l2vpn"';
+                when '../afi = "l2vpn" and ../safi != "vpls" and ../safi != "evpn"';
                 key "name";
                 unique "local-service-id";
                 unique "remote-service-id";
@@ -721,7 +723,7 @@ grouping bgp-export-label-block {
                 leaf label-base {
                     mandatory true;
                     when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
-                    description "srgb base";
+                    description "SRGB base";
                     type uint32 {
                         range "200001..300000";
                     }
@@ -1027,7 +1029,9 @@ grouping bgp-export-label-block {
             }';
             leaf-list import {
                 type rtb-types:policy-name-type;
-                max-elements 10;
+                must "count(../import) <= 10"{
+                    error-message "Maximum of 10 polices are supported in a policy chain";
+                }
                 ordered-by user;
                 description "Import policy name (max 64 characters)";
                 reference
@@ -1039,7 +1043,9 @@ grouping bgp-export-label-block {
             }
             leaf-list export {
                 type rtb-types:policy-name-type;
-                max-elements 10;
+                must "count(../export) <= 10"{
+                    error-message "Maximum of 10 polices are supported in a policy chain";
+                }
                 ordered-by user;
                 description "Export policy name (max 64 characters)";
                 reference

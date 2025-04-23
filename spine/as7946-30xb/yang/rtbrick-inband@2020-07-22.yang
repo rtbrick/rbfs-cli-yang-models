@@ -27,6 +27,7 @@ submodule rtbrick-inband {
     grouping inband-top {
         description "Configuring top level inband";
         container inband-management {
+	        presence inband-management;
         description "Configuring inband management";
             list instance {
                 must 'count(../instance) = 1' {
@@ -110,7 +111,7 @@ submodule rtbrick-inband {
                 }
                 leaf tacacs {
                     type rtb-types:boolean-type;
-                    description "Configure tacacs service";
+                    description "Configure TACACS service";
                     reference
                     '{
                         "attribute-getter" : {

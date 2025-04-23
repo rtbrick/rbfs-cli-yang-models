@@ -55,6 +55,7 @@ submodule rtbrick-statistics {
         description
             "Top-level statistics configuration";
         container statistics {
+	        presence statistics;
             description
                 "container for statistics configure";
             list type {

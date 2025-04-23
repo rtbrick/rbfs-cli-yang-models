@@ -12,7 +12,7 @@ module rtbrick-types {
                  Navaneeth Y V (navaneethyv@rtbrick.com)";
     description
       "This is the type file containing the common types across rtbrick.
-      Shall be included in other yangs and used in appropriate places";
+      Shall be included in other yang files and used in appropriate places";
 
     revision 2020-05-22 {
         description
@@ -93,11 +93,11 @@ module rtbrick-types {
         type enumeration {
             enum ACCESSLEAF {
                 value "0";
-                description "accessleaf";
+                description "access-leaf";
             }
             enum BORDERLEAF {
                 value "1";
-                description "borderleaf";
+                description "border-leaf";
 
             }
             enum SPINE {

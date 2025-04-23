@@ -4,7 +4,7 @@ module rtbrick-bgp-types {
     "urn:config:rtbrick:bgp:types";
     prefix rtb-bgp-types;
 
-    organization 
+    organization
         "RtBrick";
 
     contact
@@ -108,7 +108,7 @@ module rtbrick-bgp-types {
         type enumeration {
             enum labeled-unicast {
                 value "0";
-                description "Labled unicast";
+                description "Labeled unicast";
             }
             enum unicast {
                 value "1";
@@ -186,7 +186,7 @@ module rtbrick-bgp-types {
             }
             enum both {
                 value "3";
-                description "Send and receive additonal paths";
+                description "Send and receive additional paths";
             }
         }
         description "BGP Add-Path options";
@@ -229,6 +229,10 @@ module rtbrick-bgp-types {
             enum ipoe {
                 value "17";
                 description "ipoe routes";
+            }
+            enum nat {
+                value "22";
+                description "nat routes";
             }
         }
         description "RIB source type";

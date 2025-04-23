@@ -19,6 +19,7 @@ submodule rtbrick-neighbor {
     grouping neighbor-top {
 
         container neighbor {
+	        presence neighbor;
             description "Neighbor global configuration";
             reference
             '{

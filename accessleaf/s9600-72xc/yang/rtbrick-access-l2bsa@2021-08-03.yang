@@ -75,7 +75,7 @@ submodule rtbrick-access-l2bsa {
                         type uint16 { 
                             range "1..4094";
                         }
-                        description "Inner VLAN min <1-4094>";
+                        description "Inner VLAN min";
                         reference
                         '{
                             "attribute-getter" : {
@@ -87,7 +87,7 @@ submodule rtbrick-access-l2bsa {
                         type uint16 { 
                             range "1..4094";
                         }
-                        description "Inner VLAN max <1-4094>";
+                        description "Inner VLAN max";
                         reference
                         '{
                             "attribute-getter" : {

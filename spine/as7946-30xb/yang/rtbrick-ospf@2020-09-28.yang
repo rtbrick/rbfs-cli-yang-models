@@ -879,7 +879,9 @@ submodule rtbrick-ospf {
             type string {
                 length "1..64";
             }
-            max-elements 10;
+            must "count(../policy) <= 10"{
+                error-message "Maximum of 10 polices are supported in a policy chain";
+            }
             ordered-by user;
             description "Policy map name";
             reference
@@ -1201,7 +1203,7 @@ submodule rtbrick-ospf {
                     range "1..255";
                 }
                 description
-                    "Maximum ECMP paths to be calulcated value, default: 16";
+                    "Maximum ECMP paths to be calculated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1282,7 +1284,7 @@ submodule rtbrick-ospf {
                     range "1..255";
                 }
                 description
-                    "Maximum ECMP paths to be calulcated value, default: 16";
+                    "Maximum ECMP paths to be calculated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {

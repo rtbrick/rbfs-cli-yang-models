@@ -63,7 +63,9 @@ submodule rtbrick-network-instance {
             }';
             leaf-list import {
                 type types:policy-name-type;
-                max-elements 10;
+                must "count(../import) <= 10"{
+                    error-message "Maximum of 10 polices are supported in a policy chain";
+                }
                 ordered-by user;
                 description "Import policy name (max 64 characters)";
                 reference
@@ -75,7 +77,9 @@ submodule rtbrick-network-instance {
             }
             leaf-list export {
                 type types:policy-name-type;
-                max-elements 10;
+                must "count(../export) <= 10"{
+                    error-message "Maximum of 10 polices are supported in a policy chain";
+                }
                 ordered-by user;
                 description "Export policy name (max 64 characters)";
                 reference

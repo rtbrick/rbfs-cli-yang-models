@@ -97,6 +97,14 @@ submodule rtbrick-qos {
                 value 21;
                 description "dhcp";
             }
+            enum "arp" {
+                value 23;
+                description "arp";
+            }
+            enum "nd" {
+                value 24;
+                description "nd";
+            }
         }
         description "protocol name type";
     }
@@ -140,7 +148,7 @@ submodule rtbrick-qos {
                 description "disable";
             }
         }
-        description "qos priority propogation data type";
+        description "qos priority propagation data type";
     }
 
     typedef type-qos-queue-group-profile {
@@ -459,7 +467,7 @@ submodule rtbrick-qos {
         list protocol {
             key 'protocol';
             description
-                "Configure controle plane security protocol";
+                "Configure control plane security protocol";
             reference
             '{
                 "table-getter": {
@@ -527,10 +535,16 @@ submodule rtbrick-qos {
     }
 
     grouping qos-classifier-top {
+
         description
             "Top-level grouping for QoS classifier model";
         list classifier {
             key 'classifier-name';
+
+            must 'not((count(./match-type[match-type="ieee-802.1"]) > 0) and (count(./match-type[match-type="ieee-802.1-inner"]) > 0))' {
+                error-message "Match Type 'ieee-802.1' and 'ieee-802.1-inner' are not supported in a classifier";
+            }
+
             description
                 "Configure traffic classifier";
             reference
@@ -576,6 +590,10 @@ submodule rtbrick-qos {
                         enum "ieee-802.1" {
                             value 3;
                             description "ieee-802.1";
+                        }
+                        enum "ieee-802.1-inner" {
+                            value 4;
+                            description "ieee-802.1-inner";
                         }
                         enum "exp" {
                             value 5;
@@ -673,6 +691,7 @@ submodule rtbrick-qos {
                 }';
             }
             container egress-header-compensation {
+	            presence egress-header-compensation;
                 description
                     "Configure Interface Egress Header Compensation parameters";
                 reference
@@ -709,6 +728,7 @@ submodule rtbrick-qos {
                 }
             }
             container ingress-header-compensation {
+	            presence ingress-header-compensation;
                 description
                     "Configure Interface Ingress Header Compensation parameters";
                 reference
@@ -1218,6 +1238,7 @@ submodule rtbrick-qos {
         description
             "Top-level grouping for QoS Global";
         container global {
+	        presence global;
             description
                 "Configure Global Qos";
             reference
@@ -1372,6 +1393,7 @@ submodule rtbrick-qos {
                 }';
             }
             container wred {
+	            presence wred;
                 description
                     "Configure Weighted Random Early Detection parameters";
                 reference
@@ -1419,6 +1441,7 @@ submodule rtbrick-qos {
                 }
             }
             container header-compensation {
+	            presence header-compensation;
                 description
                     "Configure Header Compensation parameters";
                 reference
@@ -1689,6 +1712,7 @@ submodule rtbrick-qos {
                 }';
             }
             container level1-rates {
+	            presence level1-rates;
                 description
                     "Configure level1 rates";
                 reference
@@ -1779,6 +1803,7 @@ submodule rtbrick-qos {
                 }
             }
             container level2-rates {
+	            presence level2-rates;
                 description
                     "Configure level2 rates";
                 reference
@@ -1872,6 +1897,7 @@ submodule rtbrick-qos {
                 }
             }
             container level3-rates {
+	            presence level3-rates;
                 description
                     "Configure level3 rates";
                 reference
@@ -1965,6 +1991,7 @@ submodule rtbrick-qos {
                 }
             }
             container level4-rates {
+	            presence level4-rates;
                 description
                     "Configure level3 rates";
                 reference
@@ -2366,6 +2393,7 @@ submodule rtbrick-qos {
         description
             "Top-level grouping for host path qos";
         container ingress-qos {
+	        presence ingress-qos;
             description
                 "Configure host path quality of service";
             reference
@@ -2398,6 +2426,7 @@ submodule rtbrick-qos {
         description
             "Top-level grouping for control plane security";
         container control-plane-security {
+	        presence control-plane-security;
             description
                 "Configure control plane security";
             reference
@@ -2508,6 +2537,7 @@ submodule rtbrick-qos {
         description
             "Configuring acl l3v4 match parameters";
         container match {
+	        presence match;
             description
                 "Configuration parameters relating acl l3v4 match";
             reference
@@ -2557,7 +2587,7 @@ submodule rtbrick-qos {
                     range "0 .. 63";
                 }
                 description
-                    "Configure ipv4 dscp value";
+                    "Configure ipv4 DSCP value";
                 reference
                 '{
                     "attribute-getter" : {
@@ -2653,6 +2683,7 @@ submodule rtbrick-qos {
         description
             "Configuring acl l3v6 match parameters";
         container match {
+	        presence match;
             description
                 "Configuration parameters relating acl l3v6 match";
             reference
@@ -2782,12 +2813,15 @@ submodule rtbrick-qos {
         description
             "Top-level grouping for multifield classifier";
         container multifield-classifier {
+	        presence multifield-classifier;
             description
                 "Configure multifield-classifier";
             container acl {
+	            presence acl;
                 description
                     "container for list of acl config";
                 container l3v4 {
+	                presence l3v4;
                     description
                         "container for l3v4 acl config";
                     list rule {
@@ -2839,6 +2873,7 @@ submodule rtbrick-qos {
                             }
                             uses qos-match-l3v4;
                             container action {
+	                            presence action;
                                 description
                                     "Configure acl action parameters";
                                 reference
@@ -2891,6 +2926,7 @@ submodule rtbrick-qos {
                     }
                 } // container l3v4
                 container l3v6 {
+	                presence l3v6;
                     description
                         "container for l3v6 acl config";
                     list rule {
@@ -2943,6 +2979,7 @@ submodule rtbrick-qos {
                             }
                             uses qos-match-l3v6;
                             container action {
+	                            presence action;
                                 description
                                     "Configure acl action parameters";
                                 reference
@@ -3002,13 +3039,14 @@ submodule rtbrick-qos {
         description
         "Top-level grouping for control plane QoS outbound marking configuration";
         container outbound-marking {
+	        presence outbound-marking;
             description
                 "Configure control plane QoS outbound marking";
 
                 list protocol {
                 key "protocol remark-type";
                 description
-                    "Configure controle plane QoS outbound marking protocol";
+                    "Configure control plane QoS outbound marking protocol";
                 reference
                 '{
                     "table-getter": {
@@ -3044,7 +3082,6 @@ submodule rtbrick-qos {
 
                 leaf codepoint {
                     type uint8;
-                    mandatory true;
                     description
                         "Configure codepoint value";
                     reference
@@ -3054,6 +3091,86 @@ submodule rtbrick-qos {
                         }
                     }';
                 }
+                list ifl {
+                    key "ifl";
+                    description
+                        "Configure ifl name";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.hostpath.outbound.interface.config",
+                            "type"    : "qos_global_hostpath_outbound_interface_config_table",
+                            "inherit-attribute" : ["protocol","remark_type"]
+                        }
+                    }';   
+                    leaf ifl {
+                        type rtb-types:logical-interface-type;
+                        description
+                            "Configure ifl name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ifl",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                                }
+                            }
+                        }';                        
+                    }   
+                    leaf codepoint {
+                        type uint8;
+                        mandatory true;
+                        description
+                            "Configure codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "codepoint"
+                            }
+                        }';
+                    }
+                }
+                list ifp {
+                    key "ifp";
+                    description
+                        "Configure ifp name";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.qos.hostpath.outbound.interface.config",
+                            "type"    : "qos_global_hostpath_outbound_interface_config_table",
+                            "inherit-attribute" : ["protocol","remark_type"]
+                        }
+                    }';   
+                    leaf ifp {
+                        type rtb-types:interface-type;
+                        description
+                            "Configure ifp name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ifp",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
+                                }                            
+                            }
+                        }';                        
+                    }   
+                    leaf codepoint {
+                        type uint8;
+                        mandatory true;
+                        description
+                            "Configure codepoint value";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "codepoint"
+                            }
+                        }';
+                    }       
+                }
             }
         }
     }
@@ -3062,6 +3179,7 @@ submodule rtbrick-qos {
         description
         "Top-level grouping for control plane QoS configuration";
         container control-plane-qos {
+	        presence control-plane-qos;
             description
                 "Configure control plane QoS";
             uses qos-outbound-marking-top;
@@ -3073,6 +3191,7 @@ submodule rtbrick-qos {
         description
             "Top-level grouping for QoS model";
         container class-of-service {
+	        presence class-of-service;
             description
                 "Top-level container for QoS data";
             uses qos-classifier-top;

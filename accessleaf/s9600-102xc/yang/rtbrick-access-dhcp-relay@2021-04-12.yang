@@ -99,6 +99,18 @@ submodule rtbrick-access-dhcp-relay {
                     }
                 }';
             }
+            leaf dhcp-min-elapsed-time {
+                type uint16 { 
+                    range "1..600";
+                }
+                description "DHCP minimum elapsed time in seconds";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "dhcp_min_elapsed_sec"
+                    }
+                }';
+            }
         }   
     }
 }

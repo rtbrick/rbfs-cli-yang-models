@@ -163,11 +163,11 @@
         type enumeration {
             enum labeled-unicast {
                 value "0";
-                description "Labled unicast";
+                description "Labeled unicast";
             }
             enum multicast {
                 value "1";
-                description "Labled multicast";
+                description "Labeled multicast";
             }
             enum unicast {
                 value "2";

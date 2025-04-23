@@ -87,7 +87,9 @@ submodule rtbrick-isis {
             type string {
                 length "1..64";
             }
-            max-elements 10;
+            must "count(../policy) <= 10"{
+                error-message "Maximum of 10 polices are supported in a policy chain";
+            }
             ordered-by user;
             description "Policy map name";
             reference

@@ -77,7 +77,7 @@ submodule rtbrick-snmp {
             }
             enum AuthNoPriv {
                 value "1";
-                description "User authentication, no privacy, i.e. data is transmitted in plaintexit";
+                description "User authentication, no privacy, i.e. data is transmitted in plain text";
             }
             enum NoAuthNoPriv {
                 value "2";
@@ -192,6 +192,30 @@ submodule rtbrick-snmp {
                     }
                 }';
             }
+            leaf location {
+                description "The physical location of this node";
+                type string {
+                     length "1..512";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "location"
+                    }
+                }';
+            }
+            leaf contact {
+                description "The contact person for this node, together with information how to contact this person";
+                type string {
+                     length "1..512";
+                }
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "contact"
+                    }
+                }';
+            }
             list view {
                 description "SNMP View";
                 key "name";
@@ -204,7 +228,7 @@ submodule rtbrick-snmp {
                     }
                 }';
                 leaf name {
-                    description "Mark the instace to be management instance";
+                    description "Mark the instance to be management instance";
                     type rtb-types:string128;
                     reference
                     '{
@@ -216,7 +240,7 @@ submodule rtbrick-snmp {
                 leaf-list instance {
                     description "List of instances that are part of the return value";
                     must '(not(../../../../../inband-management/instance/name) and ../../../../name = "default") or (../../../../name = /config:inband-management/instance/name)' {
-                        error-message "Instance list only make sense for inbanad instance or default instance only if inband is not configured";
+                        error-message "Instance list only make sense for inband instance or default instance only if inband is not configured";
                     }
                     type rtb-types:string64;
                     /*type leafref {
@@ -323,7 +347,7 @@ submodule rtbrick-snmp {
                 leaf password-plain-text {
                     description "SNMP user password in plain text";
                     must '../security-level = "AuthPriv" or ../security-level = "AuthNoPriv"' {
-                        error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
                     }
                     type string {
                         length "1..64";
@@ -340,7 +364,7 @@ submodule rtbrick-snmp {
                 leaf password-encrypted-text {
                     description "SNMP user password in encrypted text";
                     must '../security-level = "AuthPriv" or ../security-level = "AuthNoPriv"' {
-                        error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
                     }
                     type rtb-types:secret-string-type;
                     reference
@@ -353,7 +377,7 @@ submodule rtbrick-snmp {
                 leaf privacy-password-plain-text {
                     description "SNMP privacy password in plain text";
                     must '../security-level = "AuthPriv"' {
-                        error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
                     }
                     type string {
                         length "1..64";
@@ -370,7 +394,7 @@ submodule rtbrick-snmp {
                 leaf privacy-password-encrypted-text {
                     description "SNMP privacy password in encrypted text";
                     must '../security-level = "AuthPriv"' {
-                        error-message "Password should be configured only if security-leve is either AuthPriv or AuthNoPriv ";
+                        error-message "Password should be configured only if security-level is either AuthPriv or AuthNoPriv ";
                     }
                     type rtb-types:secret-string-type;
                     reference

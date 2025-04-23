@@ -5,6 +5,10 @@ submodule rtbrick-fragmentation {
         prefix config;
     }
 
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
     import clixon-autocli{
         prefix autocli;
     }
@@ -94,7 +98,7 @@ submodule rtbrick-fragmentation {
                 }
                 leaf reinjection {
                     type enable-disable;
-                    autocli:hide;   
+                    autocli:hide;
                     description
                         "Reinjection of fragmented packets";
                     reference
@@ -106,6 +110,22 @@ submodule rtbrick-fragmentation {
                 }
                 must "not(reinjection = 'enable') or state = 'cpu'" {
                     error-message "Reinjection can be enabled only if state is cpu";
+                }
+
+                leaf policer {
+                    type rtb-types:string64;
+                    description
+                        "Configure policer for fragmentation";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "policer_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" :"qos_policer_name_expander_mtu"
+                            }
+                        }
+                    }';
                 }
             }
         }

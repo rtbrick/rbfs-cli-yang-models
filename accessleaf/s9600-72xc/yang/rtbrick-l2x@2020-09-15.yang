@@ -12,7 +12,9 @@ submodule rtbrick-l2x {
     import rtbrick-types {
        prefix types;
     }
-
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
     organization
       "Rtbrick";
     contact
@@ -143,11 +145,11 @@ submodule rtbrick-l2x {
         type enumeration {
             enum labeled-unicast {
                 value "0";
-                description "Labled unicast";
+                description "Labeled unicast";
             }
             enum multicast {
                 value "1";
-                description "Labled multicast";
+                description "Labeled multicast";
             }
             enum unicast {
                 value "2";
@@ -175,9 +177,7 @@ submodule rtbrick-l2x {
         }
 
         leaf incoming-interface {
-            type string {
-                length "1..64";
-            }
+            type rtb-types:interface-type;
             description
                 "Incoming physical interface name";
             reference
@@ -295,9 +295,7 @@ submodule rtbrick-l2x {
         }
 
         leaf outgoing-interface {
-            type string {
-                length "1..64";
-            }
+            type rtb-types:interface-type;
             description
                 "Outgoing physical interface name";
             reference
@@ -376,7 +374,7 @@ submodule rtbrick-l2x {
         leaf match-tp-id {
             type types:vlan-encapsulation-type;
             description
-                "Match this tpid at the ingress";
+                "Match this TPID at the ingress";
             reference
             '{
                 "attribute-getter" : {
@@ -433,6 +431,7 @@ submodule rtbrick-l2x {
             description
                 "Configuration data for l2x configuration table";
         container l2x {
+	        presence l2x;
               description
                     "Configuration data for l2x configuration table";
 

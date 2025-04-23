@@ -68,11 +68,11 @@ submodule rtbrick-static {
         type enumeration {
             enum labeled-unicast {
                 value "0";
-                description "Labled unicast";
+                description "Labeled unicast";
             }
             enum multicast {
                 value "1";
-                description "Labled multicast";
+                description "Labeled multicast";
             }
             enum unicast {
                 value "2";
@@ -421,10 +421,12 @@ submodule rtbrick-static {
         description
             "This grouping define top-level static route model data";
         container static {
+	        presence static;
             description
                 "Configuration data for static route configuration table";
 
             container route {
+	            presence route;
                 description
                     "Configuration data for static route configuration table";
 

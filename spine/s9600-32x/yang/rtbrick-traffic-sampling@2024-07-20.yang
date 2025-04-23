@@ -68,6 +68,7 @@ submodule rtbrick-traffic-sampling {
     description
       "Top-level grouping containing a list of traffic sampling config.";
     container traffic-sampling {
+	    presence traffic-sampling;
       description
         "container for traffic-sampling";
       list collector {
@@ -85,8 +86,8 @@ submodule rtbrick-traffic-sampling {
         leaf collector-id {
           description
             "Collector identifier";
-          type uint8 {
-            range "1 .. 200";
+          type int8 {
+            range "1 .. 4";
           }
           reference
             '{
@@ -122,6 +123,7 @@ submodule rtbrick-traffic-sampling {
              }';
         }
         container address {
+	        presence address;
           description
             "Collector address";
           reference
@@ -149,7 +151,7 @@ submodule rtbrick-traffic-sampling {
         leaf sampling-rate {
           description
             "Sampling rate(1/sampling-rate)";
-          type uint32 {
+          type int32 {
             range "100..50000";
           }
           reference
@@ -174,7 +176,9 @@ submodule rtbrick-traffic-sampling {
         leaf destination-udp-port {
           description
             "UDP port for the collector destination";
-          type uint16;
+          type int32 {
+            range "1 .. 65535";
+          }
           reference
             '{
                  "attribute-getter" : {
@@ -222,7 +226,7 @@ submodule rtbrick-traffic-sampling {
         leaf collector {
           description
             "collector id used by the profile";
-          type uint8 {
+          type int8 {
             range "1 .. 4";
           }
           reference

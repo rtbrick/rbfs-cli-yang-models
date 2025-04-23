@@ -278,7 +278,7 @@ submodule rtbrick-system {
                     }';
                 }
                 must '(not(./maxpoll) and not(./minpoll)) or (./minpoll and ./maxpoll)'{
-                    error-message "Minpoll and maxpoll has to be alays configured together";
+                    error-message "Minpoll and maxpoll has to be always configured together";
                 }
             }
         }
@@ -376,7 +376,7 @@ submodule rtbrick-system {
             }
             leaf password-hashed-text {
                 type rtb-types:secret-string-type;
-                description "Local user hashed passowrd";
+                description "Local user hashed password";
                 reference
                 '{
                     "attribute-getter" : {
@@ -490,7 +490,7 @@ submodule rtbrick-system {
             description "Authorization configuration";
             list tacacs {
                 key "ipv4-address type";
-                description "Tacacs server configuration";
+                description "TACACS server configuration";
                 reference
                 '{
                     "table-getter": {
@@ -501,7 +501,7 @@ submodule rtbrick-system {
                 }';
                 leaf ipv4-address {
                     type inet:ipv4-address;
-                    description "IPv4 address of the tacacs server";
+                    description "IPv4 address of the TACACS server";
                     reference
                     '{
                         "attribute-getter" : {
@@ -537,7 +537,7 @@ submodule rtbrick-system {
                 leaf secret-encrypted-text {
                     type rtb-types:secret-string-type;
                     mandatory true;
-                    description "Secret password in encrypted text for the tacacs server";
+                    description "Secret password in encrypted text for the TACACS server";
                     reference
                     '{
                         "attribute-getter" : {
@@ -547,7 +547,7 @@ submodule rtbrick-system {
                 }
                 leaf port {
                     type inet:port-number;
-                    description "Port number of the tacacs server";
+                    description "Port number of the TACACS server";
                     reference
                     '{
                         "attribute-getter" : {
@@ -744,6 +744,56 @@ submodule rtbrick-system {
                             "attribute" : "license_string"
                         }
                     }';
+                }
+            }
+            container authentication{
+                presence "Not mandatory";
+                description "Authentication Configuration";
+                container ssh{
+                    presence "Not mandatory";
+                    description "Secure Shell Daemon";
+                    reference '{
+                            "table-getter": {
+                            "table-name" : "global.sshd.config",
+                            "type" : "sshd_config_table",
+                            "default-attribute" : [ { "configuration_name" : "rtbrick"}],
+                            "notification-type" : "table-change",                    
+                            "notification-interval": 500  
+                        }
+                    }';
+                    leaf password-authentication{
+                        type rtb-types:boolean-type;
+                        default "true";
+                        description "Enables or disables password-based authentication, set to 'false' to enforce key-based authentication for enhanced security.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "password_authentication"
+                            }
+                        }';
+                    }
+                    leaf client-alive-interval{
+                        type uint16;
+                        default 30;
+                        description "Sets the interval (in seconds) for sending keepalive messages to the client to prevent idle disconnections.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "client_alive_interval"
+                            }
+                        }';
+                    }
+                    leaf client-alive-count-max{
+                        type uint16;
+                        default 5;
+                        description "Defines the maximum number of unanswered keepalive messages before terminating the connection.";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "client_alive_count_max"
+                            }
+                        }';
+                    }
                 }
             }
 
@@ -1103,7 +1153,7 @@ submodule rtbrick-system {
                     }';
                     leaf-list ignore-ip {
                         type inet:ip-address-and-prefix;
-                        description "List of IPs to be whitelistes by fail2ban";
+                        description "List of IPs to be whitelisted by fail2ban";
                         reference
                         '{
                             "attribute-getter" : {

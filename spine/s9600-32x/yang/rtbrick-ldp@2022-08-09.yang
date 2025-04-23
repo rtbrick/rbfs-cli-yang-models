@@ -88,7 +88,9 @@ submodule rtbrick-ldp {
     grouping ldp-policy {
         description "Policy map name";
         leaf-list policy {
-            max-elements 10;
+            must "count(../policy) <= 10"{
+                error-message "Maximum of 10 polices are supported in a policy chain";
+            }
             ordered-by user;
             type string {
                 length "1..64";
@@ -146,7 +148,7 @@ submodule rtbrick-ldp {
 
     grouping ldp-redistribution {
         description
-            "This grouping defines LDP redistribution releated configurations";
+            "This grouping defines LDP redistribution related configurations";
         list redistribute {
             key "source";
             description "Redistribution configuration";
@@ -539,9 +541,9 @@ submodule rtbrick-ldp {
 
     grouping ldp-peer {
         description
-            "This grouping defines LDP peer related configuration";
-        container peer {
-            description "LDP peer related configuration";
+            "This grouping defines LDP session related configuration";
+        container session {
+            description "LDP session related configuration";
             list ipv4 {
                 key "address";
                 description "ipv4 address";
@@ -708,7 +710,7 @@ submodule rtbrick-ldp {
             }
             uses ldp-timer;
             uses ldp-loop-detection;
-            //uses ldp-targeted-neighbor;
+            uses ldp-targeted-neighbor;
             uses ldp-interface;
             uses igp-synchronization;
             uses source-address;
