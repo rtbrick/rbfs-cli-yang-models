@@ -143,6 +143,18 @@ submodule rtbrick-policy {
                 value "12";
                 description "Or longer type match";
             }
+            enum neighbor {
+                value "13";
+                description "Neighbor AS in BGP AS-path";
+            }
+            enum transit {
+                value "14";
+                description "Transit AS in BGP AS-path";
+            }
+            enum origin {
+                value "15";
+                description "Origin AS in BGP AS-path";
+            }
         }
         description "Match type enum";
     }
@@ -231,6 +243,10 @@ submodule rtbrick-policy {
                 value "1";
                 description "Value entered is a list name";
             }
+            enum length {
+                value "2";
+                description "Value entered is length of array";
+            }
         }
         description "Match condition enum";
     }
@@ -269,6 +285,21 @@ submodule rtbrick-policy {
                 '{
                     "attribute-getter" : {
                         "attribute" : "value"
+                    }
+                }';
+            }
+            leaf value2 {
+                type string {
+                    length "1..64";
+                }
+                must "../../sub-type = 'range'"{
+                    error-message "value2 is supported for sub-type range only";
+                }
+                description "Attribute value2";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "value2"
                     }
                 }';
             }
@@ -317,7 +348,32 @@ submodule rtbrick-policy {
                     }
                 }';
             }
+            leaf sub-type {
+                type enumeration {
+                    enum range {
+                        value "1";
+                        description "Configure range of elements";
+                    }
+                }
+                must "../type = 'as-path'"{
+                    error-message "sub-type range is supported with type as-path only";
+                }
+                description "Sub-type of list";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "sub_type"
+                    }
+                }';
+            }
             uses policy-list-ordinal;
+            must "not(sub-type = 'range') or (count(ordinal[value2]) = count(ordinal))" {
+                error-message "When subtype is range, value2 must be configured for all entries.";
+            }
+            must "(not(type = 'ipv4-prefix' or type = 'ipv6-prefix') and (count(ordinal[value]) <= 16000)) or
+                  (type = 'ipv4-prefix' or type = 'ipv6-prefix')" {
+                error-message "Only 16,000 ordinals are supported in the list, except when list type is \"ipv4-prefix\" or \"ipv6-prefix\"";
+            }
         }
     }
 

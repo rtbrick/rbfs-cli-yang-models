@@ -85,6 +85,47 @@ submodule rtbrick-ldp {
         } 
     }
 
+    grouping ldp-protocol-preference {
+        description "Protocol preference related configuration";
+        container protocol-preference {
+            description "Protocol preference";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.ldp.instance.config",
+                    "type" :   "ldp_instance_config_table",
+                    "inherit-attribute":["instance_name"]
+                }
+            }';
+            leaf internal {
+                type uint32 {
+                    range "1..255";
+                }
+                description
+                    "Distance value for internal LDP routes including Link neighbor";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "internal_preference"
+                    }
+                }';
+            }
+            leaf external {
+                type uint32 {
+                    range "1..255";
+                }
+                description
+                    "Distance value for Targeted LDP routes";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "external_preference"
+                    }
+                }';
+            }
+        }
+    }
+
     grouping ldp-policy {
         description "Policy map name";
         leaf-list policy {
@@ -111,7 +152,7 @@ submodule rtbrick-ldp {
 
     grouping ldp-address_family {
         list address-family {
-            key "afi";
+            key "afi safi";
             description "LDP address family";
             reference
             '{
@@ -129,6 +170,19 @@ submodule rtbrick-ldp {
                 '{
                     "attribute-getter": {
                         "attribute": "afi"
+                    }
+                }';
+            }
+            leaf safi {
+                type rtb-ldp-types:safi;
+                description "Safi type";
+                must '(../afi != "l2vpn" and . != "vpls-vpws") or (../afi = "l2vpn" and . = "vpls-vpws")' {
+                    error-message "l2vpn afi can only be configured with vpls-vpws safi and vice-versa";
+                }                
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "safi"
                     }
                 }';
             }
@@ -272,6 +326,189 @@ submodule rtbrick-ldp {
                         "attribute" : "targeted_hold_interval"
                     }
                 }';
+            }
+        }
+    }
+
+    grouping ldp-vpws {
+        container vpls-vpws {
+            description "LDP VPWS Pseudowire configurations";
+            list interface {
+                key "name";
+                unique "pseudowire-id";
+                description "Enabling VPWS on an interface";
+                reference
+                    '{
+                        "table-getter": {
+                            "library": "libldpyang.so",
+                            "symbol": "ldp_yang_config_vpws_tbl_templ",
+                            "type" :  "ldp_l2vpn_vpws_intf_config_table"
+                        }
+                    }';
+                
+                leaf name {
+                    type rtb-types:logical-interface-type;
+                    description "Interface name on which VPWS has to be enabled";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "interface_name",
+                                "expansion-getter" : {
+                                    "package":"ifm",
+                                    "method" : "ifm_interface_layer2_name_expander_from_instance"
+                                }
+                            }
+                        }';
+                }
+
+                leaf pseudowire-id {
+                    mandatory true;
+                    description "VPWS Pseudowire Id";
+                    type uint32 {
+                        range "1..4294967295";
+                    }
+                    must '../pseudowire-id' {
+                        error-message "Pseudowire ID must be configured";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "pseudowire_id"
+                            }
+                        }';
+                }
+                
+                leaf control-word {
+                    description "Enable control word";
+                    type rtb-ldp-types:enable-disable;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "l2_control_flags"
+                            }
+                        }';
+                }
+
+                container neighbor {
+                    description "LDP targeted neighbor configuration";
+                     container ipv4 {
+                        description "IPv4 address configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libldpyang.so",
+                                "symbol": "ldp_yang_config_vpws_tbl_templ",
+                                "type" :  "ldp_l2vpn_vpws_intf_config_table",
+                                "inherit-attribute":["interface_name"]
+                            }
+                        }';
+                        leaf address {
+                            type inet:ipv4-address-no-zone;
+                            description "Targeted neighbor address";
+                            must 'not(../../ipv6/address)' {
+                                error-message "VPWS neighbor can be either ipv4 or ipv6 address";
+                            }                            
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "nbr_address"
+                                }
+                            }';
+                        }
+                    }
+                    container ipv6 {
+                        description "IPv6 address configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libldpyang.so",
+                                "symbol": "ldp_yang_config_vpws_tbl_templ",
+                                "type" :  "ldp_l2vpn_vpws_intf_config_table",
+                                "inherit-attribute":["interface_name"]
+                            }
+                        }';
+                        leaf address {
+                            type inet:ipv6-address-no-zone;
+                            description "Targeted neighbor address";
+                            must 'not(../../ipv4/address)' {
+                                error-message "VPWS neighbor can be either ipv4 or ipv6 address";
+                            }
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "nbr_v6_address"
+                                }
+                            }';
+                        }
+                    }
+
+                }
+
+                container backup-neighbor {
+                    description "LDP backup targeted neighbor configuration";
+                    container ipv4 {
+                        description "IPv4 address configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libldpyang.so",
+                                "symbol": "ldp_yang_config_vpws_tbl_templ",
+                                "type" :  "ldp_l2vpn_vpws_intf_config_table",
+                                "inherit-attribute":["interface_name"]
+                            }
+                        }';
+                        leaf address {
+                            type inet:ipv4-address-no-zone;
+                            description "Targeted neighbor address";
+                            must 'not(../../ipv6/address)' {
+                                error-message "VPWS backup neighbor can be either ipv4 or ipv6 address";
+                            }
+                            must '../../../neighbor/ipv4/address or ../../../neighbor/ipv6/address' {
+                                error-message "VPWS neighbor configuration is mandatory for configuring backup VPWS neighbor";
+                            }
+                            must 'not(../../../neighbor/ipv4/address) or ../../../neighbor/ipv4/address != .' {
+                                error-message "VPWS neighbor and Backup neighbor configuration must be different";
+                            }                           
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "backup_nbr_address"
+                                }
+                            }';
+                        }
+                    }
+                    container ipv6 {
+                        description "IPv6 address configuration";
+                        reference
+                        '{
+                            "table-getter": {
+                                "library": "libldpyang.so",
+                                "symbol": "ldp_yang_config_vpws_tbl_templ",
+                                "type" :  "ldp_l2vpn_vpws_intf_config_table",
+                                "inherit-attribute":["interface_name"]
+                            }
+                        }';
+                        leaf address {
+                            type inet:ipv6-address-no-zone;
+                            description "Targeted neighbor address";
+                            must 'not(../../ipv4/address)' {
+                                error-message "VPWS backup neighbor can be either ipv4 or ipv6 address";
+                            }
+                            must '../../../neighbor/ipv4/address or ../../../neighbor/ipv6/address' {
+                                error-message "Neighbor configuration is mandatory for configuring backup neighbor";
+                            }
+                            must 'not(../../../neighbor/ipv6/address) or ../../../neighbor/ipv6/address != .' {
+                                error-message "VPWS neighbor and Backup neighbor configuration must be different";
+                            }                          
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "backup_nbr_v6_address"
+                                }
+                            }';
+                        }
+                    }
+                }
             }
         }
     }
@@ -708,14 +945,17 @@ submodule rtbrick-ldp {
                     }
                 }';
             }
+
             uses ldp-timer;
             uses ldp-loop-detection;
+            uses ldp-protocol-preference;
             uses ldp-targeted-neighbor;
             uses ldp-interface;
             uses igp-synchronization;
             uses source-address;
             uses ldp-address_family;
             uses ldp-peer;
+            uses ldp-vpws;
         }
     }
 }

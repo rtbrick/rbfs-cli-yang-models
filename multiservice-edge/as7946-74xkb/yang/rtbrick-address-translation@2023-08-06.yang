@@ -90,6 +90,18 @@ submodule rtbrick-address-translation {
                 value 2048;
                 description "2048 Rules";
             }
+            enum "4096" {
+                value 4096;
+                description "4096 Rules";
+            }
+            enum "8192" {
+                value 8192;
+                description "8192 Rules";
+            }
+            enum "16342" {
+                value 16342;
+                description "16342 Rules";
+            }
         }
         description "NAT supported Ports per block";
     }
@@ -250,6 +262,19 @@ submodule rtbrick-address-translation {
                         }
                     }';
                 }
+                leaf control-plane-ageing-timeout {
+                    type uint32 {
+                        range "5..120";
+                    }
+                    description "NAT UDP DNS timeout ";
+                    default "30";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ageing_timeout_udp_dns"
+                        }
+                    }';
+                }
             }
             container other {
                 description "Configuration parameters for all the other protocols";
@@ -274,6 +299,35 @@ submodule rtbrick-address-translation {
                         }
                     }';
                 }
+            }
+        }
+    }
+    grouping address-translation-policer-top {
+        description "Top-level grouping for address translation policer";
+
+        container trap {
+            description "Configuration parameters for address-translation traps";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.nat.trap.config",
+                    "type"    : "nat_trap_config_table",
+                    "default-attribute" : [ { "trap_name" : "NAT_TRAP_DEFAULT"} ]
+                }
+            }';
+            leaf policer {
+                type rtb-types:string64;
+                description "Configure policer for NAT Trap";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "policer_name",
+                        "expansion-getter" : {
+                            "package":"nat",
+                            "method" :"nat_trap_policer_name_expander"
+                        }
+                    }
+                }';
             }
         }
     }
@@ -529,6 +583,7 @@ submodule rtbrick-address-translation {
             uses address-translation-pool-top;
             uses address-translation-profile-top;
             uses address-translation-rule-top;
+            uses address-translation-policer-top;
         } //container address-translation
     } //grouping address-translation-top
 }

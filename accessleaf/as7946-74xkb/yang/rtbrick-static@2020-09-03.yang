@@ -108,6 +108,9 @@ submodule rtbrick-static {
             "Nexthop attributes";
 
         leaf nexthop {
+            must 'not(contains(../exit-interface,"null0"))' {
+                error-message "Nexthop cannot be configured with null0 exit-interface";
+            }
             type inet:ip-address;
             description "IPv4/IPv6 nexthop address";
             reference

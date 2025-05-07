@@ -540,6 +540,7 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf retain-route-target {
+                when '../safi = "vpn-unicast" or ../safi = "vpn-multicast" or ../safi = "vpls" or ../safi = "evpn"';
                 type rtb-bgp-types:enable-disable;
                 description "Retain vpn routes of all route target, default: enable";
                 reference
@@ -1104,6 +1105,9 @@ grouping bgp-export-label-block {
     grouping bgp-pg-af-add-path {
         description "BGP additional path related configuration";
         container add-path {
+            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
+                error-message "add-path cannot be configured for safi evpn-vpws/vpls-vpws";
+            }
             description "Negotiate additional paths capabilities with the peer";
             reference
             '{
@@ -1141,6 +1145,9 @@ grouping bgp-export-label-block {
 
     grouping bgp-pg-address-family-attributes{
         leaf extended-nexthop {
+            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
+                error-message "extended-nexthop cannot be configured for safi evpn-vpws/vpls-vpws";
+            }
             type rtb-types:boolean-type;
             description "Enable extended nexthop capability";
             reference

@@ -90,9 +90,6 @@ submodule rtbrick-lwip {
                     type string {
                         length "1..256";
                     }
-                    must "../key1-id" {
-                        error-message "key1-id is not configured";
-                    }
                     description "Key1 in plain text for TCP AO for sending and receiving packets";
                     reference
                         '{
@@ -106,9 +103,6 @@ submodule rtbrick-lwip {
                 leaf key1-encrypted-text {
                     mandatory true;
                     type rtb-types:secret-string-type;
-                    must "../key1-id" {
-                        error-message "key1-id is not configured";
-                    }
                     description "Key1 in encrypted text for TCP AO for sending and receiving packets";
                     reference
                         '{
@@ -131,9 +125,6 @@ submodule rtbrick-lwip {
                     type string {
                         length "1..256";
                     }
-                    must "../key2-id" {
-                        error-message "key2-id is not configured";
-                    }
                     description "Key2 in plain text for TCP AO for sending and receiving packets";
                     reference
                         '{
@@ -146,9 +137,6 @@ submodule rtbrick-lwip {
                 }
                 leaf key2-encrypted-text {
                     type rtb-types:secret-string-type;
-                    must "../key2-id" {
-                        error-message "key2-id is not configured";
-                    }
                     description "Key2 in encrypted text for TCP AO for sending and receiving packets";
                     reference
                         '{

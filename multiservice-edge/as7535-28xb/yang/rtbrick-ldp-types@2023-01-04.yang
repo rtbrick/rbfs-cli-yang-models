@@ -65,8 +65,26 @@ module rtbrick-ldp-types {
                 value "1";
                 description "IPv6 address";
             }
+            enum l2vpn {
+                value "2";
+                description "L2VPN";
+            }
         }
         description "Afi data type";
+    }
+
+    typedef safi {
+        type enumeration {
+            enum labeled-unicast {
+                value "2";
+                description "Labeled unicast";
+            }
+            enum vpls-vpws {
+                value "9";
+                description "VPLS VPWS";
+            }
+        }
+        description "Safi data type";
     }
 
     typedef nbr-type {
@@ -81,5 +99,19 @@ module rtbrick-ldp-types {
             }
         }
         description "Afi data type";
+    }
+
+    typedef enable-disable {
+        type enumeration {
+            enum disable {
+                value "0";
+                description "Disable the configuration";
+            }
+            enum enable {
+                value "1";
+                description "Enable the configuration";
+            }
+        }
+        description "Enable and disable common type";
     }
 }
