@@ -168,7 +168,7 @@ submodule rtbrick-acl {
                         "attribute" : "match_ifl_name",
                             "expansion-getter" : {
                                 "package":"ifm",
-                                "method" :"ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                                "method" :"ifm_acl_match_logical_interface_name_expander"
                             }
                     }
                 }';
@@ -341,7 +341,7 @@ submodule rtbrick-acl {
                         "attribute" : "match_ifl_name",
                         "expansion-getter" : {
                             "package":"ifm",
-                            "method" :"ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            "method" :"ifm_acl_match_logical_interface_name_expander"
                         }
                     }
                 }';

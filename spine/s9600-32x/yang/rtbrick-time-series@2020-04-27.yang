@@ -99,6 +99,9 @@ submodule rtbrick-time-series {
     typedef prometheus-metric-name {
         type string {
             pattern '[a-zA-Z_:][a-zA-Z0-9_:]*';
+            pattern '([^r].*|r([^t].*|$)|rt([^b].*|$)|rtb([^r].*|$)|rtbr([^i].*|$)|rtbri([^c].*|$)|rtbric([^k].*|$)|.{0,6})' {
+                error-message "Metric name must not start with 'rtbrick'.";
+            }
             length "1..128";
         }
         description "Prometheus Metric name format";
@@ -166,6 +169,9 @@ submodule rtbrick-time-series {
             }';
             leaf profile-name {
                 type string{
+                    pattern '([^r].*|r([^t].*|$)|rt([^b].*|$)|rtb([^r].*|$)|rtbr([^i].*|$)|rtbri([^c].*|$)|rtbric([^k].*|$)|.{0,6})' {
+                        error-message "Profile name must not start with 'rtbrick'.";
+                    }
                     length "1..128";
                 }
                 mandatory true;
@@ -212,6 +218,9 @@ submodule rtbrick-time-series {
                     "default-attribute": [{"profile-name": "default"}]
                 }
             }';
+            must 'count(attribute) >= 1' {
+                error-message "Attribute configuration is mandatory";
+            }
             leaf name {
                 type prometheus-metric-name;
                 mandatory true;

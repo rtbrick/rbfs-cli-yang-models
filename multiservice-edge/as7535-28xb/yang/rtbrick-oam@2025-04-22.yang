@@ -1,0 +1,153 @@
+submodule rtbrick-oam {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization "RtBrick";
+
+    revision "2025-04-22" {
+        description
+            "First revision of OAM configuration";
+        reference
+            "None";
+    }
+    typedef cfm_interval_type {
+        type enumeration {
+            enum 100ms {
+                value 3;
+            }
+            enum 1s {
+                value 4;
+            }
+            enum 10s {
+                value 5;
+            }
+        }
+    }
+    typedef short_name_format {
+        type enumeration {
+            enum character-string {
+                value 1;
+            }
+            enum primary-vid {
+                value 2;
+            }
+            enum icc-based {
+                value 3;
+            }
+        }
+    }
+    container oam {
+        description "Operation Administration and Maintenance configuration hierarchy";
+        container cfm {
+            description "Connectivity Fault Management configuration hierarchy ";
+            list profile {
+                key "name";
+                description "Profile definition";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.oam.profile.config",
+                        "type" :  "oam_profile_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile"
+                        }
+                    }';   
+                }
+
+                leaf level {
+                    type uint8 {
+                        range "0..7";
+                    }
+                    description "CFM level";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "level"
+                        }
+                    }';   
+                }
+                leaf maintenance-domain {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Maintenance domain name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "maintenance_domain"
+                        }
+                    }';
+                } 
+                leaf maintenance-association {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Maintenance association name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "maintenance_association"
+                        }
+                    }';
+                }
+                leaf continuity-check-interval {
+                    type cfm_interval_type;
+                    description "Continuity check interval";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "continuity_check_interval"
+                        }
+                    }';
+                }
+                leaf local-mep {
+                    type uint16 {
+                        range "1..8191";
+                    }
+                    description "Local end-point identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "local_endpoint_id"
+                        }
+                    }';
+                }
+                leaf remote-mep {
+                    type uint16 {
+                        range "1..8191";
+                    }
+                    description "Remote end-point identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "remote_endpoint_id"
+                        }
+                    }';
+                }
+                must level {
+                    error-message "CFM level name must be configured.";
+                }
+                must maintenance-domain {
+                    error-message "CFM maintenance-domain name must be configured.";
+                }
+                must maintenance-association {
+                    error-message "CFM maintenance-association name must be configured.";
+                }
+                must local-mep {
+                    error-message "CFM local-mep name must be configured.";
+                }
+            }
+        }
+    }
+}

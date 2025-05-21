@@ -65,6 +65,8 @@ module rtbrick-config {
 
     include rtbrick-lawful-interception;
 
+    include rtbrick-oam;
+
     organization
       "Rtbrick";
     contact
