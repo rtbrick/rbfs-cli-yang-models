@@ -1490,17 +1490,7 @@ grouping bgp-export-label-block {
                     "inherit-attribute":["instance_name"]
                 }
             }';
-            leaf always-compare-med {
-                type rtb-types:boolean-type;
-                description
-                    "Always compare MED during best route selection";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "always_compare_med"
-                    }
-                }';
-            }
+
             leaf ignore-local-preference {
                 type rtb-types:boolean-type;
                 description
@@ -1556,6 +1546,51 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
+            leaf ignore-cluster-length {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore cluster-length during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_cluster_len"
+                    }
+                }';
+            }
+            leaf ignore-validation-state {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore RPKI validation state during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_validation_state"
+                    }
+                }';
+            }
+            leaf ignore-igp-metric {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore igp metric during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_igp_metric"
+                    }
+                }';
+            }
+            /*
+            leaf always-compare-med {
+                type rtb-types:boolean-type;
+                description
+                    "Always compare MED during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "always_compare_med"
+                    }
+                }';
+            }
             leaf ignore-route-type {
                 type rtb-types:boolean-type;
                 description
@@ -1578,17 +1613,6 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
-            leaf ignore-cluster-length {
-                type rtb-types:boolean-type;
-                description
-                    "Ignore cluster-length during best route selection";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "ignore_cluster_len"
-                    }
-                }';
-            }
             leaf ignore-peer-ip {
                 type rtb-types:boolean-type;
                 description
@@ -1599,7 +1623,7 @@ grouping bgp-export-label-block {
                         "attribute" : "ignore_peer_ip"
                     }
                 }';
-            }
+            } */
         }
     }
 
@@ -1829,9 +1853,8 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
-            /* bestroute-selection is not supported  */
-            //uses bgp-bestroute-selection;
 
+            uses bgp-bestroute-selection;
             uses bgp-protocol-preference;
             uses bgp-timers;
             uses bgp-address-family;

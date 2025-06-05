@@ -387,15 +387,19 @@ module rtbrick-bgp-types {
         type enumeration {
             enum disable {
                 value "0";
-                description "Strict validation";
+                description "Validation disable";
+            }
+            enum mark-only {
+                value "1";
+                description "Mark RPKI state in route. Validation disable";
             }
             enum loose {
-                value "1";
+                value "2";
                 description "Loose validation";
             }
             enum strict {
-                value "2";
-                description "Validation disable";
+                value "3";
+                description "Strict validation";
             }
         }
         description "Validation Filters";

@@ -370,9 +370,8 @@ submodule rtbrick-policy {
             must "not(sub-type = 'range') or (count(ordinal[value2]) = count(ordinal))" {
                 error-message "When subtype is range, value2 must be configured for all entries.";
             }
-            must "(not(type = 'ipv4-prefix' or type = 'ipv6-prefix') and (count(ordinal[value]) <= 16000)) or
-                  (type = 'ipv4-prefix' or type = 'ipv6-prefix')" {
-                error-message "Only 16,000 ordinals are supported in the list, except when list type is \"ipv4-prefix\" or \"ipv6-prefix\"";
+            must "(count(ordinal[value]) <= 16000)" {
+                error-message "Only 16,000 ordinals are supported in the list";
             }
         }
     }

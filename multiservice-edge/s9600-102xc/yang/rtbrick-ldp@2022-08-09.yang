@@ -495,7 +495,7 @@ submodule rtbrick-ldp {
                                 error-message "VPWS backup neighbor can be either ipv4 or ipv6 address";
                             }
                             must '../../../neighbor/ipv4/address or ../../../neighbor/ipv6/address' {
-                                error-message "Neighbor configuration is mandatory for configuring backup neighbor";
+                                error-message "VPWS neighbor configuration is mandatory for configuring backup VPWS neighbor";
                             }
                             must 'not(../../../neighbor/ipv6/address) or ../../../neighbor/ipv6/address != .' {
                                 error-message "VPWS neighbor and Backup neighbor configuration must be different";

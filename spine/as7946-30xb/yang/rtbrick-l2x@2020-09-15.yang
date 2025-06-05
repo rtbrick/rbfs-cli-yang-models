@@ -424,7 +424,17 @@ submodule rtbrick-l2x {
                 }
             }';
         }
-
+        leaf statistics {
+            type rtb-types:boolean-true;
+            description
+                "Enable traffic-statistic";
+            reference
+            '{
+                    "attribute-getter" : {
+                        "attribute" : "statistics"
+                    }
+                }';
+        }
     }
 
     grouping l2x-top {

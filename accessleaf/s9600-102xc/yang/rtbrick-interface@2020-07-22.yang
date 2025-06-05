@@ -1318,6 +1318,17 @@ submodule rtbrick-interface {
                         }
                     }';
             }
+            leaf statistics {
+                type rtb-types:boolean-type;
+                description
+                    "Enable traffic-statistic";
+                reference
+                '{
+                        "attribute-getter" : {
+                            "attribute" : "statistics"
+                    }
+                }';
+            }
             leaf ra-disable {
                 type rtb-types:boolean-true;
                 description
@@ -1326,8 +1337,8 @@ submodule rtbrick-interface {
                 '{
                         "attribute-getter" : {
                             "attribute" : "ra_disable"
-                        }
-                    }';
+                    }
+                }';
             }
             uses cfm-config;
             must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {

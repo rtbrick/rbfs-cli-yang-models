@@ -17,10 +17,9 @@ submodule rtbrick-access-l2tp-profile {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       access L2TPv2 profile.";
+      "This sub-module defines the YANG structure for the access L2TP profile.";
     revision 2020-07-24 {
         description "First revision";
         reference "None";
