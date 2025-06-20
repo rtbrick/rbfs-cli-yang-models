@@ -11,7 +11,7 @@ submodule rtbrick-time-series {
     organization
       "Rtbrick";
     contact
-      "Author : Navaneeth Y V (navaneethyv@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains the YANG structure for the time series configuration, that can interact with Prometheus.
        time-series
@@ -138,6 +138,9 @@ submodule rtbrick-time-series {
     /* Time series hierarchy */
     container time-series {
         description "Time series Hierarchy";
+        must 'count(metric-profile) <= 100' {
+            error-message "Maximum number of metric-profiles allowed is 100";
+        }
         reference
         '{
             "table-getter": {

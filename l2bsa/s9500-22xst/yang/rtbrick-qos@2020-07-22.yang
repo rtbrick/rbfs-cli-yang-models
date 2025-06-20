@@ -20,7 +20,7 @@ submodule rtbrick-qos {
     organization "Rtbrick";
 
     contact
-      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module defines configuration and operational state data
@@ -104,6 +104,10 @@ submodule rtbrick-qos {
             enum "nd" {
                 value 24;
                 description "nd";
+            }
+            enum "cfm" {
+                value 25;
+                description "cfm";
             }
         }
         description "protocol name type";

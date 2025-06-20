@@ -23,7 +23,7 @@ submodule rtbrick-interface {
     organization
       "Rtbrick";
     contact
-      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for interface configuration.
@@ -473,62 +473,6 @@ submodule rtbrick-interface {
         }  // list address
     }  // grouping subinterface-address-config
 
-    grouping cfm-config {
-        description
-            "Configuration data for cfm";
-        container cfm {
-                presence cfm;
-                description
-                    "Configure CFM profile for sub-interface";
-
-                reference
-                    '{
-                        "table-getter": {
-                        "table-name": "global.interface.logical.config",
-                            "type" :  "ifl_config_table",
-                            "inherit-attribute" : [ "ifp_name" , "logical_unit_id" ]
-                        }
-                    }';
-                leaf profile {
-                    type string {
-                        length "1..48";
-                    }
-                    description
-                        "CFM profile name";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "cfm_profile"
-                        }
-                    }';
-                }
-                leaf local-mep {
-                    type uint16;
-                    description
-                        "CFM local endpoint ID";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "cfm_local_mep"
-                        }
-                    }';
-                }
-                leaf remote-mep {
-                    type uint16;
-                    description
-                        "CFM remote endpoint ID";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "cfm_remote_mep"
-                        }
-                    }';
-                }
-                must profile {
-                    error-message "CFM profile name must be configured.";
-                }
-        }
-    }
     grouping subinterface-neighbor-config {
         description
             "Configuration data for subinterfaces neighbor address";
@@ -1340,7 +1284,6 @@ submodule rtbrick-interface {
                     }
                 }';
             }
-            uses cfm-config;
             must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
                 error-message "Invalid parameters configured on logical interface";
             }

@@ -12,7 +12,7 @@ submodule rtbrick-snmp {
     organization
       "Rtbrick";
     contact
-      "Author : Rohit Kumar (rohit@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains the YANG structure for the SNMP configuration.
        instance

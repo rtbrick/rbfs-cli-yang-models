@@ -12,7 +12,7 @@ submodule rtbrick-mtu {
     organization "Rtbrick";
 
     contact
-      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module defines configuration and operational state data

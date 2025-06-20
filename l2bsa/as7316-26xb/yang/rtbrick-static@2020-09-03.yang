@@ -16,7 +16,7 @@ submodule rtbrick-static {
     organization
       "Rtbrick";
     contact
-      "Authors: Sudhir CR (sudhir@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for static route configuration

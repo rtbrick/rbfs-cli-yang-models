@@ -8,7 +8,7 @@ submodule rtbrick-policy {
     organization "Rtbrick";
 
     contact
-      "Authors: Ankit (ankit@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module describes a YANG model for policy protocol

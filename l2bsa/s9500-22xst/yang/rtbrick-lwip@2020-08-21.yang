@@ -9,7 +9,7 @@ submodule rtbrick-lwip {
     organization
       "Rtbrick";
     contact
-      "Authors: Rohit Kumar (rohit@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This module describes a YANG model for TCP configuration";
     revision 2020-08-21 {

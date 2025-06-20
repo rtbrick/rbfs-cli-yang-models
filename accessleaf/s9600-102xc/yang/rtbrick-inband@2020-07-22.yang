@@ -12,7 +12,7 @@ submodule rtbrick-inband {
     organization "Rtbrick";
 
     contact
-      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module defines configuration data related to network inband config";

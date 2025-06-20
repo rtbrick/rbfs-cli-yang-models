@@ -12,7 +12,7 @@ submodule rtbrick-logging {
     organization
       "Rtbrick";
     contact
-      "Authors: Rohit Kumar (rohit@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This module contains yang definition for LOGGING module";
     revision 2020-04-27 {

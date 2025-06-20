@@ -177,6 +177,153 @@ submodule rtbrick-network-instance {
         }
     }
 
+    grouping track-nexthop {
+        description "Instance address family track nexthop related configurations";
+        container track {
+            description "Instance address family track nexthop related configuration";
+            list nexthop4 {
+                key "nexthop4";
+                description "Instance address family track nexthop related configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.instance.afi-safi.track-nexthop.config",
+                        "type" :  "rib_oam_track_nh_config_table",
+                        "inherit-attribute":["instance_name", "afi", "safi"]
+                    }
+                }';
+
+                leaf nexthop4 {
+                    type inet:ipv4-address;
+                    description "IPv4 nexthop";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nexthop4"
+                        }
+                    }';
+                }
+                leaf cfm-profile-name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "CFM profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "cfm_profile_name"
+                        }
+                    }';   
+                }
+                leaf-list interface {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Logical interface name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                    must "
+                    not(/instance/address-family/track/nexthop4[interface = current()][cfm-profile-name != current()/../cfm-profile-name])
+                    and
+                    not(/instance/address-family/track/nexthop4[interface = current()][cfm-profile-name != current()/../cfm-profile-name])
+                    " {
+                        error-message "cfm-profile must be unique for an interface.";
+                    }
+                }
+                must '(../../afi = "ipv4")' {
+                    error-message "nexthop4 is supported only for ipv4 address-family";
+                }
+                must '(../../safi = "unicast")' {
+                    error-message "Track nexthop feature supported only for unicast safi";
+                }
+                must 'interface' {
+                    error-message "Must configure interface";
+                }
+                must 'cfm-profile-name' {
+                    error-message "Must configure cfm-profile-name";
+                }
+            }
+            list nexthop6 {
+                key "nexthop6";
+                description "Instance address family track nexthop related configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.instance.afi-safi.track-nexthop.config",
+                        "type" :  "rib_oam_track_nh_config_table",
+                        "inherit-attribute":["instance_name", "afi", "safi"]
+                    }
+                }';
+
+                leaf nexthop6 {
+                    type inet:ipv6-address;
+                    description "IPv6 nexthop";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "nexthop6"
+                        }
+                    }';
+                }
+                leaf cfm-profile-name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "cfm_profile_name"
+                        }
+                    }';   
+                }
+                leaf-list interface {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Logical interface name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                    must "
+                    not(/instance/address-family/track/nexthop6[interface = current()][cfm-profile-name != current()/../cfm-profile-name])
+                    and
+                    not(/instance/address-family/track/nexthop6[interface = current()][cfm-profile-name != current()/../cfm-profile-name])
+                    " {
+                        error-message "cfm-profile must be unique for an interface.";
+                    }
+                }
+                must '(../../afi = "ipv6")' {
+                    error-message "nexthop6 is supported only for ipv6 address-family";
+                }
+                must '(../../safi = "unicast")' {
+                    error-message "Track nexthop feature is supported only for unicast safi";
+                }
+                must 'interface' {
+                    error-message "Must configure interface";
+                }
+                must 'cfm-profile-name' {
+                    error-message "Must configure cfm-profile-name";
+                }
+            }            
+        }
+        
+    }
 
     grouping address-family {
         description "Instance address family related configurations";
@@ -220,6 +367,7 @@ submodule rtbrick-network-instance {
             uses af-policy;
             uses route-target;
             uses import-rib;
+            uses track-nexthop;
         }
     }
 

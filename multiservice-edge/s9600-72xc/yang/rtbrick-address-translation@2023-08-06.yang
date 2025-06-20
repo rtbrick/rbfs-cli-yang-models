@@ -328,6 +328,9 @@ submodule rtbrick-address-translation {
                         }
                     }
                 }';
+                must '((count(../../../class-of-service/policer[policer-name=current()]/level1-rates/cir) = 0) or (../../../class-of-service/policer[policer-name=current()]/level1-rates/cir <= 150000)) and ((count(../../../class-of-service/policer[policer-name=current()]/level1-rates/pir) = 0) or (../../../class-of-service/policer[policer-name=current()]/level1-rates/pir <= 150500))' {
+                    error-message "NAT trap policer size should not exceed 150MB";
+                }
             }
         }
     }

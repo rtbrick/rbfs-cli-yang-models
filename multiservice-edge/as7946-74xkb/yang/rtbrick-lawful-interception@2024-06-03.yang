@@ -24,7 +24,7 @@ submodule rtbrick-lawful-interception {
             reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.li.mtls.server.config",
+                        "table-name" : "secure.li.mtls.server.config",
                         "type" : "li_mtls_server_config_table",
                         "inherit-attribute": ["protocol_name"]
                     }
@@ -90,7 +90,7 @@ submodule rtbrick-lawful-interception {
             reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.li.mtls.client.config",
+                        "table-name" : "secure.li.mtls.client.config",
                         "type" : "li_mtls_client_config_table",
                         "inherit-attribute": ["protocol_name"]
                     }
@@ -113,7 +113,7 @@ submodule rtbrick-lawful-interception {
                 reference
                     '{
                         "table-getter": {
-                          "table-name" : "global.li.mtls.client.auth.config",
+                          "table-name" : "secure.li.mtls.client.auth.config",
                           "type" : "li_mtls_client_auth_config_table",
                           "inherit-attribute": ["protocol_name"]
                         }
@@ -187,7 +187,7 @@ submodule rtbrick-lawful-interception {
             reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.li.protocol.config",
+                        "table-name" : "secure.li.protocol.config",
                         "type" : "li_protocol_config_table"
                     }
                 }';

@@ -35,10 +35,6 @@ submodule rtbrick-access-aaa-profile {
                 value "3";
                 description "Local authentication with fallback to RADIUS";
             }
-            enum RADIUS_LOCAL {
-                value "4";
-                description "RADIUS authentication with fallback to local";
-            }
         }
     }
 

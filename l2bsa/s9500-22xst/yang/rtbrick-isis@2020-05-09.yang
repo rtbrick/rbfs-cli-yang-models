@@ -150,6 +150,34 @@ submodule rtbrick-isis {
                 must "not(anycast-index) or anycast-index <= ../../../segment-routing/srgb/range" {
                     error-message "Please enter anycast-index within the configured SRGB range";
                 }
+
+                leaf no-penultimate-pop {
+                    type rtb-types:boolean-type;
+                    must "../index or ../anycast-index" {
+                        error-message "Please configure segment routing index or anycast index for no-penultimate-pop";
+                    }
+                    description "Configure no penultimate popping of the segment routing label";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_no_php"
+                        }
+                    }';
+                }
+
+                leaf explicit-null {
+                    type rtb-types:boolean-type;
+                    must "../no-penultimate-pop" {
+                        error-message "Please configure no-penultimate-pop for explicit-null";
+                    }
+                    description "Configure replacing of segment routing label with explicit null label";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_explicit_null"
+                        }
+                    }';
+                }
             }
             container ipv6 {
                 description "ISIS IPv6 segment routing interface configuration";
@@ -191,6 +219,28 @@ submodule rtbrick-isis {
                 }
                 must "not(anycast-index) or anycast-index <= ../../../segment-routing/srgb/range" {
                     error-message "Please enter anycast-index within the configured SRGB range";
+                }
+
+                leaf no-penultimate-pop {
+                    type rtb-types:boolean-type;
+                    description "Configure no penultimate popping of the segment routing label";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_no_php"
+                        }
+                    }';
+                }
+
+                leaf explicit-null {
+                    type rtb-types:boolean-type;
+                    description "Configure replacing of segment routing label with explicit null label";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_explicit_null"
+                        }
+                    }';
                 }
             }
             container point-to-point {
