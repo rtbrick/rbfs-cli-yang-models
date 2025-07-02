@@ -15,8 +15,7 @@ submodule rtbrick-isis {
     organization
       "Rtbrick";
     contact
-      "Authors: Radhika talasu (radhika@rtbrick.com )
-                Ankit Sinha (ankit@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for ISIS protocol configuration.
@@ -1284,7 +1283,7 @@ submodule rtbrick-isis {
             {
                 type uint16;
                 description
-                    "Load sharing among multiple ISIS paths, default 256";
+                    "Load sharing among multiple ISIS paths";
                 reference
                 '{
                     "attribute-getter" : {

@@ -13,8 +13,7 @@ submodule rtbrick-address-translation {
     organization
       "RtBrick";
     contact
-      "Authors: Mahendra Singh Negi (mahendra@rtbrick.com)
-                Jeevan Samrudh L H  (jeevan@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains yang structure for
        Address Translation.";

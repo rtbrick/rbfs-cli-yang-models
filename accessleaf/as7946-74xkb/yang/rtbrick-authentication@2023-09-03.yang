@@ -12,7 +12,7 @@ submodule rtbrick-authentication {
     organization
       "Rtbrick";
     contact
-      "Author : Ankit (ankit@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This is authentication related configuration YANG file";

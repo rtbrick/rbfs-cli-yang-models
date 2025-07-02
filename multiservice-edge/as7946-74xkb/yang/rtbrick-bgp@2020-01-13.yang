@@ -17,8 +17,7 @@ submodule rtbrick-bgp {
     organization "RtBrick";
 
     contact
-      "Authors: Ankit (ankit@rtbrick.com)
-                kuldeep (kuldeep@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for BGP configuration.
@@ -190,7 +189,7 @@ submodule rtbrick-bgp {
             when '../afi != "l2vpn" and ../safi != "vpn-unicast" and ../safi != "vpn-multicast"';
             key "source";
             description "Redistribution related configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -454,7 +453,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP address family related configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -528,9 +527,7 @@ grouping bgp-export-label-block {
             }
             leaf multipath {
                 when '../afi != "l2vpn"';
-                type uint16 {
-                    range "0..255";
-                }
+                type uint16;
                 description "Load sharing among multiple BGP paths number";
                 reference
                 '{
@@ -570,7 +567,7 @@ grouping bgp-export-label-block {
                     "attribute-getter" : {
                         "attribute" : "export_filter"
                     }
-                }';              
+                }';
             }
             leaf sid-index {
                 must '../../../../name != "default" and ../safi = "unicast"' {
@@ -1210,7 +1207,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP peer group address family specific configuration commands";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1333,7 +1330,7 @@ grouping bgp-export-label-block {
         list peer-group {
             key "pg-name";
             description "BGP peer group configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1730,7 +1727,7 @@ grouping bgp-export-label-block {
 
         container bgp {
             description "Protocol bgp configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "table-name": "global.bgp.instance.config",

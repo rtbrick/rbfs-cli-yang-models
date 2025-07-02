@@ -27,8 +27,7 @@ submodule rtbrick-network-instance {
     organization
       "Rtbrick";
     contact
-      "Author : Navaneeth Y V (navaneethyv@rtbrick.com)
-              : Kuldeep Mishra (kuldeep@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This is the instance related configuration YANG file";
 
@@ -211,7 +210,7 @@ submodule rtbrick-network-instance {
                     reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "cfm_profile_name"
+                            "attribute" : "cfm_session_name"
                         }
                     }';   
                 }
@@ -281,7 +280,7 @@ submodule rtbrick-network-instance {
                     reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "cfm_profile_name"
+                            "attribute" : "cfm_session_name"
                         }
                     }';   
                 }
@@ -367,7 +366,58 @@ submodule rtbrick-network-instance {
             uses af-policy;
             uses route-target;
             uses import-rib;
-            uses track-nexthop;
+        }
+    }
+
+
+    grouping oam-track-nh {
+        description "Instance address family track nexthop related configurations";
+        container oam {
+            container cfm {
+                list track {
+                    key "session";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name": "global.instance.afi-safi.track-nexthop.config",
+                            "type" :  "rib_oam_track_nh_config_table",
+                            "inherit-attribute":["instance_name"]
+                        }
+                    }';
+                    leaf session {
+                        type string {
+                            length "1..48";
+                        }
+                        description "OAM CFM session";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "cfm_session_name"
+                            }
+                        }';
+                    }
+                    leaf-list nexthop4 {
+                        type inet:ipv4-address;
+                        description "IPv4 nexthop";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "nexthop4"
+                            }
+                        }';
+                    }
+                    leaf-list nexthop6 {
+                        type inet:ipv6-address;
+                        description "IPv6 nexthop";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "nexthop6"
+                            }
+                        }';
+                    }
+                }
+            }
         }
     }
 
@@ -429,6 +479,7 @@ submodule rtbrick-network-instance {
 
             uses address-family;
             uses tcp-config;
+            uses oam-track-nh;
 
             container protocol {
             description

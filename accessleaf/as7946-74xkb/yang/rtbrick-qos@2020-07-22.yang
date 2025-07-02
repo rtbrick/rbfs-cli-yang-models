@@ -2309,6 +2309,7 @@ submodule rtbrick-qos {
                     }
                     leaf connection-point {
                         type type-qos-scheduler-map-connection-point;
+                        mandatory true;
                         description
                             "Configure connection point";
                         reference

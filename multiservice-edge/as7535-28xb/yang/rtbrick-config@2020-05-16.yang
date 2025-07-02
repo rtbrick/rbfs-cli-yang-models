@@ -72,8 +72,7 @@ module rtbrick-config {
     organization
       "Rtbrick";
     contact
-      "Authors: Ankit Kumar Sinha (ankit@rtbrick.com)
-                Navaneeth Y V (navaneethyv@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This is the Rtbrick main YANG module file.
       All the other YANG files will be registered as submodules to this file.";

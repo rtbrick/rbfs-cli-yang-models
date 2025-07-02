@@ -7,7 +7,7 @@ submodule rtbrick-access {
     organization
       "Rtbrick";
     contact
-      "Authors: Navaneeth Y V (navaneethyv@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This sub module contains the top level configurations of dummy access config to help rtbrick roles.

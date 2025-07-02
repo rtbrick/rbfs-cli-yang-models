@@ -17,7 +17,7 @@ submodule rtbrick-forwarding-options {
     organization
       "Rtbrick";
     contact
-        "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
         "This is the forwarding-options configuration yang file";
 

@@ -1553,6 +1553,30 @@ submodule rtbrick-interface {
                         }
                  }';
             }
+            container ptp {
+                description "Configure PTP for physical interface";
+                presence ptp;
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.interface.physical.config",
+                        "type" :  "ifp_config_table",
+                        "inherit-attribute" : [ "ifp_name" ]
+                    }
+                }';
+                leaf enable
+                {
+                    type rtb-types:boolean-true;
+                    description
+                        "Configure PTP for the interface";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ptp"
+                            }
+                        }';
+                }
+            }
             container breakout {
                 description "Configure breakout for physical interface";
                 presence breakout;

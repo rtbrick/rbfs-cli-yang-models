@@ -80,9 +80,9 @@ submodule rtbrick-time-series {
         }
         description "Metric type from a BDS perspective";
     }
-    typedef keyval-string {
+    typedef prometheus-keyval-string {
         type string {
-             pattern '.*:.*';
+             pattern '([a-zA-Z0-9_]+\:.*)';
              length "1..128";
         }
         description "A BDS key-value string";
@@ -542,7 +542,7 @@ submodule rtbrick-time-series {
                 type string{
                     length "1..128";
                 }
-                description "abel constraints to match alert notifications";
+                description "Label constraints to match alert notifications";
                 reference
                 '{
                     "attribute-getter" : {
@@ -671,7 +671,7 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf-list labels {
-                type keyval-string;
+                type prometheus-keyval-string;
                 ordered-by user;
                 description "Key,value pair of labels for this alert";
                 reference
@@ -682,7 +682,7 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf-list annotations {
-                type keyval-string;
+                type prometheus-keyval-string;
                 ordered-by user;
                 description "Key,value pair of annotations for this alert";
                 reference

@@ -42,25 +42,25 @@ submodule rtbrick-oam {
         description "Operation Administration and Maintenance configuration hierarchy";
         container cfm {
             description "Connectivity Fault Management configuration hierarchy ";
-            list profile {
+            list session {
                 key "name";
-                description "Profile definition";
+                description "Session name";
                 reference
                 '{
                     "table-getter": {
-                        "table-name": "global.oam.profile.config",
-                        "type" :  "oam_profile_config_table"
+                        "table-name": "global.oam.cfm.session.config",
+                        "type" :  "oam_cfm_session_config_table"
                     }
                 }';
                 leaf name {
                     type string {
                         length "1..48";
                     }
-                    description "Unique name for the OAM profile";
+                    description "Unique name for the OAM CFM session";
                     reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "profile"
+                            "attribute" : "session"
                         }
                     }';   
                 }
@@ -135,6 +135,22 @@ submodule rtbrick-oam {
                         }
                     }';
                 }
+                leaf interface {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Logical interface name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                }
                 must level {
                     error-message "CFM level name must be configured.";
                 }
@@ -146,6 +162,12 @@ submodule rtbrick-oam {
                 }
                 must local-mep {
                     error-message "CFM local-mep name must be configured.";
+                }
+                must interface {
+                    error-message "CFM interface name must be configured.";
+                }
+                must "not(boolean(../session[interface = current()/interface and not(name = current()/name)]))" {
+                    error-message "Multiple sessions on same interface is not allowed.";
                 }
             }
         }

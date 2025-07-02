@@ -8,7 +8,7 @@ module rtbrick-ldp-types {
         "RtBrick";
 
     contact
-        "Author: ankit@rtbrick.com, akshath@rtbrick.com";
+      "yang-support@rtbrick.com";
 
     description
       "This module contains general data definitions for use in LDP YANG

@@ -194,6 +194,24 @@ submodule rtbrick-system {
          }
     }
 
+    typedef ptp-clock-profile-type {
+        type enumeration  {
+            enum  g8275.1 {
+                value "1";
+                description "clock Profile g8725.1";
+            }
+        }
+    }
+
+    typedef ptp-clock-mode-type {
+        type enumeration  {
+            enum  slave {
+                value "3";
+                description "configure clock mode slave";
+            }
+        }
+    }
+
     grouping ntp-top {
         description "NTP configurations";
         container ntp {
@@ -278,6 +296,45 @@ submodule rtbrick-system {
                 }
                 must '(not(./maxpoll) and not(./minpoll)) or (./minpoll and ./maxpoll)'{
                     error-message "Minpoll and maxpoll has to be always configured together";
+                }
+            }
+        }
+    }
+
+    grouping ptp-top {
+        container ptp {
+            description "PTP global configuration";
+            list clock {
+                 key "profile";
+                 description "PTP clock configuration";
+                 reference
+                 '{
+                      "table-getter": {
+                        "table-name" : "global.ptp.clock.config",
+                        "type"    : "global_ptp_clock_config_tbl"
+                      }
+                 }';
+
+               leaf profile {
+                 type ptp-clock-profile-type;
+                 description "Enable PTP clock profile";
+                 reference
+                 '{
+                      "attribute-getter" : {
+                          "attribute" : "profile"
+                       }
+                   }';
+               }
+               leaf mode {
+                  type ptp-clock-mode-type;
+                  description "Configure PTP clock mode";
+                  default slave;
+                  reference
+                  '{
+                      "attribute-getter" : {
+                          "attribute" : "mode"
+                      }
+                  }';
                 }
             }
         }
@@ -958,6 +1015,7 @@ submodule rtbrick-system {
 
             uses secure-management-top;
             uses ntp-top;
+            uses ptp-top;
             uses lum-top;
             uses platform-profile-top;
             container platform-management {

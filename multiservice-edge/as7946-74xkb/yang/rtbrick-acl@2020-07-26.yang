@@ -25,7 +25,7 @@ submodule rtbrick-acl {
       "Rtbrick";
 
     contact
-      "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module describes the YANG model for the access control list (ACL) configuration.";
@@ -662,6 +662,17 @@ submodule rtbrick-acl {
                     }';
             }
 
+            leaf l2tp-ppp-lcp {
+                type rtb-types:boolean-true;
+                description
+                    "Configure acl match for l2tp ppp lcp protocol.";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_l2tp_ppp_lcp"
+                    }
+                }';
+            }
             must 'not(tcp-control) or (ip-protocol = "tcp")' {
                 error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }

@@ -9,7 +9,7 @@ submodule rtbrick-igmp {
         "Rtbrick";
 
     contact
-        "Authors: Bhishma Acharya (bhishma@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module contains the dummy YANG model for the IGMP protocol configuration";

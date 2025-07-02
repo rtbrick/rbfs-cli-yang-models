@@ -8,7 +8,7 @@ module rtbrick-bgp-types {
         "RtBrick";
 
     contact
-        "Author: kuldeep@rtbrick.com";
+      "yang-support@rtbrick.com";
 
     description
       "This module contains general data definitions for use in BGP YANG

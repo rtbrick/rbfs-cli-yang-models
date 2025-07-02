@@ -17,7 +17,7 @@ submodule rtbrick-ldp {
     organization "RtBrick";
 
     contact
-      "Authors: Akshath TR (akshath@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for LDP configuration.
