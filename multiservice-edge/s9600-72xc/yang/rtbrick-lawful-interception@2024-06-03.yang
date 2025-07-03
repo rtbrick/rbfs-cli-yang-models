@@ -1,0 +1,307 @@
+submodule rtbrick-lawful-interception {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization "RtBrick";
+    contact      "Authors: Deeksha Bhandary (deeksha@rtbrick.com)";
+    description  "This sub-module contains yang structure for lawful interception configuration";
+    revision 2024-06-03 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping mutual-tls-server-top {
+        container server {
+            description "Global mutual TLS server configuration";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "secure.li.mtls.server.config",
+                        "type" : "li_mtls_server_config_table",
+                        "inherit-attribute": ["protocol_name"]
+                    }
+                }';
+
+            leaf-list client-ca {
+                type rtb-types:li-cert-data;
+                description "Trusted client CAs in base64 encoding";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "client_ca"
+                        }
+                    }';
+            }
+
+            leaf certificate {
+                type rtb-types:li-cert-data;
+                description "Certificate PEM data in base64 encoding";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "cert_data"
+                        }
+                    }';
+            }
+
+            leaf key-plain-text {
+                type rtb-types:li-cert-data;
+                description "Certificate key in base64 encoding";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "cert_key_encrypted",
+                            "plain-text-password" : true,
+                            "secret-text-leaf-name" : "key-encrypted-text"
+                        }
+                    }';
+            }
+
+            must '(not(./certificate) and not(./key-encrypted-text)) or (./certificate and ./key-encrypted-text)'{
+                error-message "Server certificate and key-plain-text has be configured together";
+            }
+
+            leaf key-encrypted-text {
+                type rtb-types:secret-string-type;
+                description "Certificate key in encrypted text";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "cert_key_encrypted"
+                        }
+                    }';
+            }
+
+        }
+    }//end mutual-tls-server-top 
+
+    grouping mutual-tls-client-top {
+        container client {
+            description "Global mutual TLS client configuration";
+            
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "secure.li.mtls.client.config",
+                        "type" : "li_mtls_client_config_table",
+                        "inherit-attribute": ["protocol_name"]
+                    }
+                }';
+
+            leaf-list root-ca {
+                type rtb-types:li-cert-data;
+                description "Trusted CA in base64 encoding";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "root_ca"
+                        }
+                    }';
+            }
+
+            list authentication {
+                description "Global mutual TLS client authentication configuration";
+                key "certificate-name";
+                reference
+                    '{
+                        "table-getter": {
+                          "table-name" : "secure.li.mtls.client.auth.config",
+                          "type" : "li_mtls_client_auth_config_table",
+                          "inherit-attribute": ["protocol_name"]
+                        }
+                    }';
+
+
+                leaf certificate-name {
+                    type rtb-types:string64;
+                    description "Name of the certificate";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "certificate_name"
+                            }
+                        }';
+                }
+
+                leaf certificate {
+                    type rtb-types:li-cert-data;
+                    description "Certificate PEM data in base64 encoding";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "cert_data"
+                            }
+                        }';
+                }
+
+                leaf key-plain-text {
+                    type rtb-types:li-cert-data;
+                    description "Certificate key in base64 encoding";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "cert_key_encrypted",
+                                "plain-text-password" : true,
+                                "secret-text-leaf-name" : "key-encrypted-text"
+                            }
+                        }';
+                }
+
+                leaf key-encrypted-text {
+                    type rtb-types:secret-string-type;
+                    description "Certificate key in encrypted text";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "cert_key_encrypted"
+                            }
+                        }';
+                }
+            }
+        }
+    }// end mutual-tls-client-top
+
+    grouping mutual-tls-top {
+        container mutual-tls {
+            description "Global mutual TLS configuration";
+            uses mutual-tls-server-top;
+            uses mutual-tls-client-top;
+        }
+    }
+
+
+    container lawful-intercept {
+        description "Global lawful interception configuration";
+        
+        list protocol {
+            description "Global lawful interception protocol configuration";
+            key "protocol-name";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "secure.li.protocol.config",
+                        "type" : "li_protocol_config_table"
+                    }
+                }';
+
+
+            leaf protocol-name {
+                type rtb-types:li-protocol-type;
+                description "Protocol name[allowed values: x1]";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "protocol_name"
+                        }
+                    }';
+            }
+
+            leaf network-element-id {
+                type rtb-types:string128;
+                description "The network element ID of the network element in the ADMF";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "network_element_id"
+                        }
+                    }';
+            }
+
+            leaf network-element-path {
+                type rtb-types:string128;
+                description "The context-path for all incoming protocol requests [default: /X1/NE]";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "network_element_path"
+                        }
+                    }';
+            }
+
+            leaf mediation-device-instance {
+                type rtb-types:string64;
+                description "Instance that hosts the mediation devices";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "mediation_device_instance"
+                        }
+                    }';
+            }
+
+            leaf sync-timeout {
+                type uint16 {
+                    range "5..60";
+                }
+                description "The maximum interval for completing protocol requests synchronously in seconds [default: 5 sec]";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "sync_timeout"
+                        }
+                    }';
+            }
+
+
+            leaf async-timeout {
+                type uint16 {
+                    range "10..120";
+                }
+                description "The maximum interval for completing protocol requests asynchronously in seconds [default: 15 sec]";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "async_timeout"
+                        }
+                    }';
+            }
+
+            leaf hold-time {
+                type uint32 {
+                    range "60..86400";
+                }
+                description "The maximum interval for receiving keep-alive from ADMF in seconds [default: 3600 sec]";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "hold_time"
+                        }
+                    }';
+            }
+
+
+            leaf administrative-function-id {
+                type rtb-types:string128;
+                description "The identifier of the ADMF";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "admin_function_id"
+                        }
+                    }';
+
+            }
+
+            leaf administrative-function-endpoint {
+                type rtb-types:string128;
+                description "The ADMF endpoint URL for sending requests";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "admin_function_endpoint"
+                        }
+                    }';
+
+            }
+            uses mutual-tls-top;
+       }
+   }
+}

@@ -1,0 +1,27 @@
+submodule rtbrick-link-aggregation {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+
+    description
+        "This sub module contains the top level configurations of dummy link-aggregation configuration to help rtbrick roles
+    This must be dated before the latest package";
+
+    revision 2021-01-01 {
+        description
+          "Dummy link-aggregation yang file";
+        reference "None";
+    }
+
+
+    grouping link-aggregation-top  {
+        description "Dummy global link aggregation top level config";
+    }
+}
+

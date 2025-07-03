@@ -1,0 +1,151 @@
+submodule rtbrick-lwip {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+    import rtbrick-types {
+       prefix "rtb-types";
+    }
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+      "This module describes a YANG model for TCP configuration";
+    revision 2020-08-21 {
+        description "First revision";
+        reference "None";
+    }
+
+    typedef authentication-type {
+        type enumeration {
+            enum "MD5" {
+                value 1;
+                description "Authentication type MD5";
+            }
+            enum "HMAC-SHA-1-96" {
+                value 2;
+                description "Authentication type HMAC-SHA-1-96";
+            }
+            enum "HMAC-SHA-256-128" {
+                value 3;
+                description "Authentication type HMAC-SHA-256-128";
+            }
+            enum "AES-128-CMAC-96" {
+                value 4;
+                description "Authentication type AES-128-CMAC-96";
+            }
+        }
+        description "Authentication type";
+    }
+    grouping tcp-config {
+        description "Grouping TCP configuration";
+        container tcp {
+            description "TCP configuration";
+            list authentication {
+                key "authentication-id";
+                description "Authentication for TCP";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libcmdlwip.so",
+                        "symbol": "cmd_lwip_get_default_auth_config_tbl_templ",
+                        "type" :  "tcp.auth_config_tbl"
+                    }
+                }';
+                leaf authentication-id {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Authentication Tuple Identifier";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "auth_id"
+                        }
+                    }';
+                }
+                leaf type {
+                    mandatory true;
+                    type authentication-type;
+                    description "Authentication type to be configured";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "auth_type"
+                        }
+                    }';
+                }
+                leaf key1-id {
+                    type uint8;
+                    description "Key1 id for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key1_id"
+                            }
+                        }';
+                }
+                leaf key1-plain-text {
+                    type string {
+                        length "1..256";
+                    }
+                    description "Key1 in plain text for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key1",
+                                "plain-text-password" : true,
+                                "secret-text-leaf-name" : "key1-encrypted-text"
+                            }
+                        }';
+                }
+                leaf key1-encrypted-text {
+                    mandatory true;
+                    type rtb-types:secret-string-type;
+                    description "Key1 in encrypted text for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key1"
+                            }
+                        }';
+                }
+                leaf key2-id {
+                    type uint8;
+                    description "Key2 id for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key2_id"
+                            }
+                        }';
+                }
+                leaf key2-plain-text {
+                    type string {
+                        length "1..256";
+                    }
+                    description "Key2 in plain text for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key2",
+                                "plain-text-password" : true,
+                                "secret-text-leaf-name" : "key2-encrypted-text"
+                            }
+                        }';
+                }
+                leaf key2-encrypted-text {
+                    type rtb-types:secret-string-type;
+                    description "Key2 in encrypted text for TCP AO for sending and receiving packets";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "key2"
+                            }
+                        }';
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,136 @@
+submodule rtbrick-access-pool {
+
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+      "This sub-module defines the YANG structure for the access address pool.";
+    revision 2020-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping access-pool {
+        description "Global access address pool configuration";
+        
+        list pool {
+            key "pool-name";
+            description "Global address pool configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.pool.address-assignment.config",
+                    "type"    : "pool_address_config_table"
+                }
+            }';                                                      
+            leaf pool-name {
+                type string {
+                    length "1..64";
+                }
+                description "Name of the address pool";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "pool_name"
+                    }
+                }';
+            }
+            leaf next-pool-name {
+                type string {
+                    length "1..64";
+                }
+                description "Name of the next address pool to be used if full";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "next_pool_name"
+                    }
+                }';
+            }
+            container ipv4-address {
+                description "IPv4 address pool configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.pool.address-assignment.config",
+                        "type"    : "pool_address_config_table",
+                        "inherit-attribute": ["pool_name"]
+                    }
+                }';
+                leaf low {
+                    type inet:ipv4-address;
+                    description "Lowest IPv4 address";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_range_low"
+                        }
+                    }';
+                }
+                leaf high {
+                    type inet:ipv4-address;
+                    description "Highest IPv4 address";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv4_range_high"
+                        }
+                    }';
+                }
+                leaf subnet-mask {
+                    type inet:ipv4-address;
+                    description "Subnet mask";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "subnet_mask"
+                        }
+                    }';
+                }
+            }
+            container ipv6-prefix {
+                description "IPv6 prefix pool configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.pool.address-assignment.config",
+                        "type"    : "pool_address_config_table",
+                        "inherit-attribute": ["pool_name"]
+                    }
+                }';
+                leaf low {
+                    type inet:ipv6-prefix;
+                    description "Lowest IPv6 prefix";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_range_low"
+                        }
+                    }';
+                }
+                leaf high {
+                    type inet:ipv6-prefix;
+                    description "Highest IPv6 prefix";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ipv6_range_high"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+}

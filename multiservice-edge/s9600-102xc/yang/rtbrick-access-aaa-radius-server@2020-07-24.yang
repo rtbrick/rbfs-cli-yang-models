@@ -1,0 +1,300 @@
+submodule rtbrick-access-aaa-radius-server {
+
+    yang-version 1.1;                                                                
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+        reference "RFC 6991";
+    }
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    organization
+      "RtBrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+      "This sub-module defines the YANG structure for the access RADIUS server configurations.";
+    revision 2020-07-24 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping access-aaa-radius-server {
+        description "Global access RADIUS server configuration";
+
+        list radius-server {
+            key "server-name";
+            description "Global RADIUS server configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name" : "global.access.radius.config",
+                    "type"    : "global_radius_config_table"
+                }
+            }';
+            leaf server-name {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Name of the RADIUS server";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "radius_name"
+                    }
+                }';
+            }
+            leaf address {
+                type inet:ipv4-address;
+                description "RADIUS server IPv4 address";
+                mandatory true;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "radius_ipv4_address"
+                    }
+                }';
+            } 
+            leaf source-address {
+                type inet:ipv4-address;
+                description "Source IPv4 address used for RADIUS packets";
+                mandatory true;
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "local_source_ipv4_address"
+                    }
+                }';
+            } 
+            leaf secret-plain-text {
+                type string {
+                    length "1 .. 64";
+                }
+                description "RADIUS secret in plain text";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "secret",
+                        "plain-text-password" : true,
+			            "secret-text-leaf-name" : "secret-encrypted-text"
+                    }
+                }';
+            }
+            leaf secret-encrypted-text {
+                type rtb-types:secret-string-type;
+                description "RADIUS secret in encrypted text";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "secret"
+                    }
+                }';
+            }
+            leaf routing-instance {
+                type string {
+                    length "1 .. 64";
+                }
+                description "Instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "radius_instance",
+                        "expansion-getter" : {
+                            "package":"subsMgmt",
+                            "method" :"access_instance_name_expander"
+                        }
+                    }
+                }';
+            }
+            leaf rate {
+                type uint16 { 
+                    range "1..65535";
+                }
+                description "Maximum RADIUS requests per second";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "request_rate"
+                    }
+                }';
+            }
+            container authentication {
+                description "RADIUS authentication mode";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.radius.config",
+                        "type"    : "global_radius_config_table",
+                        "inherit-attribute": ["radius_name"]
+                    }
+                }';
+                leaf enable {
+                    type rtb-types:boolean-type;
+                    description "Enable RADIUS authentication";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_enabled"
+                        }
+                    }';
+                } 
+                leaf port {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "RADIUS server authentication port";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_port"
+                        }
+                    }';
+                } 
+                leaf retry {
+                    type uint8 { 
+                        range "1..255";
+                    }
+                    description "Maximum retries for authentication requests";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_retry"
+                        }
+                    }';
+                } 
+                leaf timeout {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "Authentication request timeout in seconds";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_timeout"
+                        }
+                    }';
+                }
+                leaf outstanding {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "Maximum number of outstanding authentication requests";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "authentication_max_outstanding"
+                        }
+                    }';
+                }
+            }
+            container accounting {
+                description "RADIUS accounting mode";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.radius.config",
+                        "type"    : "global_radius_config_table",
+                        "inherit-attribute": ["radius_name"]
+                    }
+                }';
+                leaf enable {
+                    type rtb-types:boolean-type;
+                    description "Enable RADIUS accounting";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_enabled"
+                        }
+                    }';
+                } 
+                leaf port {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "RADIUS server accounting port";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_port"
+                        }
+                    }';
+                } 
+                leaf retry {
+                    type uint8 { 
+                        range "1..255";
+                    }
+                    description "Maximum retries for accounting request packets";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_retry"
+                        }
+                    }';
+                } 
+                leaf timeout {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "Accounting request timeout in seconds";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_timeout"
+                        }
+                    }';
+                }
+                leaf outstanding {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "Maximum number of outstanding accounting requests";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "accounting_max_outstanding"
+                        }
+                    }';
+                }
+            }
+            container coa {
+                description "RADIUS Change-of-Authorization (CoA) mode";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.access.radius.config",
+                        "type"    : "global_radius_config_table",
+                        "inherit-attribute": ["radius_name"]
+                    }
+                }';
+                leaf enable {
+                    type rtb-types:boolean-type;
+                    description "Enable Change-of-Authorization (CoA)";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "coa_enabled"
+                        }
+                    }';
+                } 
+                leaf port {
+                    type uint16 { 
+                        range "1..65535";
+                    }
+                    description "Local RADIUS CoA port";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "coa_port"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+}
