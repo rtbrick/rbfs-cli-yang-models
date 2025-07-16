@@ -19,7 +19,7 @@ submodule rtbrick-global-options {
     organization
       "Rtbrick";
     contact
-        "Author : Ankit (ankit@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
         "This is the multicast-options configuration yang file";
 

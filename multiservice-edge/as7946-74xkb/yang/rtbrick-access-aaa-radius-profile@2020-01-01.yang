@@ -7,7 +7,7 @@ submodule rtbrick-access-aaa-radius-profile {
     organization
       "Rtbrick";
     contact
-      "Authors: Deeksha Bhandary (deeksha@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This sub module contains the top level configurations of dummy access-aaa-radius-profile config to help rtbrick roles.

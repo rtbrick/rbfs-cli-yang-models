@@ -6,7 +6,7 @@ module rtbrick-qos-types {
     organization
       "Rtbrick";
     contact
-      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This is the type file containing the common qos types across rtbrick.
       Shall be included in other yang files and used in appropriate places";

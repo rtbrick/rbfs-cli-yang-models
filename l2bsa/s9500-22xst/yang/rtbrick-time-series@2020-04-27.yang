@@ -11,7 +11,7 @@ submodule rtbrick-time-series {
     organization
       "Rtbrick";
     contact
-      "Author : Navaneeth Y V (navaneethyv@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains the YANG structure for the time series configuration, that can interact with Prometheus.
        time-series
@@ -80,9 +80,9 @@ submodule rtbrick-time-series {
         }
         description "Metric type from a BDS perspective";
     }
-    typedef keyval-string {
+    typedef prometheus-keyval-string {
         type string {
-             pattern '.*:.*';
+             pattern '([a-zA-Z0-9_]+\:.*)';
              length "1..128";
         }
         description "A BDS key-value string";
@@ -99,6 +99,9 @@ submodule rtbrick-time-series {
     typedef prometheus-metric-name {
         type string {
             pattern '[a-zA-Z_:][a-zA-Z0-9_:]*';
+            pattern '([^r].*|r([^t].*|$)|rt([^b].*|$)|rtb([^r].*|$)|rtbr([^i].*|$)|rtbri([^c].*|$)|rtbric([^k].*|$)|.{0,6})' {
+                error-message "Metric name must not start with 'rtbrick'.";
+            }
             length "1..128";
         }
         description "Prometheus Metric name format";
@@ -117,9 +120,27 @@ submodule rtbrick-time-series {
         }
     }
 
+    typedef prometheus-scrape-interval {
+        type string {
+            pattern '\d+[ms]';
+            length "1..128";
+        }
+        description "Prometheus scrape interval format";
+    }
+    typedef prometheus-repeat-interval {
+        type string {
+            pattern '\d+[msh]';
+            length "1..128";
+        }
+        description "Prometheus repeat interval format";
+    }
+
     /* Time series hierarchy */
     container time-series {
         description "Time series Hierarchy";
+        must 'count(metric-profile) <= 100' {
+            error-message "Maximum number of metric-profiles allowed is 100";
+        }
         reference
         '{
             "table-getter": {
@@ -138,6 +159,57 @@ submodule rtbrick-time-series {
                 }
             }';
         }
+        list metric-profile {
+            key "profile-name";
+            description "Metric profile configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.time-series.profile.config",
+                    "type": "time_series_profile_config_table",
+                    "default-attribute": [{"scrape-interval": "5s"}, {"append-timestamp": "false"}]
+                }
+            }';
+            leaf profile-name {
+                type string{
+                    pattern '([^r].*|r([^t].*|$)|rt([^b].*|$)|rtb([^r].*|$)|rtbr([^i].*|$)|rtbri([^c].*|$)|rtbric([^k].*|$)|.{0,6})' {
+                        error-message "Profile name must not start with 'rtbrick'.";
+                    }
+                    length "1..128";
+                }
+                mandatory true;
+                description "Metrics profile name";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "profile-name"
+                    }
+                }';
+                must '. != "default"' {
+                    error-message "Profile name cannot be default";
+                }
+            }
+            leaf scrape-interval {
+                type prometheus-scrape-interval;
+                description "Scrape interval with amount and unit. The amount is an integer value. The unit is m for minutes and s for seconds";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "scrape-interval"
+                    }
+                }';
+            }
+            leaf append-timestamp {
+                type rtb-types:boolean-type;
+                description "Specifies if the sample timestamp should be appended.";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "append-timestamp"
+                    }
+                }';
+            }
+        }
         list metric {
             key "name";
             description "Metric configuration";
@@ -145,9 +217,13 @@ submodule rtbrick-time-series {
             '{
                 "table-getter": {
                     "table-name": "global.time-series.metric.config",
-                    "type"   : "time_series_metric_config_table"
+                    "type"   : "time_series_metric_config_table",
+                    "default-attribute": [{"profile-name": "default"}]
                 }
             }';
+            must 'count(attribute) >= 1' {
+                error-message "Attribute configuration is mandatory";
+            }
             leaf name {
                 type prometheus-metric-name;
                 mandatory true;
@@ -169,6 +245,25 @@ submodule rtbrick-time-series {
                 '{
                     "attribute-getter" : {
                         "attribute" : "table-name"
+                    }
+                }';
+            }
+            leaf profile-name {
+                must "(../../metric-profile[profile-name=current()])" {
+                    error-message "Profile must be configured first";
+                }
+                type string{
+                    length "1..128";
+                }
+                description "Profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "profile-name",
+                        "expansion-getter" : {
+                            "package":"bds",
+                            "method" :"bds_profile_name_expander"
+                        }
                     }
                 }';
             }
@@ -384,7 +479,78 @@ submodule rtbrick-time-series {
                 }
             }
         }
-
+        list alert-profile {
+            key "profile-name";
+            description "Metric alert-profile configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.time-series.alert.profile.config",
+                    "type": "time_series_alert_profile_config_table",
+                    "default-attribute": [{"repeat-interval": "4h"}, {"group-by": "..."}],
+                     "notification-type" : "table-change",                    
+                     "notification-interval": 500
+                }
+            }';
+            leaf profile-name {
+                type string{
+                    length "1..128";
+                }
+                mandatory true;
+                description "Metrics alert-profile name";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "profile-name"
+                    }
+                }';
+            }
+            leaf priority {
+                mandatory true;
+                type uint16;
+                description "Profile priority";
+                reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "priority"
+                        }
+                    }';
+            }
+            leaf repeat-interval {
+                type prometheus-repeat-interval;
+                description "Repeat interval with amount and unit. [Default: 4h]";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "repeat-interval"
+                    }
+                }';
+            }
+            leaf-list group-by {
+                type string{
+                    length "1..128";
+                }
+                description "The label names to group alerts to avoid duplicate alert notifications";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "group-by"
+                    }
+                }';
+            }
+            leaf-list matchers {
+                type string{
+                    length "1..128";
+                }
+                description "Label constraints to match alert notifications";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "matchers"
+                    }
+                }';
+            }
+        }
         list alert {
             key "name";
             description "Alert configuration";
@@ -428,7 +594,6 @@ submodule rtbrick-time-series {
                     length "1..64";
                     pattern '[0-9]+(ms|[smhdwy])';
                 }
-                mandatory true;
                 description "Interval for the alert has to be active after which prometheus will fire the alert";
                 reference
                 '{
@@ -506,7 +671,7 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf-list labels {
-                type keyval-string;
+                type prometheus-keyval-string;
                 ordered-by user;
                 description "Key,value pair of labels for this alert";
                 reference
@@ -517,13 +682,46 @@ submodule rtbrick-time-series {
                 }';
             }
             leaf-list annotations {
-                type keyval-string;
+                type prometheus-keyval-string;
                 ordered-by user;
                 description "Key,value pair of annotations for this alert";
                 reference
                 '{
                     "attribute-getter" : {
                         "attribute" : "annotations"
+                    }
+                }';
+            }
+        }
+        container self-monitoring {
+            description "Prometheus self-monitoring configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.time-series.self-monitoring",
+                    "type": "time_series_self_monitoring_table",
+                    "default-attribute": [{"configuration_name": "rtbrick"}, {"scrape-interval": "5s"}, {"enable": "false"}],
+                    "notification-type" : "table-change",                    
+                    "notification-interval": 500
+                }
+            }';
+            leaf enable {
+                type rtb-types:boolean-type;
+                description "Specifies if self monitoring should be enabled.";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "enable"
+                    }
+                }';
+            }
+            leaf scrape-interval {
+                type prometheus-scrape-interval;
+                description "Scrape interval with amount and unit. The amount is an integer value. The unit is m for minutes and s for seconds";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "scrape-interval"
                     }
                 }';
             }

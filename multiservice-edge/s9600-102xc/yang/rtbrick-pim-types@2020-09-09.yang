@@ -11,7 +11,7 @@
     organization "rtbrick";
 
     contact
-    "anil@rtbrick.com";
+      "yang-support@rtbrick.com";
 
     description
       "This module contains general data definitions for use in PIM YANG model";

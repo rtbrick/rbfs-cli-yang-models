@@ -7,7 +7,7 @@ submodule rtbrick-access-l2bsa {
     organization
       "Rtbrick";
     contact
-      "Authors: Vyshakh (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This sub module contains the top level configurations of dummy access-l2bsa config to help rtbrick roles.

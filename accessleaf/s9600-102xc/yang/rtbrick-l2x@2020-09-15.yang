@@ -18,7 +18,7 @@ submodule rtbrick-l2x {
     organization
       "Rtbrick";
     contact
-      "Authors: Sudhir CR (sudhir@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for l2x configuration
@@ -424,7 +424,17 @@ submodule rtbrick-l2x {
                 }
             }';
         }
-
+        leaf statistics {
+            type rtb-types:boolean-true;
+            description
+                "Enable traffic-statistic";
+            reference
+            '{
+                    "attribute-getter" : {
+                        "attribute" : "statistics"
+                    }
+                }';
+        }
     }
 
     grouping l2x-top {

@@ -14,7 +14,7 @@ submodule rtbrick-pim {
       "Rtbrick";
 
     contact
-      "Authors: Anil Kumar S N (anil@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This sub-module contains YANG structure for

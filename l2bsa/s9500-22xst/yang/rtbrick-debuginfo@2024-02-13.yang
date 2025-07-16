@@ -7,7 +7,7 @@ submodule rtbrick-debuginfo {
     organization
       "Rtbrick";
     contact
-      "Author : Arihant Daragaj (arihant@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains the YANG structure for the debug info utility cro job configuration.
        debug-information

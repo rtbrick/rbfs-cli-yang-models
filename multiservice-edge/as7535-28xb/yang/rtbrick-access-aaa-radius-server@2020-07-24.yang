@@ -17,10 +17,9 @@ submodule rtbrick-access-aaa-radius-server {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       access AAA RADIUS server.";
+      "This sub-module defines the YANG structure for the access RADIUS server configurations.";
     revision 2020-07-24 {
         description "First revision";
         reference "None";

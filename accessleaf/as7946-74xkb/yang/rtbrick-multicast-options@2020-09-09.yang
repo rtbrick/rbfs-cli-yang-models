@@ -15,7 +15,7 @@ submodule rtbrick-multicast-options {
     organization
       "Rtbrick";
     contact
-        "Author : Bhishma Acharya (bhishma@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
         "This is the multicast-options configuration yang file";
 

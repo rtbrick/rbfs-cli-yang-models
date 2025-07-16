@@ -17,8 +17,7 @@ submodule rtbrick-bgp {
     organization "RtBrick";
 
     contact
-      "Authors: Ankit (ankit@rtbrick.com)
-                kuldeep (kuldeep@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This module describes a YANG model for BGP configuration.
@@ -190,7 +189,7 @@ submodule rtbrick-bgp {
             when '../afi != "l2vpn" and ../safi != "vpn-unicast" and ../safi != "vpn-multicast"';
             key "source";
             description "Redistribution related configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -454,7 +453,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP address family related configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -528,9 +527,7 @@ grouping bgp-export-label-block {
             }
             leaf multipath {
                 when '../afi != "l2vpn"';
-                type uint16 {
-                    range "0..255";
-                }
+                type uint16;
                 description "Load sharing among multiple BGP paths number";
                 reference
                 '{
@@ -540,6 +537,7 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf retain-route-target {
+                when '../safi = "vpn-unicast" or ../safi = "vpn-multicast" or ../safi = "vpls" or ../safi = "evpn"';
                 type rtb-bgp-types:enable-disable;
                 description "Retain vpn routes of all route target, default: enable";
                 reference
@@ -569,7 +567,7 @@ grouping bgp-export-label-block {
                     "attribute-getter" : {
                         "attribute" : "export_filter"
                     }
-                }';              
+                }';
             }
             leaf sid-index {
                 must '../../../../name != "default" and ../safi = "unicast"' {
@@ -1104,6 +1102,9 @@ grouping bgp-export-label-block {
     grouping bgp-pg-af-add-path {
         description "BGP additional path related configuration";
         container add-path {
+            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
+                error-message "add-path cannot be configured for safi evpn-vpws/vpls-vpws";
+            }
             description "Negotiate additional paths capabilities with the peer";
             reference
             '{
@@ -1141,6 +1142,9 @@ grouping bgp-export-label-block {
 
     grouping bgp-pg-address-family-attributes{
         leaf extended-nexthop {
+            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
+                error-message "extended-nexthop cannot be configured for safi evpn-vpws/vpls-vpws";
+            }
             type rtb-types:boolean-type;
             description "Enable extended nexthop capability";
             reference
@@ -1203,7 +1207,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP peer group address family specific configuration commands";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1326,7 +1330,7 @@ grouping bgp-export-label-block {
         list peer-group {
             key "pg-name";
             description "BGP peer group configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1483,17 +1487,7 @@ grouping bgp-export-label-block {
                     "inherit-attribute":["instance_name"]
                 }
             }';
-            leaf always-compare-med {
-                type rtb-types:boolean-type;
-                description
-                    "Always compare MED during best route selection";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "always_compare_med"
-                    }
-                }';
-            }
+
             leaf ignore-local-preference {
                 type rtb-types:boolean-type;
                 description
@@ -1549,6 +1543,51 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
+            leaf ignore-cluster-length {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore cluster-length during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_cluster_len"
+                    }
+                }';
+            }
+            leaf ignore-validation-state {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore RPKI validation state during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_validation_state"
+                    }
+                }';
+            }
+            leaf ignore-igp-metric {
+                type rtb-types:boolean-type;
+                description
+                    "Ignore igp metric during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ignore_igp_metric"
+                    }
+                }';
+            }
+            /*
+            leaf always-compare-med {
+                type rtb-types:boolean-type;
+                description
+                    "Always compare MED during best route selection";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "always_compare_med"
+                    }
+                }';
+            }
             leaf ignore-route-type {
                 type rtb-types:boolean-type;
                 description
@@ -1571,17 +1610,6 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
-            leaf ignore-cluster-length {
-                type rtb-types:boolean-type;
-                description
-                    "Ignore cluster-length during best route selection";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "ignore_cluster_len"
-                    }
-                }';
-            }
             leaf ignore-peer-ip {
                 type rtb-types:boolean-type;
                 description
@@ -1592,7 +1620,7 @@ grouping bgp-export-label-block {
                         "attribute" : "ignore_peer_ip"
                     }
                 }';
-            }
+            } */
         }
     }
 
@@ -1699,7 +1727,7 @@ grouping bgp-export-label-block {
 
         container bgp {
             description "Protocol bgp configuration";
-            reference 
+            reference
             '{
                 "table-getter": {
                     "table-name": "global.bgp.instance.config",
@@ -1822,9 +1850,8 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
-            /* bestroute-selection is not supported  */
-            //uses bgp-bestroute-selection;
 
+            uses bgp-bestroute-selection;
             uses bgp-protocol-preference;
             uses bgp-timers;
             uses bgp-address-family;

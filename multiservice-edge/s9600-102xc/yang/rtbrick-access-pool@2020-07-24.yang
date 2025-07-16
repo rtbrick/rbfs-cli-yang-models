@@ -14,10 +14,9 @@ submodule rtbrick-access-pool {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       global address pool.";
+      "This sub-module defines the YANG structure for the access address pool.";
     revision 2020-07-24 {
         description "First revision";
         reference "None";

@@ -6,7 +6,7 @@ submodule rtbrick-lawful-interception {
     }
 
     organization "RtBrick";
-    contact      "Authors: Deeksha Bhandary (deeksha@rtbrick.com)";
+    contact  "yang-support@rtbrick.com";
     description  "This is the dummy yang file for lawful interception module";
     revision 2024-06-01 {
         description "First revision";

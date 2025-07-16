@@ -9,10 +9,9 @@ submodule rtbrick-access-aaa-profile {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains YANG structure for
-       access AAA profile.";
+      "This sub-module defines the YANG structure for the access AAA profile.";
     revision 2020-05-21 {
         description "First revision";
         reference "None";
@@ -35,10 +34,6 @@ submodule rtbrick-access-aaa-profile {
             enum LOCAL_RADIUS {
                 value "3";
                 description "Local authentication with fallback to RADIUS";
-            }
-            enum RADIUS_LOCAL {
-                value "4";
-                description "RADIUS authentication with fallback to local";
             }
         }
     }

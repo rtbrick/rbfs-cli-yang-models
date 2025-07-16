@@ -20,10 +20,9 @@ submodule rtbrick-access-access-profile {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       access profile configuration.";
+      "This sub-module defines the YANG structure for the access profile.";
     revision 2020-07-25 {
         description "First revision";
         reference "None";
@@ -357,6 +356,9 @@ submodule rtbrick-access-access-profile {
                         leaf enable {
                             type rtb-types:boolean-type;
                             description "Enable PPP IPCP";
+                            must "not(. = 'true') or ../../../../address-family/ipv4/enable = 'true'" {
+                                error-message "IPv4 must be enabled if IPCP is enabled";
+                            }
                             reference
                             '{
                                 "attribute-getter" : {
@@ -409,17 +411,20 @@ submodule rtbrick-access-access-profile {
                                     "attribute" : "ipcp_config_nak_max"
                                 }
                             }';
-                        } 
+                        }
+                        must "not(enable = 'true') or source-ifl" {
+                            error-message "source-ifl must be set when IPCP is enabled.";
+                        }
                         leaf source-ifl {
                             type rtb-types:logical-interface-type;
                             description "Source IFL";
                             reference
                             '{
                                 "attribute-getter" : {
-                                    "attribute" : "ipcp_source_ifl",
-                                    "expansion-getter" : {
-                                        "package":"subsMgmt",
-                                        "method" :"access_ifl_name_expander"
+                                    "attribute": "ipcp_source_ifl",
+                                    "expansion-getter": {
+                                        "package": "subsMgmt",
+                                        "method": "access_ifl_name_expander"
                                     }
                                 }
                             }';
@@ -430,13 +435,16 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "table-name" : "global.access.profile.config",
-                                "type"    : "access_profile_config_table",
+                                "table-name": "global.access.profile.config",
+                                "type": "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
                         }';
                         leaf enable {
                             type rtb-types:boolean-type;
+                            must "not(. = 'true') or ../../../../address-family/ipv6/enable = 'true'" {
+                                error-message "IPv6 must be enabled if IP6CP is enabled";
+                            }
                             description "Enable PPP IP6CP";
                             reference
                             '{
@@ -498,8 +506,8 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -766,7 +774,11 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "attribute-getter" : {
-                                "attribute" : "ipv4_address_pool_name"
+                                "attribute" : "ipv4_address_pool_name",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_ipv4_pool_name_expander"
+                                }
                             }
                         }';
                     } 
@@ -860,7 +872,11 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "attribute-getter" : {
-                                "attribute" : "ipv6_prefix_pool_name"
+                                "attribute" : "ipv6_prefix_pool_name",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_ipv6_pool_name_expander"
+                                }
                             }
                         }';
                     } 
@@ -868,11 +884,15 @@ submodule rtbrick-access-access-profile {
                         type string {
                             length "1..64";
                         }
-                        description "Local IPv6 prefix delegation pool name";
+                        description "Local IPv6 pool name";
                         reference
                         '{
                             "attribute-getter" : {
-                                "attribute" : "ipv6_prefix_delegation_pool_name"
+                                "attribute" : "ipv6_prefix_delegation_pool_name",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_ipv6_pool_name_expander"
+                                }
                             }
                         }';
                     } 

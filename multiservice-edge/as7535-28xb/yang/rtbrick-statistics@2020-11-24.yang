@@ -9,7 +9,7 @@ submodule rtbrick-statistics {
       "Rtbrick";
 
     contact
-      "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module describes the YANG model for the statistics configuration.";

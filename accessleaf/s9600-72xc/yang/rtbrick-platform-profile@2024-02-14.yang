@@ -10,7 +10,7 @@ submodule rtbrick-platform-profile {
         "RtBrick";
 
     contact
-        "Authors: Jeevan Samrudh L H  (jeevan@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This sub-module contains yang structure for platform profile";

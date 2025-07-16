@@ -7,7 +7,7 @@
     organization "rtbrick";
 
     contact
-    "prejeeth@rtbrick.com";
+      "yang-support@rtbrick.com";
 
     description
       "This module contains general data definitions for use in OSPF YANG

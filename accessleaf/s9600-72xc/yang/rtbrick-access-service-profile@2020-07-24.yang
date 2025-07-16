@@ -13,10 +13,9 @@ submodule rtbrick-access-service-profile {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       access service profile.";
+      "This sub-module defines the YANG structure for the access service profile.";
     revision 2020-07-24 {
         description "First revision";
         reference "None";
@@ -107,7 +106,11 @@ submodule rtbrick-access-service-profile {
                     reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "qos_profile_name"
+                            "attribute" : "qos_profile_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_qos_profile_name_expander"
+                            }
                         }
                     }';
                 }

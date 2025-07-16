@@ -13,10 +13,9 @@ submodule rtbrick-access-dhcp-relay {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       DHCP relay without subscriber management.";
+      "This sub-module defines the YANG structure for the access DHCP relay configurations.";
     revision 2021-04-12 {
         description "First revision";
         reference "None";

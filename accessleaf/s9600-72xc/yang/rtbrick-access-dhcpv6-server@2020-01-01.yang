@@ -7,7 +7,7 @@ submodule rtbrick-access-dhcpv6-server {
     organization
       "Rtbrick";
     contact
-      "Authors: Ayana Chembra (ayanac@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
         "This sub module contains the top level configurations of dummy access-dhcpv6-server config to help rtbrick roles.

@@ -14,10 +14,9 @@ submodule rtbrick-access-dhcp-server {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       DHCP server configurations.";
+      "This sub-module defines the YANG structure for the access DHCP server configurations.";
     revision 2021-04-12 {
         description "First revision";
         reference "None";

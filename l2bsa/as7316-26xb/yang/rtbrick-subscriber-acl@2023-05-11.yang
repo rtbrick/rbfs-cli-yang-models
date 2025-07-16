@@ -17,7 +17,7 @@ submodule rtbrick-subscriber-acl {
       "Rtbrick";
 
     contact
-      "Author : Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
 
     description
       "This module describes the YANG model for the subscriber access control list (ACL) configuration.";

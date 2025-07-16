@@ -65,11 +65,14 @@ module rtbrick-config {
 
     include rtbrick-lawful-interception;
 
+    include rtbrick-oam;
+
+    import ietf-yang-types { prefix yang; }
+    
     organization
       "Rtbrick";
     contact
-      "Authors: Ankit Kumar Sinha (ankit@rtbrick.com)
-                Navaneeth Y V (navaneethyv@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This is the Rtbrick main YANG module file.
       All the other YANG files will be registered as submodules to this file.";
@@ -202,6 +205,25 @@ module rtbrick-config {
                 }
                 description
                     "Warning message related to the committed configuration";
+            }
+        }
+    }
+
+    rpc get_last_commit {
+        description "RPC for getting the commit user and timestamp associated with last successful commit";
+
+        output {
+            leaf user-name {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "User responsible for the last successful commit";
+            }
+            leaf commit-time {
+                type yang:date-and-time;
+                description
+                    "Timestamp of the last successful commit";
             }
         }
     }

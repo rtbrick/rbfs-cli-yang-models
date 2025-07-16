@@ -14,10 +14,9 @@ submodule rtbrick-access-interface-profile {
     organization
       "RtBrick";
     contact
-      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
-      "This sub-module contains yang structure for
-       access interface profile configuration.";
+      "This sub-module defines the YANG structure for the access interface profile.";
     revision 2020-08-06 {
         description "First revision";
         reference "None";
@@ -154,7 +153,7 @@ submodule rtbrick-access-interface-profile {
                 }
             }';
             must '. = ../../../../link-aggregation/interface[interface-name = current()/../interface-name]/redundancy-session-id = current()' {
-                    error-message "Redundancy session ID must be same for lag-interface and access-interface";
+                    error-message "redundancy-session-id must be same for lag-interface and access-interface";
             }
         }
         leaf pppoe-pado-delay {

@@ -8,7 +8,7 @@ submodule rtbrick-neighbor {
     organization
       "Rtbrick";
     contact
-      "Authors: Bhishma Acharya (bhishma@rtbrick.com)";
+      "yang-support@rtbrick.com";
     description
       "This sub-module contains the YANG structure for the Neighbor module";
     revision 2021-12-14 {
