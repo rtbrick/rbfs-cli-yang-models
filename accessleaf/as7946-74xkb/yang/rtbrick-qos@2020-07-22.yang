@@ -20,7 +20,7 @@ submodule rtbrick-qos {
     organization "Rtbrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
 
     description
       "This module defines configuration and operational state data
@@ -104,10 +104,6 @@ submodule rtbrick-qos {
             enum "nd" {
                 value 24;
                 description "nd";
-            }
-            enum "cfm" {
-                value 25;
-                description "cfm";
             }
         }
         description "protocol name type";
@@ -198,14 +194,6 @@ submodule rtbrick-qos {
             enum "single-level" {
                 value 1;
                 description "single level policer";
-            }
-            enum "large-bucket" {
-                value 2;
-                description "large bucket policer";
-            }
-            enum "single-level-large-bucket" {
-                value 3;
-                description "single level large bucket policer";
             }
         }
         description "qos policer type data type";
@@ -1145,7 +1133,7 @@ submodule rtbrick-qos {
                      range "0 .. 700000000";
                 }
                 description
-                    "Configure shaping high rate value (Kbps)";
+                    "Configure shaping high rate value";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1169,7 +1157,7 @@ submodule rtbrick-qos {
                      range "0 .. 700000000";
                 }
                 description
-                    "Configure shaping low rate value (Kbps)";
+                    "Configure shaping low rate value";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1381,7 +1369,7 @@ submodule rtbrick-qos {
             leaf queue-size {
                 type uint32;
                 description
-                    "Configure QoS queue size (bytes)";
+                    "Configure QoS queue size";
                 reference
                 '{
                     "attribute-getter" : {
@@ -1740,7 +1728,7 @@ submodule rtbrick-qos {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure committed information rate value (Kbps)";
+                        "Configure committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1750,26 +1738,23 @@ submodule rtbrick-qos {
                 }
                 leaf cbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure committed burst size value (Kbits)";
+                        "Configure committed burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level1_cbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../cbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../cbs > 33200)))" {
-                        error-message "'cbs' is limited by 33200 kbits, for larger 'cbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf pir {
                     type uint32 {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure peak information rate value (Kbps)";
+                        "Configure peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1779,26 +1764,23 @@ submodule rtbrick-qos {
                 }
                 leaf pbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure peak burst size value (Kbits)";
+                        "Configure peak burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level1_pbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../pbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../pbs > 33200)))" {
-                        error-message "'pbs' is limited by 33200 kbits, for larger 'pbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf max-cir {
                     type uint32 {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure maximum committed information rate value (Kbps)";
+                        "Configure maximum committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1811,7 +1793,7 @@ submodule rtbrick-qos {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure maximum peak information rate value (Kbps)";
+                        "Configure maximum peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1840,7 +1822,7 @@ submodule rtbrick-qos {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure committed information rate value (Kbps)";
+                        "Configure committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1850,26 +1832,23 @@ submodule rtbrick-qos {
                 }
                 leaf cbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure committed burst size value (Kbits)";
+                        "Configure committed burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level2_cbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../cbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../cbs > 33200)))" {
-                        error-message "'cbs' is limited by 33200 kbits, for larger 'cbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf pir {
                     type uint32 {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure peak information rate value (Kbps)";
+                        "Configure peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1879,26 +1858,23 @@ submodule rtbrick-qos {
                 }
                 leaf pbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure peak burst size value (Kbits)";
+                        "Configure peak burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level2_pbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../pbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../pbs > 33200)))" {
-                        error-message "'pbs' is limited by 33200 kbits, for larger 'pbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf max-cir {
                     type uint32 {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure maximum committed information rate value (Kbps)";
+                        "Configure maximum committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1911,7 +1887,7 @@ submodule rtbrick-qos {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure maximum peak information rate value (Kbps)";
+                        "Configure maximum peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1940,7 +1916,7 @@ submodule rtbrick-qos {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure committed information rate value (Kbps)";
+                        "Configure committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1950,26 +1926,23 @@ submodule rtbrick-qos {
                 }
                 leaf cbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure committed burst size value (Kbits)";
+                        "Configure committed burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level3_cbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../cbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../cbs > 33200)))" {
-                        error-message "'cbs' is limited by 33200 kbits, for larger 'cbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf pir {
                     type uint32 {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure peak information rate value (Kbps)";
+                        "Configure peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -1979,26 +1952,23 @@ submodule rtbrick-qos {
                 }
                 leaf pbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure peak burst size value (Kbits)";
+                        "Configure peak burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level3_pbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../pbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../pbs > 33200)))" {
-                        error-message "'pbs' is limited by 33200 kbits, for larger 'pbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf max-cir {
                     type uint32 {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure maximum committed information rate value (Kbps)";
+                        "Configure maximum committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2011,7 +1981,7 @@ submodule rtbrick-qos {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure maximum peak information rate value (Kbps)";
+                        "Configure maximum peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2040,7 +2010,7 @@ submodule rtbrick-qos {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure committed information rate value (Kbps)";
+                        "Configure committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2050,26 +2020,23 @@ submodule rtbrick-qos {
                 }
                 leaf cbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure committed burst size value (Kbits)";
+                        "Configure committed burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level4_cbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../cbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../cbs > 33200)))" {
-                        error-message "'cbs' is limited by 33200 kbits, for larger 'cbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf pir {
                     type uint32 {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure peak information rate value (Kbps)";
+                        "Configure peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2079,26 +2046,23 @@ submodule rtbrick-qos {
                 }
                 leaf pbs {
                     type uint32 {
-                         range "0 .. 2088960";
+                         range "0 .. 33200";
                     }
                     description
-                        "Configure peak burst size value (Kbits)";
+                        "Configure peak burst rate value";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "level4_pbs"
                             }
                         }';
-                    must "not((not(../../mode) and (../pbs > 33200)) or (((../../mode) and ((../../mode != 'single-level-large-bucket') and (../../mode != 'large-bucket'))) and (../pbs > 33200)))" {
-                        error-message "'pbs' is limited by 33200 kbits, for larger 'pbs' large-bucket mode must be configured";
-                    }
                 }
                 leaf max-cir {
                     type uint32 {
                          range "0 .. 700000000";
                     }
                     description
-                        "Configure maximum committed information rate value (Kbps)";
+                        "Configure maximum committed information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2111,7 +2075,7 @@ submodule rtbrick-qos {
                          range "0 .. 1400000000";
                     }
                     description
-                        "Configure maximum peak information rate value (Kbps)";
+                        "Configure maximum peak information rate value";
                     reference
                         '{
                             "attribute-getter" : {
@@ -2309,7 +2273,6 @@ submodule rtbrick-qos {
                     }
                     leaf connection-point {
                         type type-qos-scheduler-map-connection-point;
-                        mandatory true;
                         description
                             "Configure connection point";
                         reference
@@ -3139,7 +3102,7 @@ submodule rtbrick-qos {
                             "type"    : "qos_global_hostpath_outbound_interface_config_table",
                             "inherit-attribute" : ["protocol","remark_type"]
                         }
-                    }';
+                    }';   
                     leaf ifl {
                         type rtb-types:logical-interface-type;
                         description
@@ -3153,8 +3116,8 @@ submodule rtbrick-qos {
                                     "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
                                 }
                             }
-                        }';
-                    }
+                        }';                        
+                    }   
                     leaf codepoint {
                         type uint8;
                         mandatory true;
@@ -3179,7 +3142,7 @@ submodule rtbrick-qos {
                             "type"    : "qos_global_hostpath_outbound_interface_config_table",
                             "inherit-attribute" : ["protocol","remark_type"]
                         }
-                    }';
+                    }';   
                     leaf ifp {
                         type rtb-types:interface-type;
                         description
@@ -3191,10 +3154,10 @@ submodule rtbrick-qos {
                                 "expansion-getter" : {
                                     "package":"ifm",
                                     "method" :"ifm_interface_name_expander_without_recyc_ppp_cpu"
-                                }
+                                }                            
                             }
-                        }';
-                    }
+                        }';                        
+                    }   
                     leaf codepoint {
                         type uint8;
                         mandatory true;
@@ -3206,7 +3169,7 @@ submodule rtbrick-qos {
                                 "attribute" : "codepoint"
                             }
                         }';
-                    }
+                    }       
                 }
             }
         }

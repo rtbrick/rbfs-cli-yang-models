@@ -17,7 +17,8 @@ submodule rtbrick-bgp {
     organization "RtBrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Ankit (ankit@rtbrick.com)
+                kuldeep (kuldeep@rtbrick.com)";
 
     description
         "This module describes a YANG model for BGP configuration.
@@ -189,7 +190,7 @@ submodule rtbrick-bgp {
             when '../afi != "l2vpn" and ../safi != "vpn-unicast" and ../safi != "vpn-multicast"';
             key "source";
             description "Redistribution related configuration";
-            reference
+            reference 
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -453,7 +454,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP address family related configuration";
-            reference
+            reference 
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -527,7 +528,9 @@ grouping bgp-export-label-block {
             }
             leaf multipath {
                 when '../afi != "l2vpn"';
-                type uint16;
+                type uint16 {
+                    range "0..255";
+                }
                 description "Load sharing among multiple BGP paths number";
                 reference
                 '{
@@ -537,7 +540,6 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf retain-route-target {
-                when '../safi = "vpn-unicast" or ../safi = "vpn-multicast" or ../safi = "vpls" or ../safi = "evpn"';
                 type rtb-bgp-types:enable-disable;
                 description "Retain vpn routes of all route target, default: enable";
                 reference
@@ -567,7 +569,7 @@ grouping bgp-export-label-block {
                     "attribute-getter" : {
                         "attribute" : "export_filter"
                     }
-                }';
+                }';              
             }
             leaf sid-index {
                 must '../../../../name != "default" and ../safi = "unicast"' {
@@ -1102,9 +1104,6 @@ grouping bgp-export-label-block {
     grouping bgp-pg-af-add-path {
         description "BGP additional path related configuration";
         container add-path {
-            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
-                error-message "add-path cannot be configured for safi evpn-vpws/vpls-vpws";
-            }
             description "Negotiate additional paths capabilities with the peer";
             reference
             '{
@@ -1142,9 +1141,6 @@ grouping bgp-export-label-block {
 
     grouping bgp-pg-address-family-attributes{
         leaf extended-nexthop {
-            must "(../safi != 'evpn-vpws') and (../safi != 'vpls-vpws')" {
-                error-message "extended-nexthop cannot be configured for safi evpn-vpws/vpls-vpws";
-            }
             type rtb-types:boolean-type;
             description "Enable extended nexthop capability";
             reference
@@ -1207,7 +1203,7 @@ grouping bgp-export-label-block {
         list address-family {
             key "afi safi";
             description "BGP peer group address family specific configuration commands";
-            reference
+            reference 
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1330,7 +1326,7 @@ grouping bgp-export-label-block {
         list peer-group {
             key "pg-name";
             description "BGP peer group configuration";
-            reference
+            reference 
             '{
                 "table-getter": {
                     "library": "libbgpyang.so",
@@ -1727,7 +1723,7 @@ grouping bgp-export-label-block {
 
         container bgp {
             description "Protocol bgp configuration";
-            reference
+            reference 
             '{
                 "table-getter": {
                     "table-name": "global.bgp.instance.config",

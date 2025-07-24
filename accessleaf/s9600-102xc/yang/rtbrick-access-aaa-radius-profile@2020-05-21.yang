@@ -17,9 +17,10 @@ submodule rtbrick-access-aaa-radius-profile {
     organization
       "RtBrick";
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
     description
-      "This sub-module defines the YANG structure for the access RADIUS profile.";
+      "This sub-module contains yang structure for
+       access AAA RADIUS profile.";
     revision 2020-05-21 {
         description "First revision";
         reference "None";

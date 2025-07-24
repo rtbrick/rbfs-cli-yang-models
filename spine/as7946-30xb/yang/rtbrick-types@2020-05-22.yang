@@ -8,7 +8,8 @@ module rtbrick-types {
     organization
       "Rtbrick";
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Ankit Kumar Sinha (ankit@rtbrick.com)
+                 Navaneeth Y V (navaneethyv@rtbrick.com)";
     description
       "This is the type file containing the common types across rtbrick.
       Shall be included in other yang files and used in appropriate places";
@@ -170,7 +171,7 @@ module rtbrick-types {
 
     typedef secret-string-type {
         type string {
-            pattern '$(2[0-9a-fA-F]+|[56].+)';
+            pattern '$(2|5|6).+';
             length "4..16419";
         }
     }

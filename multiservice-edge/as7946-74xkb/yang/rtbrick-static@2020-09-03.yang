@@ -16,7 +16,7 @@ submodule rtbrick-static {
     organization
       "Rtbrick";
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Sudhir CR (sudhir@rtbrick.com)";
 
     description
         "This module describes a YANG model for static route configuration
@@ -108,9 +108,6 @@ submodule rtbrick-static {
             "Nexthop attributes";
 
         leaf nexthop {
-            must 'not(contains(../exit-interface,"null0"))' {
-                error-message "Nexthop cannot be configured with null0 exit-interface";
-            }
             type inet:ip-address;
             description "IPv4/IPv6 nexthop address";
             reference

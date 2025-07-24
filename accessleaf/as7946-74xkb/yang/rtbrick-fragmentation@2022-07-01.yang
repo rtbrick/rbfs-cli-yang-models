@@ -17,7 +17,7 @@ submodule rtbrick-fragmentation {
       "Rtbrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Author : Sudhir C R (sudhir@rtbrick.com)";
 
     description
       "This module describes the YANG model for the fragmentation configuration.";

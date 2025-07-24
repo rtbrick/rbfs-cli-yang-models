@@ -16,7 +16,7 @@ submodule rtbrick-link-aggregation {
       "Rtbrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Sudhir C R (sudhir@rtbrick.com)";
 
     description
         "This module contains the YANG structure for the link-aggregation module

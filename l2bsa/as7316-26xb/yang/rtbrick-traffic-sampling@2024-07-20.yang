@@ -17,7 +17,7 @@ submodule rtbrick-traffic-sampling {
     "Rtbrick";
 
   contact
-      "yang-support@rtbrick.com";
+    "Author : Jashmikant Mohanty (jashmikant@rtbrick.com)";
 
   description
     "This module describes the YANG model for the traffic sampling configuration.";

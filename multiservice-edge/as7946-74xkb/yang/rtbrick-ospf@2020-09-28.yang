@@ -17,7 +17,7 @@ submodule rtbrick-ospf {
     organization "RtBrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Authors: kuldeep (kuldeep@rtbrick.com)";
 
     description
         "This module describes a YANG model for OSPF configuration.
@@ -1198,14 +1198,16 @@ submodule rtbrick-ospf {
                     }
                 }';
             }
-            leaf multipath {
-                type uint16;
+            leaf max-load-balance {
+                type uint32{
+                    range "1..255";
+                }
                 description
-                    "Maximum ECMP paths to be calculated";
+                    "Maximum ECMP paths to be calculated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "multipath"
+                        "attribute" : "max_load_balance"
                     }
                 }';
             }
@@ -1277,14 +1279,16 @@ submodule rtbrick-ospf {
                     }
                 }';
             }
-            leaf multipath {
-                type uint16;
+            leaf max-load-balance {
+                type uint32{
+                    range "1..255";
+                }
                 description
-                    "Maximum ECMP paths to be calculated value";
+                    "Maximum ECMP paths to be calculated value, default: 16";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "multipath"
+                        "attribute" : "max_load_balance"
                     }
                 }';
             }

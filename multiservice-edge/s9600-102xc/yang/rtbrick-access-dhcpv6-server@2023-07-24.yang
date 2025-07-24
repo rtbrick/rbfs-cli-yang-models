@@ -14,9 +14,10 @@ submodule rtbrick-access-dhcpv6-server {
     organization
       "RtBrick";
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Ayana Chembra (ayanac@rtbrick.com)";
     description
-      "This sub-module defines the YANG structure for the access DHCPv6 server configurations.";
+      "This sub-module contains yang structure for
+       DHCPv6 server configurations.";
     revision 2023-07-24 {
         description "First revision";
         reference "None";

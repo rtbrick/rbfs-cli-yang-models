@@ -23,7 +23,7 @@ submodule rtbrick-interface {
     organization
       "Rtbrick";
     contact
-      "yang-support@rtbrick.com";
+      "Authors: Ganesh Nagesh Naik (ganesh@rtbrick.com)";
 
     description
         "This module describes a YANG model for interface configuration.
@@ -303,6 +303,17 @@ submodule rtbrick-interface {
         description "esi mode";
     }
 
+    typedef type-none {
+        type enumeration {
+            enum "none" {
+                value 1;
+                description
+                    "Ignore Operation";
+            }
+        }
+        description "Ignore Operation";
+    }
+    
     grouping subinterface-address-config {
         description
             "Configuration data for subinterfaces address";
@@ -917,6 +928,20 @@ submodule rtbrick-interface {
                     }';
                 }
 
+                leaf vlan-priority-operation {
+                    type type-none;
+                    description
+                        "Vlan Priority operation";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_priority_oper"
+                        }
+                    }';
+                }
                 leaf vlan-id {
                     type vlan-range;
                     description
@@ -1262,28 +1287,6 @@ submodule rtbrick-interface {
                         }
                     }';
             }
-            leaf statistics {
-                type rtb-types:boolean-type;
-                description
-                    "Enable traffic-statistic";
-                reference
-                '{
-                        "attribute-getter" : {
-                            "attribute" : "statistics"
-                    }
-                }';
-            }
-            leaf ra-disable {
-                type rtb-types:boolean-true;
-                description
-                    "Configure to disable ra";
-                reference
-                '{
-                        "attribute-getter" : {
-                            "attribute" : "ra_disable"
-                    }
-                }';
-            }
             must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
                 error-message "Invalid parameters configured on logical interface";
             }
@@ -1297,7 +1300,6 @@ submodule rtbrick-interface {
         list interface
         {
             key "name";
-            unique "host-if";
             description
                "The list of named interfaces on the device";
             reference
@@ -1552,30 +1554,6 @@ submodule rtbrick-interface {
                             }
                         }
                  }';
-            }
-            container ptp {
-                description "Configure PTP for physical interface";
-                presence ptp;
-                reference
-                '{
-                    "table-getter": {
-                        "table-name": "global.interface.physical.config",
-                        "type" :  "ifp_config_table",
-                        "inherit-attribute" : [ "ifp_name" ]
-                    }
-                }';
-                leaf enable
-                {
-                    type rtb-types:boolean-true;
-                    description
-                        "Configure PTP for the interface";
-                    reference
-                        '{
-                            "attribute-getter" : {
-                                "attribute" : "ptp"
-                            }
-                        }';
-                }
             }
             container breakout {
                 description "Configure breakout for physical interface";

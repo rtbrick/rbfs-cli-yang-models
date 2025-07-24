@@ -19,13 +19,15 @@ submodule rtbrick-access {
     include rtbrick-access-dhcp-relay;
     include rtbrick-access-dhcp-server;
     include rtbrick-access-dhcpv6-server;
+    include rtbrick-access-l2bsa;
 
-    organization 
+    organization
       "RtBrick";
-    contact 
-      "yang-support@rtbrick.com";
+    contact
+      "Authors: Vyshakh Krishnan (vyshakh@rtbrick.com)";
     description
-      "This sub-module defines the YANG structure for the access module.";
+      "This sub-module contains YANG structure for
+       access module.";
     revision 2020-05-21 {
         description "First revision";
         reference "None";
@@ -69,6 +71,7 @@ submodule rtbrick-access {
           uses access-dhcp-relay;
           uses access-dhcp-server;
           uses access-dhcpv6-server;
+          uses access-l2bsa;
       }
     }
 

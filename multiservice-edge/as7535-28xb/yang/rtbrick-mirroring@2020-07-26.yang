@@ -13,7 +13,7 @@ submodule rtbrick-mirroring {
       "Rtbrick";
 
     contact
-      "yang-support@rtbrick.com";
+      "Author : Ganesh Nagesh Naik (ganesh@rtbrick.com)";
 
     description
       "This is the mirroring related configuration yang file";
