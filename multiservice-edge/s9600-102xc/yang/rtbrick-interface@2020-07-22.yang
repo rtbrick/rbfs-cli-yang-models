@@ -303,6 +303,17 @@ submodule rtbrick-interface {
         description "esi mode";
     }
 
+    typedef type-none {
+        type enumeration {
+            enum "none" {
+                value 1;
+                description
+                    "Ignore Operation";
+            }
+        }
+        description "Ignore Operation";
+    }
+    
     grouping subinterface-address-config {
         description
             "Configuration data for subinterfaces address";
@@ -917,6 +928,20 @@ submodule rtbrick-interface {
                     }';
                 }
 
+                leaf vlan-priority-operation {
+                    type type-none;
+                    description
+                        "Vlan Priority operation";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_priority_oper"
+                        }
+                    }';
+                }
                 leaf vlan-id {
                     type vlan-range;
                     description
