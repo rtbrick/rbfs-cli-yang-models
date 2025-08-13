@@ -346,7 +346,7 @@ submodule rtbrick-bgp {
         }
     }
 
-grouping bgp-export-label-block {
+    grouping bgp-export-label-block {
         description "Segment routing global block related configuration";
         container export-label-block {
             when '../afi = "l2vpn" or ../safi = "vpn-unicast"';
@@ -407,7 +407,9 @@ grouping bgp-export-label-block {
             }';
             leaf base {
                 type uint32 {
-                    range "16..16777215";
+                    range "256 .. 499968"{
+                        error-message "BGP srgb base should be between 256 and 499968";
+                    }
                 }
                 must "../range" {
                     error-message "configure/un-configure SRGB base and range";
@@ -421,7 +423,9 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf range {
-                type uint32;
+                type uint32 {
+                    range "0 .. 499968";
+                }
                 must "../base" {
                     error-message "configure/un-configure SRGB base and range";
                 }
@@ -434,8 +438,26 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf index {
-                type uint32 {
-                    range "0..4294967294";
+                type uint32;
+                must "../base" {
+                    error-message "configure/un-configure SRGB base and range";
+                }
+                must ". + ../base <= 499968" {
+                    error-message "Label out of the range <256-499968>";
+                }
+                must ". >= 0 and  . <= ../range" {
+                    error-message "Index out of configured srgb range for BGP";
+                }
+                must "count(../../../../../../instance[not(name = current()/../../../../../name)]
+                        /protocol/bgp/address-family/srgb[base + index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label across BGP instances";
+                }
+                must "count(../../../address-family[not(afi = current()/../../afi)]/srgb[base + index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP ipv4 and ipv6";
+                }
+                must "count(../../../../../../instance/protocol/bgp/address-family/interface
+                        [label-base + sid-index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label and BGP interface label";
                 }
                 description "SRGB segment index";
                 reference
@@ -547,6 +569,17 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
+            leaf inter-as-option-ab {
+                when '../safi = "vpn-unicast" ';
+                type rtb-bgp-types:enable-disable;
+                description "Use static label of a instance as option-B label for re-advertisement";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "inter_as_option_ab"
+                    }
+                }';
+            }
             leaf allow-missing-export-policy {
                 when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
@@ -586,6 +619,34 @@ grouping bgp-export-label-block {
                 '{
                     "attribute-getter" : {
                         "attribute" : "sid_index"
+                    }
+                }';
+            }
+            leaf label {
+                must '../../../../name != "default" and ../safi = "unicast"' {
+                    error-message "Static Label cannot be configured for default instance or non-unicast address families";
+                }
+                must "count(../../../../../instance/protocol/bgp/address-family/srgb
+                            [base + index = current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label and BGP unicast label";
+                }
+                must "count(../../../../../instance[not(name = current()/../../../../name)]
+                        /protocol/bgp/address-family[label = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast across BGP instances";
+                }
+                must "count(../../address-family[not(afi = current()/../afi)]/label[. = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast for BGP ipv4 and ipv6";
+                }
+                must "count(../../../../../instance/protocol/bgp/address-family/interface
+                        [label-base + sid-index = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast label and BGP interface label";
+                }
+                type rtb-types:mpls-label;
+                description "Configure static label associated with the instance";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "label"
                     }
                 }';
             }
@@ -723,7 +784,7 @@ grouping bgp-export-label-block {
                     when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
                     description "SRGB base";
                     type uint32 {
-                        range "200001..300000";
+                        range "256 .. 499968";
                     }
                     reference
                         '{
@@ -736,6 +797,10 @@ grouping bgp-export-label-block {
                     when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
                     description "Index to be used in transit labels";
                     type uint32;
+                    must "count(../../../../../../instance[not(name = current()/../../../../../name)]
+                        /protocol/bgp/address-family/interface[label-base + sid-index = current()/../label-base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP interface across BGP instances";
+                     }
                     reference
                         '{
                             "attribute-getter" : {
@@ -1847,6 +1912,17 @@ grouping bgp-export-label-block {
                             "package":"ifm",
                             "method" :"ifm_instance_name_expander"
                         }
+                    }
+                }';
+            }
+            leaf malformed-update {
+                type rtb-bgp-types:bgp-ignore;
+                description
+                    "Malformed update packet is ignored and session is not reset";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "malformed_update"
                     }
                 }';
             }

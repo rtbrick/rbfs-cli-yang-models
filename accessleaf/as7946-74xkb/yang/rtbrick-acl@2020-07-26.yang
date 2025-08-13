@@ -673,6 +673,20 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "Configure acl match for instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_instance_name"
+                    }
+                }';
+            }
+
             must 'not(tcp-control) or (ip-protocol = "tcp")' {
                 error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }
@@ -776,6 +790,7 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+
             leaf ipv6-tc {
                 type uint8 {
                     range "0 .. 254";
@@ -1001,6 +1016,7 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description
@@ -1176,6 +1192,21 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
+                            leaf remark-codepoint {
+                                type uint8 {
+                                        range "0 .. 254";
+                                }
+                                description
+                                    "Configure remark codepoint value";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_remark_codepoint"
+                                    }
+                                }';
+                            }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description

@@ -442,7 +442,11 @@ submodule rtbrick-network-instance {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "instance_name"
+                        "attribute" : "instance_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" : "ifm_instance_name_expander"
+                        }
                     }
                  }';
             }
