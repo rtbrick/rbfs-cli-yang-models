@@ -4,6 +4,10 @@ submodule rtbrick-oam {
         prefix config;
     }
 
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
     organization "RtBrick";
 
     revision "2025-04-22" {
@@ -172,6 +176,146 @@ submodule rtbrick-oam {
                                     interface = current()/interface and
                                     not(name = current()/name)])" {
                     error-message "Combination of maintenance_association, local-mep, remote-mep, and interface must be unique.";
+                }
+            }
+        }
+        container bfd {
+            description "Bidirectional Forwarding Detection configuration hierarchy ";
+            list session {
+                key "name";
+                description "Session name";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.oam.bfd.session.config",
+                        "type" :  "oam_bfd_session_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "session_name"
+                        }
+                    }';
+                }
+                leaf peer-v4-address {
+                    type inet:ipv4-address-no-zone;
+                    description "Peer v4 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv4_address"
+                        }
+                    }';
+                    must "not(../../session[peer-v4-address = current()][not(name = current()/../name)])" {
+                        error-message "Multiple sessions with same IPv4 peer address are not allowed.";
+                    }
+                }
+                leaf peer-v6-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Peer v6 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv6_address"
+                        }
+                    }';
+                    must "not(../../session[peer-v6-address = current()][not(name = current()/../name)])" {
+                        error-message "Multiple sessions with same IPv6 peer address are not allowed.";
+                    }
+                }
+                leaf local-v4-address {
+                    type inet:ipv4-address-no-zone;
+                    description "Local v4 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "local_ipv4_address"
+                        }
+                    }';
+                }
+                leaf local-v6-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Local v6 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "local_ipv6_address"
+                        }
+                    }';
+                }
+                leaf transmit-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+                    description "Configure transmit interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_tx_interval"
+                        }
+                    }';
+                }
+                leaf receive-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+
+                    description "Configure receive interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_rx_interval"
+                        }
+                    }';
+                }
+                leaf detect-multiplier {
+                    type uint8 {
+                        range "1..255";
+                    }
+                    description "Configure detection multiplier, default: 3";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "detect_multiplier"
+                        }
+                    }';
+                }
+                leaf interface {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Logical interface name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                }
+                must interface {
+                    error-message "BFD interface name must be configured.";
+                }
+                must "not(peer-v4-address) or not(peer-v6-address)" {
+                    error-message "'peer-v4-address' and 'peer-v6-address' cannot be configured under same session.";
+                }
+                must "peer-v4-address or peer-v6-address" {
+                    error-message " Either 'peer-v4-address' or 'peer-v6-address' must be configured.";
+                }
+                must "not(peer-v4-address) or local-v4-address" {
+                    error-message "If peer-v4-address is configured, local-v4-address must also be configured.";
+                }
+                must "not(peer-v6-address) or local-v6-address" {
+                    error-message "If peer-v6-address is configured, local-v6-address must also be configured.";
                 }
             }
         }

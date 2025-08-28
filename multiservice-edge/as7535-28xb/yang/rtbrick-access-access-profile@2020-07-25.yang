@@ -513,6 +513,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if RA is enabled";
+                        }
                         description "Enable IPv6 router-advertisement";
                         reference
                         '{
@@ -523,7 +526,7 @@ submodule rtbrick-access-access-profile {
                     } 
                     leaf interval {
                         type uint8 { 
-                            range "1..255";
+                            range "0..255";
                         }
                         description "Interval in seconds";
                         reference
@@ -557,6 +560,18 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
+                    leaf router-lifetime {
+                        type uint16 { 
+                            range "0..9000";
+                        }
+                        description "Router lifetime in seconds";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ipv6_ra_router_lifetime"
+                            }
+                        }';
+                    }
                 }
                 container dhcp {
                     description "Protocol DHCP";
@@ -570,6 +585,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv4/enable = 'true'" {
+                            error-message "IPv4 must be enabled if DHCP is enabled";
+                        }
                         description "Enable DHCP";
                         reference
                         '{
@@ -629,6 +647,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if DHCPv6 is enabled";
+                        }
                         description "Enable DHCPv6";
                         reference
                         '{

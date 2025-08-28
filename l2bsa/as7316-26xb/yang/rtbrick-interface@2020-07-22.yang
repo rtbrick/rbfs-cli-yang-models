@@ -1680,12 +1680,61 @@ submodule rtbrick-interface {
                     type rtb-types:boolean-true;
                     description
                         "Configure PTP for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "PTP cannot be configured on loopback or LAG interfaces";
+                    }
+
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "ptp"
                             }
                         }';
+                }
+            }
+            container synce {
+                description "Configure PTP for physical interface";
+                presence synce;
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.interface.physical.config",
+                        "type" :  "ifp_config_table",
+                        "inherit-attribute" : [ "ifp_name" ]
+                    }
+                }';
+                leaf enable
+                {
+                    type rtb-types:boolean-true;
+                    description
+                        "Configure SyncE for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "SyncE cannot be configured on loopback or LAG interfaces";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "synce"
+                         }
+                     }';
+                }
+                leaf esmc
+                {
+                    type rtb-types:boolean-true;
+                    description
+                        "Configure ESMC for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "ESMC cannot be configured on loopback or LAG interfaces";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "esmc"
+                         }
+                    }';
                 }
             }
             container breakout {

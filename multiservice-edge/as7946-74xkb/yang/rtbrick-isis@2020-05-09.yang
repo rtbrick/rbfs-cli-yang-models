@@ -349,7 +349,7 @@ submodule rtbrick-isis {
                         must "../../../../../segment-routing/srlb/base" {
                             error-message "Configure SRGB base and range";
                         }
-                        must ". >= 0 and  . <= ../../../../../segment-routing/srgb/range" {
+                        must ". >= 0 and  . <= ../../../../../segment-routing/srlb/range" {
                             error-message "Label out of specified range";
                         }
                         must ". + ../../../../../segment-routing/srlb/base <= 499968" {
@@ -380,7 +380,7 @@ submodule rtbrick-isis {
                         must "../../../../../segment-routing/srlb/base" {
                             error-message "Configure SRGB base and range";
                         }
-                        must ". >= 0 and  . <= ../../../../../segment-routing/srgb/range" {
+                        must ". >= 0 and  . <= ../../../../../segment-routing/srlb/range" {
                             error-message "Label out of specified range";
                         }
                         must ". + ../../../../../segment-routing/srlb/base <= 499968" {
