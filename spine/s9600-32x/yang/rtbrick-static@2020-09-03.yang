@@ -106,6 +106,10 @@ submodule rtbrick-static {
                 value "4";
                 description "Check interface state is up";
             }
+            enum nexthop-count {
+                value "5";
+                description "Check for nexthop count";
+            }
         }
         description "Compare type";
     }

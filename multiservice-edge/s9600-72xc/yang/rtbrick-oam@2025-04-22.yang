@@ -305,17 +305,65 @@ submodule rtbrick-oam {
                 must interface {
                     error-message "BFD interface name must be configured.";
                 }
-                must "not(peer-v4-address) or not(peer-v6-address)" {
-                    error-message "'peer-v4-address' and 'peer-v6-address' cannot be configured under same session.";
+            }
+            list profile {
+                key "name";
+                description "Profile name";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.oam.bfd.profile.config",
+                        "type" :  "oam_bfd_profile_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM BFD profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile_name"
+                        }
+                    }';
                 }
-                must "peer-v4-address or peer-v6-address" {
-                    error-message " Either 'peer-v4-address' or 'peer-v6-address' must be configured.";
+                leaf transmit-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+                    description "Configure transmit interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_tx_interval"
+                        }
+                    }';
                 }
-                must "not(peer-v4-address) or local-v4-address" {
-                    error-message "If peer-v4-address is configured, local-v4-address must also be configured.";
+                leaf receive-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+
+                    description "Configure receive interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_rx_interval"
+                        }
+                    }';
                 }
-                must "not(peer-v6-address) or local-v6-address" {
-                    error-message "If peer-v6-address is configured, local-v6-address must also be configured.";
+                leaf detect-multiplier {
+                    type uint8 {
+                        range "1..255";
+                    }
+                    description "Configure detection multiplier, default: 3";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "detect_multiplier"
+                        }
+                    }';
                 }
             }
         }

@@ -333,18 +333,69 @@ submodule rtbrick-policy {
                 }';
             }
             leaf type {
-                type string {
-                    length "1..64";
+                type enumeration {
+                    enum ipv4-prefix {
+                        value "0";
+                        description "IPv4 prefix list";
+                    }
+                    enum ipv6-prefix {
+                        value "1";
+                        description "IPv6 prefix list";
+                    }
+                    enum ipv4-address {
+                        value "30";
+                        description "IPv4 address list";
+                    }
+                    enum ipv6-address {
+                        value "31";
+                        description "IPv6 address list";
+                    }
+                    enum route-distinguisher {
+                        value "2";
+                        description "Route distinguisher list";
+                    }
+                    enum community {
+                        value "3";
+                        description "Community list";
+                    }
+                    enum extended-community {
+                        value "4";
+                        description "Extended community list";
+                    }
+                    enum large-community {
+                        value "5";
+                        description "Large community list";
+                    }
+                    enum as-path {
+                        value "6";
+                        description "AS path list";
+                    }
+                    enum source {
+                        value "14";
+                        description "Source protocol list";
+                    }
+                    enum sub-source {
+                        value "15";
+                        description "Sub source list";
+                    }
+                    enum cluster-list {
+                        value "7";
+                        description "Cluster list";
+                    }
+                    enum mpls-label {
+                        value "38";
+                        description "MPLS Label list";
+                    }
+                    enum ipv4-mcast-group {
+                        value "32";
+                        description "IPv4 multicast group list";
+                    }
                 }
                 description "List type";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "type",
-                        "expansion-getter" : {
-                            "package":"policy",
-                            "method" : "policy_list_type_expander"
-                        }
+                        "attribute" : "type"
                     }
                 }';
             }

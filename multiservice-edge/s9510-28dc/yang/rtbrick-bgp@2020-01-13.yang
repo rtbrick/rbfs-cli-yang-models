@@ -14,6 +14,8 @@ submodule rtbrick-bgp {
         prefix "rtb-bgp-types";
     }
 
+    include rtbrick-oam;
+
     organization "RtBrick";
 
     contact
@@ -64,130 +66,6 @@ submodule rtbrick-bgp {
                     "attribute" : "policy_name"
                 }
             }';
-        }
-    }
-
-    grouping bgp-bfd {
-        description "BGP BFD peer grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_peer_table_tmpl_get",
-                    "type" :  "bgp.peer_config_table",
-                    "inherit-attribute":["peer_ipv4_address", "source_ipv4_address"]
-                }
-            }';
-            leaf status {
-                type rtb-bgp-types:enable-disable;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-        }
-    }
-    grouping bgp-bfd-v6 {
-        description "BGP BFD peer grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_peer_table_tmpl_get",
-                    "type" :  "bgp.peer_config_table",
-                    "inherit-attribute":["peer_ipv6_address", "source_ipv6_address"]
-                }
-            }';
-            leaf status {
-                type rtb-bgp-types:enable-disable;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-        }
-    }
-    grouping bgp-bfd-interface {
-        description "BGP BFD peer grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_peer_table_tmpl_get",
-                    "type" :  "bgp.peer_config_table",
-                    "inherit-attribute":["interface_name"]
-                }
-            }';
-            leaf status {
-                type rtb-bgp-types:enable-disable;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-        }
-    }    
-    grouping bgp-bfd-pg {
-        description "BGP BFD peer group grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_pg_table_tmpl_get",
-                    "type" :  "bgp.pg_config_table",
-                    "inherit-attribute":["pg_name"]
-                }
-            }';
-            leaf admin-status {
-                type rtb-types:boolean-type;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-            leaf profile {
-                type string {
-                    length "1..64";
-                }
-                description "BFD profile name";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "profile",
-                        "expansion-getter" : {
-                            "package":"bgp",
-                            "method" : "bgp_get_bfd_profile_name"
-                        }
-                    }
-                }';
-                must "boolean(../admin-status)" {
-                    error-message "Enable BFD status while configuring BFD profile";
-                }
-            }
         }
     }
 
@@ -403,6 +281,9 @@ submodule rtbrick-bgp {
                 }
                 must "../range" {
                     error-message "configure/un-configure Stitching label base and range";
+                }
+                must "count(../../../address-family/export-label-block[base = current()]) <= 1" {
+                    error-message "Export-label base should be unique across address families";
                 }
                 description "Stitching Label base (greater than 15)";
                 reference
@@ -629,7 +510,10 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf export-filter {
-                when '../safi = "vpls-vpws" or ../safi = "vpls"';
+                when '../safi = "evpn" or ../safi = "vpls"';
+                must '(../../../../name != "default" or ../safi != "evpn")' {
+                    error-message "Export filter is supported only on non-default evpn instance";
+                }
                 description "Apply remote site id based filters";
                 type rtb-bgp-types:export-filter;
                 reference
@@ -680,7 +564,11 @@ submodule rtbrick-bgp {
                         [label-base + sid-index = current()]) = 0" {
                         error-message "Conflicting labels for BGP unicast label and BGP interface label";
                 }
-                type rtb-types:mpls-label;
+                type rtb-types:mpls-label {
+                    range "0 .. 499968"{
+                        error-message "Unicast label should be between 0 and 499968";
+                    }
+                }
                 description "Configure static label associated with the instance";
                 reference
                 '{
@@ -921,9 +809,28 @@ submodule rtbrick-bgp {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "The BFD profile must be defined prior to associating it with a BGP auto-discovery peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
-                uses bgp-bfd-interface;
             }
             list ipv4 {
                 key "peer-address update-source";
@@ -983,9 +890,28 @@ submodule rtbrick-bgp {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "The BFD profile must be defined prior to associating it with a BGP ipv4 peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
-                uses bgp-bfd;
             }
             list ipv6 {
                 key "peer-address update-source";
@@ -1045,9 +971,28 @@ submodule rtbrick-bgp {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "The BFD profile must be defined prior to associating it with a BGP ipv4 peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
-                uses bgp-bfd-v6;
             }
         }
     }
@@ -1171,6 +1116,7 @@ submodule rtbrick-bgp {
         description "Update-nexthop related configuration";
         container update-nexthop {
             description "Updating the nexthop for updates advertised";
+            presence update-nexthop;
             reference
             '{
                 "table-getter": {
@@ -1294,7 +1240,6 @@ submodule rtbrick-bgp {
                     "attribute" : "nexthop_unchanged"
                 }
             }';
-
             must "not(../nexthop-self) and not(../update-nexthop/ipv4-address) and not(../update-nexthop/ipv6-address)" {
                 error-message "Any one (nexthop-self, nexthop-unchanged, update-nexthop) can be configured";
             }
@@ -1600,7 +1545,6 @@ submodule rtbrick-bgp {
                 }';
             }
             uses bgp-pg-address-family;
-            uses bgp-bfd-pg;
         }
     }
 
