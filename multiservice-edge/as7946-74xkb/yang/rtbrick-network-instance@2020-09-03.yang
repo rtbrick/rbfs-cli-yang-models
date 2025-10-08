@@ -23,6 +23,7 @@ submodule rtbrick-network-instance {
     include rtbrick-ldp;
     include rtbrick-lwip;
     include rtbrick-snmp;
+    include rtbrick-policy;
 
     organization
       "Rtbrick";
@@ -70,9 +71,16 @@ submodule rtbrick-network-instance {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "import_route_map"
+                        "attribute" : "import_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
             leaf-list export {
                 type types:policy-name-type;
@@ -84,9 +92,16 @@ submodule rtbrick-network-instance {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "export_route_map"
+                        "attribute" : "export_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
         }
     }
@@ -161,9 +176,17 @@ submodule rtbrick-network-instance {
                 reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "policy_name"
+                            "attribute" : "policy_name",
+                            "expansion-getter" : {
+                                "package": "policy",
+                                "method" : "policy_statement_expander"
+                            }
+
                         }
                     }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
 
             must '((../afi = "ipv4") or (../afi = "ipv6"))' {

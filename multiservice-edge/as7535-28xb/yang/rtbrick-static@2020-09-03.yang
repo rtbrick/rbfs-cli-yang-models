@@ -468,6 +468,8 @@ submodule rtbrick-static {
         }
 
         container match-peer {
+            description
+                "Conditional routing bgp peer";
             container ipv4 {
                 description
                     "Configuration ipv4 peer related attributes";

@@ -138,6 +138,9 @@ submodule rtbrick-oam {
                             "attribute" : "remote_endpoint_id"
                         }
                     }';
+                    must ". != ../local-mep" {
+                        error-message "Local MEP must be different from remote MEP.";
+                    }
                 }
                 leaf interface {
                     type string {
@@ -166,6 +169,9 @@ submodule rtbrick-oam {
                 }
                 must local-mep {
                     error-message "CFM local-mep name must be configured.";
+                }
+                must remote-mep {
+                    error-message "CFM remote-mep name must be configured.";
                 }
                 must interface {
                     error-message "CFM interface name must be configured.";
@@ -276,7 +282,7 @@ submodule rtbrick-oam {
                 }
                 leaf detect-multiplier {
                     type uint8 {
-                        range "1..255";
+                        range "2..255";
                     }
                     description "Configure detection multiplier, default: 3";
                     reference

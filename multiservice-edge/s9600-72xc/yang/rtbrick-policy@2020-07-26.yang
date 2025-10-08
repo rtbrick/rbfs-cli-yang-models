@@ -324,6 +324,7 @@ submodule rtbrick-policy {
                         '[a-zA-Z_][a-zA-Z0-9_]{0,64}';
                     length "1..64";
                 }
+
                 description "List name";
                 reference
                 '{
@@ -421,8 +422,8 @@ submodule rtbrick-policy {
             must "not(sub-type = 'range') or (count(ordinal[value2]) = count(ordinal))" {
                 error-message "When subtype is range, value2 must be configured for all entries.";
             }
-            must "(count(ordinal[value]) <= 16000)" {
-                error-message "Only 16,000 ordinals are supported in the list";
+            must "(count(ordinal[value]) <= 64000)" {
+                error-message "Only 64,000 ordinals are supported in the list";
             }
         }
     }
@@ -492,10 +493,20 @@ submodule rtbrick-policy {
                 }
                 ordered-by user;
                 description "Value against which mentioned attribute-type data will be judged";
+
+                must "(../value-type != 'list') or
+                      (/config:policy/list[name = current()])" {
+                    error-message "A policy list that is not configured or has been deleted is referenced in policy statements.";
+                }
+
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "value"
+                        "attribute" : "value",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_list_expander"
+                        }
                     }
                 }';
             }
@@ -575,6 +586,7 @@ submodule rtbrick-policy {
                 }
                 ordered-by user;
                 description "Value which is used for performing the operation on the mentioned attribute-type";
+
                 reference
                 '{
                     "attribute-getter" : {
@@ -634,10 +646,17 @@ submodule rtbrick-policy {
                     length "1..64";
                 }
                 description "Condition profile name";
+                must "count(/config:policy/condition[condition_name = current()]) > 0" {
+                    error-message "A policy condition that is not configured or has been deleted is referenced in policy statements.";
+                }
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "condition_profile"
+                        "attribute" : "condition_profile",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_condition_expander"
+                        }
                     }
                 }';
             }
@@ -761,6 +780,7 @@ submodule rtbrick-policy {
                     length "1..64";
                 }
                 description "Condition profile name";
+
                 reference
                 '{
                     "attribute-getter" : {

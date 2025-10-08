@@ -543,8 +543,12 @@ submodule rtbrick-system {
     grouping secure-management-top {
         description "Secure management configurations";
         container authorization {
+            presence true;
             description "Authorization configuration";
             list tacacs {
+                must "secret-plain-text or secret-encrypted-text" {
+                    error-message "Please provide plain text or encrypted text";
+                }
                 key "ipv4-address type";
                 description "TACACS server configuration";
                 reference
@@ -592,7 +596,6 @@ submodule rtbrick-system {
                 }
                 leaf secret-encrypted-text {
                     type rtb-types:secret-string-type;
-                    mandatory true;
                     description "Secret password in encrypted text for the TACACS server";
                     reference
                     '{
@@ -1021,6 +1024,7 @@ submodule rtbrick-system {
             container platform-management {
                 description "Platform management configuration";
                 container ipmi {
+                    presence ipmi;
                     description " Intelligent platform management interface configuration";
                     list interface {
                         key "id";
@@ -1104,6 +1108,9 @@ submodule rtbrick-system {
                     }
                     list user {
                         key "id";
+                        must "password-plain-text or password-encrypted-text" {
+                            error-message "Please provide plain text or encrypted text";
+                        }
                         description "IPMI user configuration";
                         reference
                         '{
@@ -1140,7 +1147,6 @@ submodule rtbrick-system {
                         }
                         leaf password-encrypted-text {
                             type rtb-types:secret-string-type;
-                            mandatory true;
                             description "IPMI user password in encrypted text";
                             reference
                             '{

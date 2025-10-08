@@ -13,7 +13,8 @@ submodule rtbrick-isis {
     }
 
     // include rtbrick-inband;
-
+    include rtbrick-policy;
+   
     organization
       "Rtbrick";
     contact
@@ -103,6 +104,9 @@ submodule rtbrick-isis {
                       }
                 }
             }';
+            must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+            }
         }
     }
 
@@ -319,6 +323,7 @@ submodule rtbrick-isis {
                 }
             }
             container point-to-point {
+                presence point-to-point;
                 must "not(../../type) or ../../type != 'broadcast'"{
                     error-message "segment-routing adjacency-index should be configured only on point-to-point interface";
                 }
@@ -434,7 +439,9 @@ submodule rtbrick-isis {
             }
             leaf metric
             {
-                type rtb-isis-types:protocol-metric;
+                type uint32 {
+                    range  "0 .. 16777215";
+                }
                 description
                     "Level-1 metric on an interface, default 1000000";
                 reference
@@ -533,7 +540,9 @@ submodule rtbrick-isis {
             }
             leaf metric
             {
-                type rtb-isis-types:protocol-metric;
+                type uint32 {
+                    range  "0 .. 16777215";
+                }
                 description
                     "Level-2 metric on an interface, default 1000000";
                 reference
@@ -628,7 +637,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf metric {
-                type rtb-isis-types:protocol-metric;
+                type uint32 {
+                    range  "0 .. 16777215";
+                }
                 description "Protocol metric";
                 reference
                 '{
@@ -667,7 +678,9 @@ submodule rtbrick-isis {
                 }';
             }
             leaf metric {
-                type rtb-isis-types:protocol-metric;
+                type uint32 {
+                    range  "0 .. 16777215";
+                }
                 description "Protocol metric";
                 reference
                 '{

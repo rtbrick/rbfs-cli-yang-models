@@ -13,6 +13,8 @@ submodule rtbrick-igmp {
         prefix "rtb-types";
     }
 
+    include rtbrick-policy;
+
     organization
         "Rtbrick";
 
@@ -170,6 +172,9 @@ submodule rtbrick-igmp {
                             }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) > 0' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
             }//leaf filter-policy
             leaf ssm-map-policy {
                 type string {
@@ -186,6 +191,9 @@ submodule rtbrick-igmp {
                             }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) > 0' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
             }//leaf ssm-map-policy
         }//list interface-profile
     }

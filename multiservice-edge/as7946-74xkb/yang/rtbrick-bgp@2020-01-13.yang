@@ -15,6 +15,7 @@ submodule rtbrick-bgp {
     }
 
     include rtbrick-oam;
+    include rtbrick-policy;
 
     organization "RtBrick";
 
@@ -63,9 +64,17 @@ submodule rtbrick-bgp {
             reference
             '{
                 "attribute-getter" : {
-                    "attribute" : "policy_name"
+                    "attribute" : "policy_name",
+                    "expansion-getter" : {
+                        "package": "policy",
+                        "method" : "policy_statement_expander"
+                    }
                 }
             }';
+
+            must 'count(/config:policy/statement[name=current()]) > 0' {
+                error-message "A policy statement that is not configured or has been deleted is referenced";
+            }
         }
     }
 
@@ -708,8 +717,14 @@ submodule rtbrick-bgp {
                 }
                 leaf label-base {
                     mandatory true;
-                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
+                    when '../../safi = "vpls-vpws"';
                     description "SRGB base";
+                    must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base = current()]) <= 1" {
+                        error-message "Label-base needs to be unique across BGP interfaces and BGP instances";
+                    }
+                    must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base + 1 = current()]) = 0" {
+                        error-message "Label-base with range 2 needs to be unique across BGP interfaces and BGP instances";
+                    }
                     type uint32 {
                         range "256 .. 499968";
                     }
@@ -1091,9 +1106,16 @@ submodule rtbrick-bgp {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "import_route_map"
+                        "attribute" : "import_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
             leaf-list export {
                 type rtb-types:policy-name-type;
@@ -1105,9 +1127,16 @@ submodule rtbrick-bgp {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "export_route_map"
+                        "attribute" : "export_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
         }
     }
@@ -1734,7 +1763,7 @@ submodule rtbrick-bgp {
                 }
                 must "not(current() = 1) and not(current() = 2)" {
                     error-message "Please enter a valid hold-timer";
-  
+
                 }
                 description
                     "Hold time";

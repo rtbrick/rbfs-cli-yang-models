@@ -109,6 +109,10 @@ submodule rtbrick-qos {
                 value 25;
                 description "cfm";
             }
+            enum "mpls-oam" {
+                value 26;
+                description "mpls-oam";
+            }
         }
         description "protocol name type";
     }
