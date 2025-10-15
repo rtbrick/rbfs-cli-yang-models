@@ -54,6 +54,10 @@ submodule rtbrick-acl {
                 value 1;
                 description "ingress direction";
             }
+            enum "egress" {
+                value 2;
+                description "egress direction";
+            }
         }
         description "direction data type";
     }
@@ -673,6 +677,20 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "Configure acl match for instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_instance_name"
+                    }
+                }';
+            }
+
             must 'not(tcp-control) or (ip-protocol = "tcp")' {
                 error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }
@@ -776,6 +794,7 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+
             leaf ipv6-tc {
                 type uint8 {
                     range "0 .. 254";
@@ -1001,6 +1020,7 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description
@@ -1028,6 +1048,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1036,7 +1062,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }
@@ -1176,6 +1206,21 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
+                            leaf remark-codepoint {
+                                type uint8 {
+                                        range "0 .. 254";
+                                }
+                                description
+                                    "Configure remark codepoint value";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_remark_codepoint"
+                                    }
+                                }';
+                            }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description
@@ -1203,6 +1248,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1211,7 +1262,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }
@@ -1389,6 +1444,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1397,7 +1458,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }

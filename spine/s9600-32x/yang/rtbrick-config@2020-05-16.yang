@@ -168,6 +168,34 @@ module rtbrick-config {
                 description
                     "String containing the executed command";
             }
+            leaf cli_logname {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the authenticated tacacs user";
+            }
+            leaf source_ip {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the source ip of the user";
+            }
+            leaf session_type {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the session type";
+            }
+            leaf action_type {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the action type";
+            }
         }
     }
 

@@ -109,6 +109,10 @@ submodule rtbrick-qos {
                 value 25;
                 description "cfm";
             }
+            enum "mpls-oam" {
+                value 26;
+                description "mpls-oam";
+            }
         }
         description "protocol name type";
     }
@@ -2936,12 +2940,34 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
                                         "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv4-dscp) or (../../match/ipv4-tos))' {
+                                        error-message "match ipv4-dscp and ipv4-tos are not supported with action remark-dscp-codepoint";
+                                    }
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3042,12 +3068,35 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
-                                        "Configure action remark_codepoint value";
+                                        "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv6-tc))' {
+                                        error-message "match ipv6-tc is not supported with action remark-dscp-codepoint";
+                                    }
+
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
