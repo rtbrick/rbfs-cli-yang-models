@@ -1532,6 +1532,11 @@ submodule rtbrick-interface {
                 type string {
                     length "1..64";
                 }
+                must "not(/config:forwarding-options/class-of-service/scheduler-map
+                            [scheduler-map-name = /config:forwarding-options/class-of-service/profile[profile-name = current()]/scheduler-map-name]/scheduler-name)" {
+                    error-message
+                        "IFP QoS profile must not have scheduler configured";
+                }
                 description
                     "Configure sub-interface's class-of-service profile name";
                 reference
@@ -1637,7 +1642,7 @@ submodule rtbrick-interface {
                 }
             }
             container synce {
-                description "Configure PTP for physical interface";
+                description "Configure SyncE for physical interface";
                 presence synce;
                 reference
                 '{

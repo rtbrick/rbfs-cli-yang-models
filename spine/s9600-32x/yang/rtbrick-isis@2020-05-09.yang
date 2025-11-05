@@ -14,6 +14,7 @@ submodule rtbrick-isis {
 
     // include rtbrick-inband;
     include rtbrick-policy;
+    include rtbrick-oam;
 
     organization
       "Rtbrick";
@@ -57,6 +58,9 @@ submodule rtbrick-isis {
                     }
                 }
             }';
+            must 'count(/config:oam/bfd/profile[name = current()]) > 0' {
+                error-message "BFD profile not defined or deletion not allowed when linked to the ISIS interface.";
+            }
         }
     }
 
@@ -1549,6 +1553,45 @@ submodule rtbrick-isis {
                     }';
                 }
             }
+
+            container level2-to-level1 {
+                description "Level-2 to Level-1";
+                container route-leak {
+                    description "Route leak from Level-2 to Level-1";
+                    reference
+                    '{
+                        "table-getter": {
+                            "table-name": "global.isis.instance.config",
+                            "type" :  "isis.config.table",
+                            "inherit-attribute":["instance_name"]
+                        }
+                    }';
+                    leaf-list policy {
+                        type string {
+                            length "1..64";
+                        }
+                        must "count(../policy) <= 10"{
+                            error-message "Maximum of 10 polices are supported in a policy chain";
+                        }
+                        ordered-by user;
+                        description "Policy map name";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "level2_to_level1_route_leak_policy",
+                                "expansion-getter" : {
+                                    "package":"isis",
+                                    "method" : "isis_policy_name_expander"
+                                }
+                            }
+                        }';
+                        must 'count(/config:policy/statement[name=current()]) > 0' {
+                            error-message "A policy statement that is not configured or has been deleted is referenced";
+                        }
+                    }
+                }
+            }
+
             uses isis-authentication;
             uses isis-segment-routing;
             uses isis-interface;

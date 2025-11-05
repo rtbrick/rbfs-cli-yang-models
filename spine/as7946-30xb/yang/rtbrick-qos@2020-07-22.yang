@@ -2430,38 +2430,6 @@ submodule rtbrick-qos {
         } // list  scheduler-map
     } //grouping qos-scheduler-map-top
 
-    grouping qos-host-path-qos-top {
-        description
-            "Top-level grouping for host path qos";
-        container ingress-qos {
-	        presence ingress-qos;
-            description
-                "Configure host path quality of service";
-            reference
-            '{
-                "table-getter": {
-                    "table-name" : "global.host-inbound.config",
-                    "type"    : "host_inbound_table",
-                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
-                }
-            }';
-            leaf state {
-                type enumeration {
-                    enum "enable" {
-                        value 1;
-                        description "enable";
-                    }
-                }
-                description "";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "host_path_qos_enable"
-                    }
-                }';
-            }
-        }
-    }
 
     grouping qos-control-plane-security {
         description
@@ -3269,7 +3237,6 @@ submodule rtbrick-qos {
             description
                 "Configure control plane QoS";
             uses qos-outbound-marking-top;
-            uses qos-host-path-qos-top;
         }
     }
 

@@ -103,6 +103,12 @@ submodule rtbrick-access-access-profile {
                     length "1..64";
                 }
                 description "Instance name";
+                must "current() = 'default' or not(../address-family/ipv4/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv4']/safi = 'unicast'" {
+                    error-message "access-profile with IPv4 enabled references instance without address-family IPv4 unicast";
+                }
+                must "current() = 'default' or not(../address-family/ipv6/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv6']/safi = 'unicast'" {
+                    error-message "access-profile with IPv6 enabled references instance without address-family IPv6 unicast";
+                }
                 reference
                 '{
                     "attribute-getter" : {

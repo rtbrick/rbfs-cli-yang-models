@@ -841,7 +841,7 @@ submodule rtbrick-bgp {
                     }';
                     must "/config:oam/bfd/profile[name = current()]" {
                         error-message
-                        "The BFD profile must be defined prior to associating it with a BGP auto-discovery peer.";
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
                     }
                 }
                 uses bgp-pg-name;
@@ -922,7 +922,7 @@ submodule rtbrick-bgp {
                     }';
                     must "/config:oam/bfd/profile[name = current()]" {
                         error-message
-                        "The BFD profile must be defined prior to associating it with a BGP ipv4 peer.";
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
                     }
                 }
                 uses bgp-pg-name;
@@ -1003,7 +1003,7 @@ submodule rtbrick-bgp {
                     }';
                     must "/config:oam/bfd/profile[name = current()]" {
                         error-message
-                        "The BFD profile must be defined prior to associating it with a BGP ipv4 peer.";
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
                     }
                 }
                 uses bgp-pg-name;

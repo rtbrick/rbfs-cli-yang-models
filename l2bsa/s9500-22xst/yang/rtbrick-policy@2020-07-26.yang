@@ -73,10 +73,6 @@ submodule rtbrick-policy {
                 value "8";
                 description "Operation to delete attribute that matches";
             }
-            enum goto-next-ordinal {
-                value "9";
-                description "Operation to continue executing policy to next ordinal";
-            }
             enum return-deny{
                 value "10";
                 description "Operation to stop executing policy and return deny";

@@ -13,6 +13,10 @@ submodule rtbrick-system {
         reference "RFC 6991";
     }
 
+    import ietf-yang-types {
+        prefix ietfyang;
+    }
+
     include rtbrick-platform-profile;
 
     organization
@@ -335,6 +339,53 @@ submodule rtbrick-system {
                           "attribute" : "mode"
                       }
                   }';
+                }
+            }
+            container global {
+                description "PTP global configuration";
+                reference
+                    '{
+                        "table-getter": {
+                        "table-name" : "global.ptp.info.config",
+                        "type"    : "global_ptp_info_config_tbl",
+                        "default-attribute" : [{"index" : "1"}]
+                        }
+                    }';
+                leaf destination-mac-address {
+                        type ietfyang:mac-address;
+                        description
+                            "Global destination MAC address";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "destination_mac"
+                            }
+                        }';
+                }
+            }
+        }
+        container synce {
+            description "PTP SyncE configuration";
+            container esmc {
+                description "PTP SyncE ESMC configuration";
+                reference
+                    '{
+                        "table-getter": {
+                        "table-name" : "global.ptp.esmc.info.config",
+                        "type"    : "global_ptp_esmc_info_config_tbl",
+                        "default-attribute" : [{"index" : "1"}]
+                        }
+                    }';
+                leaf destination-mac-address {
+                    type ietfyang:mac-address;
+                    description
+                        "SyncE ESMC destination MAC address";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "destination_mac"
+                        }
+                    }';
                 }
             }
         }
@@ -790,13 +841,15 @@ submodule rtbrick-system {
                 reference
                 '{
                     "table-getter": {
+                        "library": "libbds.so",
                         "table-name": "local.rtbrick.license.config",
-                        "type"   : "license_config_table"
+                        "type"   : "license_config_table",
+                        "obj_tmpl_symbol" : "bds_license_obj_tmpl_cb"
                     }
                 }';
                 leaf license-key {
                     description "License key string";
-                    type rtb-types:string512;
+                    type rtb-types:string4096;
                     reference
                     '{
                         "attribute-getter" : {

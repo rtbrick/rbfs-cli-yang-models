@@ -101,6 +101,9 @@ submodule rtbrick-mirroring {
             }
             leaf acl {
                 type rtb-types:boolean-true;
+                must 'not (../interface) and not(../logical-interface)' {
+                    error-message "Mirror config failed as source IFP or source IFL cannot be configured with source acl";
+                }
                 description
                     "Configure source as acl.";
                 reference
