@@ -12,6 +12,7 @@ submodule rtbrick-static {
     import rtbrick-types {
         prefix "rtb-types";
     }
+    include rtbrick-oam;
 
     organization
       "Rtbrick";
@@ -109,6 +110,10 @@ submodule rtbrick-static {
             enum nexthop-count {
                 value "5";
                 description "Check for nexthop count";
+            }
+            enum bfd-session-up {
+                value "6";
+                description "Check configured BFD session is up";
             }
         }
         description "Compare type";
@@ -210,10 +215,9 @@ submodule rtbrick-static {
         }
 
         leaf out-label {
-            type rtb-types:mpls-label {
-                range "256 .. 499968" {
-                    error-message "Static out-label should be between 256 and 499968";
-                }
+            type rtb-types:mpls-label;
+            must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                error-message "Static out-label should be between 256 and 499968 or 999936 and 1048576";
             }
             description
                 "Label to be pushed";
@@ -467,6 +471,28 @@ submodule rtbrick-static {
             }';
         }
 
+        leaf match-bfd-session {
+            type string {
+                length "1..64";
+            }
+            description
+                "Conditional routing BFD static session.";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_oam_bfd_session",
+                    "expansion-getter" : {
+                        "package":"static",
+                        "method" : "static_bfd_session_name_expander"
+                    }
+                }
+            }';
+            must 'count(/oam/bfd/session[name = current()]) > 0' {
+                error-message "BFD session not defined or deletion not allowed when linked to the conditional-profile";
+            }
+        }
+
+
         container match-peer {
             description
                 "Conditional routing bgp peer";
@@ -566,6 +592,11 @@ submodule rtbrick-static {
 
         leaf-list conditional-profile {
             type rtb-types:string64;
+
+            must "count(../../../conditional-profile[name = current()]) > 0"{
+                error-message "Conditional-profile not defined or deletion not allowed when linked to static route";
+            }
+
             must "count(../conditional-profile) <= 10"{
                 error-message "Maximum of 10 conditional profiles are supported";
             }
@@ -745,10 +776,9 @@ submodule rtbrick-static {
                     }';
 
                     leaf in-label {
-                        type rtb-types:mpls-label {
-                            range "256 .. 499968" {
-                                error-message "Static in-label should be between 256 and 499968";
-                            }
+                        type rtb-types:mpls-label;
+                        must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                            error-message "Static in-label should be between 256 and 499968 or 999936 and 1048576";
                         }
                         must "count(../../../../../instance[not(name = current()/../../../../name)]/static/
                                 route/mpls/in-label[. = current()]) = 0" {

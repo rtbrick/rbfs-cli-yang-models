@@ -264,10 +264,9 @@ submodule rtbrick-access-l2tp-profile {
                 }';
             } 
             leaf service-label {
-                type rtb-types:mpls-label {
-                    range "256 .. 499968" {
-                        error-message "l2tp service-label should be between 256 and 499968";
-                    }
+                type rtb-types:mpls-label;
+                must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                    error-message "l2tp service-label should be between 256 and 499968 or 999936 and 1048576";
                 }
                 must "count(/config:instance/static/route/mpls/in-label[. = current()]) = 0" {
                     error-message "Conflicting labels for l2tp service-label and static in-label";

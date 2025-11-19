@@ -15,6 +15,7 @@ submodule rtbrick-ospf {
     }
 
     include rtbrick-policy;
+    include rtbrick-oam;
 
     organization "RtBrick";
 
@@ -102,8 +103,9 @@ submodule rtbrick-ospf {
                 must "../../../../segment-routing/srgb/base" {
                     error-message "Configure SRGB base and range";
                 }
-                must " . + ../../../../segment-routing/srgb/base <= 499968" {
-                    error-message "Label out of range <256-499968>";
+                must " . + ../../../../segment-routing/srgb/base <= 499968 or
+                    (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576)" {
+                    error-message "Label out of range [<256-499968> or <999936-1048576>]";
                 }
                 must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
                     error-message "Index value out of configured srgb range for OSPF ipv6";
@@ -173,8 +175,9 @@ submodule rtbrick-ospf {
                 must "../../../../segment-routing/srgb/base" {
                     error-message "Configure SRGB base and range";
                 }
-                must " . + ../../../../segment-routing/srgb/base <= 499968" {
-                    error-message "Label out of range <256-499968>";
+                must " . + ../../../../segment-routing/srgb/base <= 499968 or
+                    (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576)" {
+                    error-message "Label out of range [<256-499968> or <999936-1048576>]";
                 }
                 must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
                     error-message "Index value out of configured srgb range for OSPF ipv4";
@@ -655,6 +658,26 @@ submodule rtbrick-ospf {
                 }';
             }
 
+            leaf bfd-profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_profile",
+                        "expansion-getter" : {
+                            "package":"ospf",
+                            "method" : "ospf_get_bfd_profile_name"
+                        }
+                    }
+                }';
+                must 'count(/config:oam/bfd/profile[name = current()]) > 0' {
+                    error-message "BFD profile not defined or deletion not allowed when linked to the OSPF interface.";
+                }
+            }
+
             uses ospf-interface-segment-routing-v3;
             uses ospf-interface-timer-v3;
         }
@@ -781,7 +804,25 @@ submodule rtbrick-ospf {
                     }
                 }';
             }
-
+            leaf bfd-profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_profile",
+                        "expansion-getter" : {
+                            "package":"ospf",
+                            "method" : "ospf_get_bfd_profile_name"
+                        }
+                    }
+                }';
+                must 'count(/config:oam/bfd/profile[name = current()]) > 0' {
+                    error-message "BFD profile not defined or deletion not allowed when linked to the OSPF interface.";
+                }
+            }
             uses ospf-interface-segment-routing;
             uses ospf-interface-timer;
         }
@@ -1126,16 +1167,15 @@ submodule rtbrick-ospf {
                     }
                 }';
                 leaf base {
-                    type uint32 {
-                        range "256 .. 499968" {
-                            error-message "OSPF ipv6 srgb base should be between 256 and 499968";
-                        }
+                    type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "OSPF ipv6 srgb base should be between 256 and 499968 or 999936 and 1048576";
                     }
                     must "../range" {
                         error-message "SRGB range is not configured";
                     }
                     description
-                        "Base label for segment routing global block";
+                        "Base label for segment routing global block [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -1199,16 +1239,15 @@ submodule rtbrick-ospf {
                     }
                 }';
                 leaf base {
-                    type uint32 {
-                        range "256 .. 499968" {
-                            error-message "BGP srgb base should be between 256 and 499968";
-                        }
+                    type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "OSPF ipv4 srgb base should be between 256 and 499968 or 999936 and 1048576";
                     }
                     must "../range" {
                         error-message "SRGB range is not configured";
                     }
                     description
-                        "Base label for segment routing global block";
+                        "Base label for segment routing global block [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {

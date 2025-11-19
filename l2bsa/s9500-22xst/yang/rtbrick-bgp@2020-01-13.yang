@@ -333,15 +333,14 @@ submodule rtbrick-bgp {
                 }
             }';
             leaf base {
-                type uint32 {
-                    range "256 .. 499968"{
-                        error-message "BGP srgb base should be between 256 and 499968";
-                    }
+                type uint32;
+                must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                    error-message "BGP srgb base should be between 256 and 499968 or 999936 and 1048576";
                 }
                 must "../range" {
                     error-message "configure/un-configure SRGB base and range";
                 }
-                description "SRGB base (greater than 15)";
+                description "SRGB base [Range: <256-499968> or <999936-1048576>]";
                 reference
                 '{
                     "attribute-getter" : {
@@ -369,8 +368,8 @@ submodule rtbrick-bgp {
                 must "../base" {
                     error-message "configure/un-configure SRGB base and range";
                 }
-                must ". + ../base <= 499968" {
-                    error-message "Label out of the range <256-499968>";
+                must ". + ../base <= 499968 or (. + ../base >= 999936 and . + ../base <= 1048576)" {
+                    error-message "Label out of the range [<256-499968> or <999936-1048576>]";
                 }
                 must ". >= 0 and  . <= ../range" {
                     error-message "Index out of configured srgb range for BGP";
@@ -394,6 +393,32 @@ submodule rtbrick-bgp {
                     }
                 }';
             }
+        }
+    }
+
+    grouping bgp-protocol-preference-para {
+        description "Protocol preference related configuration";
+        leaf internal {
+            type rtb-bgp-types:protocol-pref;
+            description
+                "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ibgp_protocol_preference"
+                }
+            }';
+        }
+        leaf external {
+            type rtb-bgp-types:protocol-pref;
+            description
+                "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ebgp_protocol_preference"
+                }
+            }';
         }
     }
 
@@ -542,10 +567,9 @@ submodule rtbrick-bgp {
                 }
 
                 description "Index to be used in transit labels";
-                type uint32 {
-                    range "0 .. 499968"{
-                        error-message "Unicast label should be between 0 and 499968";
-                    }
+                type uint32;
+                must "((. <= 499968) or (. >= 999936 and . <= 1048576))" {
+                    error-message "Unicast label should be between 0 and 499968 or 999936 and 1048576";
                 }
                 reference
                 '{
@@ -555,6 +579,10 @@ submodule rtbrick-bgp {
                 }';
             }
             leaf label {
+                type rtb-types:mpls-label;
+                must "((. <= 499968) or (. >= 999936 and . <= 1048576))" {
+                    error-message "Unicast label should be between 0 and 499968 or 999936 and 1048576";
+                }
                 must '../../../../name != "default" and ../safi = "unicast"' {
                     error-message "Static Label cannot be configured for default instance or non-unicast address families";
                 }
@@ -573,12 +601,7 @@ submodule rtbrick-bgp {
                         [label-base + sid-index = current()]) = 0" {
                         error-message "Conflicting labels for BGP unicast label and BGP interface label";
                 }
-                type rtb-types:mpls-label {
-                    range "0 .. 499968"{
-                        error-message "Unicast label should be between 0 and 499968";
-                    }
-                }
-                description "Configure static label associated with the instance";
+                description "Configure static label associated with the instance [Range: <0-499968> or <999936-1048576>]";
                 reference
                 '{
                     "attribute-getter" : {
@@ -718,15 +741,16 @@ submodule rtbrick-bgp {
                 leaf label-base {
                     mandatory true;
                     when '../../safi = "vpls-vpws"';
-                    description "SRGB base";
+                    description "SRGB base [Range: <256-499968> or <999936-1048576>]";
                     must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base = current()]) <= 1" {
                         error-message "Label-base needs to be unique across BGP interfaces and BGP instances";
                     }
                     must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base + 1 = current()]) = 0" {
                         error-message "Label-base with range 2 needs to be unique across BGP interfaces and BGP instances";
                     }
-                    type uint32 {
-                        range "256 .. 499968";
+                    type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "BGP label base should be between 256 and 499968 or 999936 and 1048576";
                     }
                     reference
                         '{
@@ -742,7 +766,7 @@ submodule rtbrick-bgp {
                     must "count(../../../../../../instance[not(name = current()/../../../../../name)]
                         /protocol/bgp/address-family/interface[label-base + sid-index = current()/../label-base + current()]) = 0" {
                         error-message "Conflicting labels for BGP interface across BGP instances";
-                     }
+                    }
                     reference
                         '{
                             "attribute-getter" : {
@@ -760,6 +784,19 @@ submodule rtbrick-bgp {
                             }
                         }';
                 }
+            }
+            container protocol-preference {
+                description "Protocol preference";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_af_table_tmpl_get",
+                        "type" :  "bgp.af_config_table",
+                        "inherit-attribute":["afi", "safi"]
+                    }
+                }';
+                uses bgp-protocol-preference-para;
             }
             uses bgp-resolve;
             uses bgp-srgb;
@@ -1297,6 +1334,19 @@ submodule rtbrick-bgp {
                 }
             }';
         }
+        leaf multi-label-capability {
+            must '../safi = "labeled-unicast"' {
+                error-message "Multiple label capability can be configured only for labeled unicast address families";
+            }
+            type rtb-types:boolean-type;
+            description "Support more than one label binding for a prefix";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "multi_label_capability"
+                }
+            }';
+        }
         uses bgp-max-prefix-limit;
         uses bgp-pg-af-default-information;
         uses bgp-pg-af-policy;
@@ -1805,28 +1855,7 @@ submodule rtbrick-bgp {
                     "inherit-attribute":["instance_name"]
                 }
             }';
-            leaf internal {
-                type rtb-bgp-types:protocol-pref;
-                description
-                    "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "protocol_preference"
-                    }
-                }';
-            }
-            leaf external {
-                type rtb-bgp-types:protocol-pref;
-                description
-                    "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "ebgp_protocol_preference"
-                    }
-                }';
-            }
+            uses bgp-protocol-preference-para;
         }
     }
 

@@ -122,8 +122,9 @@ submodule rtbrick-isis {
                     must "../../../../segment-routing/srgb/base" {
                         error-message "Configure SRGB base and range";
                     }
-                    must " . + ../../../../segment-routing/srgb/base <= 499968" {
-                        error-message "ISIS ipv4 label out of range <256-499968>";
+                    must "((. + ../../../../segment-routing/srgb/base <= 499968) or
+                            (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576))" {
+                        error-message "ISIS ipv4 label out of range <256-499968> or <999936-1048576>";
                     }
                     must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
                         error-message "Index out of configured srgb range for ISIS ipv4";
@@ -229,8 +230,9 @@ submodule rtbrick-isis {
                     must "../../../../segment-routing/srgb/base" {
                         error-message "Configure SRGB base and range";
                     }
-                    must " . + ../../../../segment-routing/srgb/base <= 499968" {
-                        error-message "Label out of range <256-499968>";
+                    must "((. + ../../../../segment-routing/srgb/base <= 499968) or
+                            (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576))" {
+                        error-message "ISIS ipv6 label out of range <256-499968> or <999936-1048576>";
                     }
                     must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
                         error-message "Index value out of configured srgb range for ISIS ipv6";
@@ -338,8 +340,9 @@ submodule rtbrick-isis {
                         must ". >= 0 and  . <= ../../../../../segment-routing/srlb/range" {
                             error-message "Label out of specified range";
                         }
-                        must ". + ../../../../../segment-routing/srlb/base <= 499968" {
-                            error-message "Label out of range <256-499968>";
+                        must "(. + ../../../../../segment-routing/srlb/base <= 499968) or
+                            (. + ../../../../../segment-routing/srlb/base >= 999936 and . + ../../../../../segment-routing/srlb/base <= 1048576)" {
+                            error-message "Label out of range [<256-499968> or <999936-1048576>]";
                         }
                         reference
                         '{
@@ -369,8 +372,9 @@ submodule rtbrick-isis {
                         must ". >= 0 and  . <= ../../../../../segment-routing/srlb/range" {
                             error-message "Label out of specified range";
                         }
-                        must ". + ../../../../../segment-routing/srlb/base <= 499968" {
-                            error-message "Label out of range <256-499968>";
+                        must ". + ../../../../../segment-routing/srlb/base <= 499968 or
+                            (. + ../../../../../segment-routing/srlb/base >= 999936 and . + ../../../../../segment-routing/srlb/base <= 1048576)" {
+                            error-message "Label out of [Range: <256-499968> or <999936-1048576>]";
                         }
                         description "Adjacency Segment Index";
                         reference
@@ -774,15 +778,14 @@ submodule rtbrick-isis {
                 }';
                 leaf base
                 {
-                    type uint32 {
-                        range "256 .. 499968"{
-                            error-message "ISIS srgb base should be between 256 and 499968";
-                        }
+                    type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "ISIS srlb base should be between 256 and 499968 or 999936 and 1048576";
                     }
                     must "../range" {
                         error-message "configure/un-configure SRGB base and range";
                     }
-                    description "Base label for Segment routing Local Block";
+                    description "Base label for Segment routing Local Block [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -822,12 +825,11 @@ submodule rtbrick-isis {
 
                 leaf base
                 {
-                type uint32 {
-                    range "256 .. 499968"{
-                        error-message "ISIS srgb base should be between 256 and 499968";
+                    type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "ISIS srgb base should be between 256 and 499968 or 999936 and 1048576";
                     }
-                }
-                    description "Base label for Segment Routing Global Block";
+                    description "Base label for Segment Routing Global Block with [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {

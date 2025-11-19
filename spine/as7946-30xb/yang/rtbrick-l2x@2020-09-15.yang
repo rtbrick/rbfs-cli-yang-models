@@ -286,10 +286,9 @@ submodule rtbrick-l2x {
         }
 
         leaf service-label {
-            type types:mpls-label {
-                range "256 .. 499968" {
-                    error-message "l2x service-label should be between 256 and 499968";
-                } 
+            type types:mpls-label;
+            must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                error-message "l2x service-label should be between 256 and 499968 or 999936 and 1048576";
             }
             must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/static/nexthop-profile/out-label[. = current()]) = 0" {
                 error-message "Conflicting labels for static out-label and l2x service-label";

@@ -391,10 +391,9 @@ submodule rtbrick-interface {
                     }';
                 }
                 leaf label {
-                    type rtb-types:mpls-label {
-                        range "256 .. 499968" {
-                            error-message "Interface label should be between 256 and 499968";
-                        }
+                    type rtb-types:mpls-label;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "Interface label should be between 256 and 499968 or 999936 and 1048576";
                     }
                     must "count(/config:l2x/name/service-label[. = current()]) = 0" {
                         error-message "Conflicting labels for interface ipv4 and l2x service-label";
@@ -500,10 +499,9 @@ submodule rtbrick-interface {
                     }';
                 }
                 leaf label {
-                    type rtb-types:mpls-label {
-                        range "256 .. 499968"{
-                            error-message "Interface label should be between 256 and 499968";
-                        }
+                    type rtb-types:mpls-label;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "Interface label should be between 256 and 499968 or 999936 and 1048576";
                     }
                     must "not(current() =../../ipv4/label)" {
                         error-message "Conflicting labels for interface ipv4 and ipv6";
