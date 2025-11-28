@@ -113,6 +113,10 @@ submodule rtbrick-qos {
                 value 26;
                 description "mpls-oam";
             }
+            enum "bfd" {
+                value 27;
+                description "bfd";
+            }
         }
         description "protocol name type";
     }

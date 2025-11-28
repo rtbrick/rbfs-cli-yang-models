@@ -583,6 +583,28 @@ submodule rtbrick-acl {
 
             uses acl-match-ipv4-prefix-list-attributes;
 
+            must "not(source-ipv4-prefix-list = destination-ipv4-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv4-prefix and source-ipv4-prefix-list) or
+                      (destination-ipv4-prefix and destination-ipv4-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
+
+            must "not(source-ipv4-prefix-list = destination-ipv4-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv4-prefix and source-ipv4-prefix-list) or
+                      (destination-ipv4-prefix and destination-ipv4-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
+
             leaf traffic-class {
                 type rtb-qos-types:type-qos-class;
                 description
@@ -782,6 +804,17 @@ submodule rtbrick-acl {
             }
 
             uses acl-match-ipv6-prefix-list-attributes;
+
+            must "not(source-ipv6-prefix-list = destination-ipv6-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv6-prefix and source-ipv6-prefix-list) or
+                      (destination-ipv6-prefix and destination-ipv6-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
 
             leaf traffic-class {
                 type rtb-qos-types:type-qos-class;
@@ -1292,6 +1325,10 @@ submodule rtbrick-acl {
                                     }
                                 }';
                             }
+                            must "not(permit and drop)" {
+                                error-message
+                                "Mutually exclusive actions are not allowed - only one of 'permit' or 'drop' can be configured at a time.";
+                            }
                         } // container action
                         leaf priority {
                             type uint16 {
@@ -1305,6 +1342,10 @@ submodule rtbrick-acl {
                                     "attribute" : "priority"
                                 }
                             }';
+                        }
+                        must "(match/direction or action/capture)" {
+                            error-message
+                            "At least one of 'direction' or 'capture' must be configured.";
                         }
                     }
                 }

@@ -212,9 +212,6 @@ submodule rtbrick-oam {
                             "attribute" : "peer_ipv4_address"
                         }
                     }';
-                    must "not(../../session[peer-v4-address = current()][not(name = current()/../name)])" {
-                        error-message "Multiple sessions with same IPv4 peer address are not allowed.";
-                    }
                 }
                 leaf peer-v6-address {
                     type inet:ipv6-address-no-zone;
@@ -225,9 +222,6 @@ submodule rtbrick-oam {
                             "attribute" : "peer_ipv6_address"
                         }
                     }';
-                    must "not(../../session[peer-v6-address = current()][not(name = current()/../name)])" {
-                        error-message "Multiple sessions with same IPv6 peer address are not allowed.";
-                    }
                 }
                 leaf local-v4-address {
                     type inet:ipv4-address-no-zone;
@@ -320,6 +314,8 @@ submodule rtbrick-oam {
                 must interface {
                     error-message "BFD interface name must be configured.";
                 }
+                unique "peer-v4-address";
+                unique "peer-v6-address";
             }
             list profile {
                 key "name";

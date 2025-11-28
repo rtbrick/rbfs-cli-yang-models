@@ -685,9 +685,9 @@ submodule rtbrick-policy {
             }';
             leaf name {
                 type string {
-                    pattern
-                        '[a-zA-Z_][a-zA-Z0-9_]{0,64}';
                     length "1..64";
+                    pattern
+                        '[a-zA-Z_][a-zA-Z0-9_]*';
                 }
                 description "Statement name";
                 reference
