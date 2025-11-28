@@ -166,8 +166,12 @@ submodule rtbrick-oam {
                 must interface {
                     error-message "CFM interface name must be configured.";
                 }
-                must "not(boolean(../session[interface = current()/interface and not(name = current()/name)]))" {
-                    error-message "Multiple sessions on same interface is not allowed.";
+                must "not(../session[maintenance-association = current()/maintenance-association and
+                                    local-mep = current()/local-mep and
+                                    remote-mep = current()/remote-mep and
+                                    interface = current()/interface and
+                                    not(name = current()/name)])" {
+                    error-message "Combination of maintenance_association, local-mep, remote-mep, and interface must be unique.";
                 }
             }
         }
