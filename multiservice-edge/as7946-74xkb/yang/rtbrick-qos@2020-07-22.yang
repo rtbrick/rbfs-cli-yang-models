@@ -109,6 +109,14 @@ submodule rtbrick-qos {
                 value 25;
                 description "cfm";
             }
+            enum "mpls-oam" {
+                value 26;
+                description "mpls-oam";
+            }
+            enum "bfd" {
+                value 27;
+                description "bfd";
+            }
         }
         description "protocol name type";
     }
@@ -2426,38 +2434,6 @@ submodule rtbrick-qos {
         } // list  scheduler-map
     } //grouping qos-scheduler-map-top
 
-    grouping qos-host-path-qos-top {
-        description
-            "Top-level grouping for host path qos";
-        container ingress-qos {
-	        presence ingress-qos;
-            description
-                "Configure host path quality of service";
-            reference
-            '{
-                "table-getter": {
-                    "table-name" : "global.host-inbound.config",
-                    "type"    : "host_inbound_table",
-                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
-                }
-            }';
-            leaf state {
-                type enumeration {
-                    enum "enable" {
-                        value 1;
-                        description "enable";
-                    }
-                }
-                description "";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "host_path_qos_enable"
-                    }
-                }';
-            }
-        }
-    }
 
     grouping qos-control-plane-security {
         description
@@ -2936,12 +2912,34 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
                                         "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv4-dscp) or (../../match/ipv4-tos))' {
+                                        error-message "match ipv4-dscp and ipv4-tos are not supported with action remark-dscp-codepoint";
+                                    }
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3042,12 +3040,35 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
-                                        "Configure action remark_codepoint value";
+                                        "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv6-tc))' {
+                                        error-message "match ipv6-tc is not supported with action remark-dscp-codepoint";
+                                    }
+
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3220,7 +3241,6 @@ submodule rtbrick-qos {
             description
                 "Configure control plane QoS";
             uses qos-outbound-marking-top;
-            uses qos-host-path-qos-top;
         }
     }
 
