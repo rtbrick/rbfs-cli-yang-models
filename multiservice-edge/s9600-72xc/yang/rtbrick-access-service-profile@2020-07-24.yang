@@ -45,8 +45,8 @@ submodule rtbrick-access-service-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.service.profile.config",
-                    "type"    : "service_profile_config_table"
+                    "table-name": "global.access.service.profile.config",
+                    "type": "service_profile_config_table"
                 }
             }';
             leaf profile-name {
@@ -56,8 +56,8 @@ submodule rtbrick-access-service-profile {
                 description "Name of the service profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "service_profile_name"
+                    "attribute-getter": {
+                        "attribute": "service_profile_name"
                     }
                 }';
             }
@@ -67,7 +67,7 @@ submodule rtbrick-access-service-profile {
                 '{
                     "table-getter": {
                         "table-name": "global.access.service.profile.config",
-                        "type" :  "service_profile_config_table",
+                        "type": "service_profile_config_table",
                         "inherit-attribute" : [ "service_profile_name" ]
                     }
                 }';
@@ -78,11 +78,11 @@ submodule rtbrick-access-service-profile {
                     description "NAT profile";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "nat_profile_name",
-                            "expansion-getter" : {
-                                "package":"subsMgmt",
-                                "method" :"access_nat_profile_name_expander"
+                        "attribute-getter": {
+                            "attribute": "nat_profile_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_nat_profile_name_expander"
                             }
                         }
                     }';
@@ -93,8 +93,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -105,8 +105,8 @@ submodule rtbrick-access-service-profile {
                     description "QoS profile";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "qos_profile_name",
+                        "attribute-getter": {
+                            "attribute": "qos_profile_name",
                             "expansion-getter": {
                                 "package": "subsMgmt",
                                 "method": "access_qos_profile_name_expander"
@@ -121,8 +121,8 @@ submodule rtbrick-access-service-profile {
                     description "QoS parent scheduler";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "qos_parent_scheduler_name"
+                        "attribute-getter": {
+                            "attribute": "qos_parent_scheduler_name"
                         }
                     }';
                 }
@@ -133,8 +133,8 @@ submodule rtbrick-access-service-profile {
                     description "QoS Ingress MFC";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "mf_classifier_name"
+                        "attribute-getter": {
+                            "attribute": "mf_classifier_name"
                         }
                     }';
                 }
@@ -144,8 +144,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -154,8 +154,8 @@ submodule rtbrick-access-service-profile {
                     description "Enable IGMP service";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_enabled"
+                        "attribute-getter": {
+                            "attribute": "igmp_enabled"
                         }
                     }';
                 }
@@ -166,8 +166,8 @@ submodule rtbrick-access-service-profile {
                     description "IGMP profile";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_profile"
+                        "attribute-getter": {
+                            "attribute": "igmp_profile"
                         }
                     }';
                 }
@@ -176,8 +176,8 @@ submodule rtbrick-access-service-profile {
                     description "IGMP version";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_version"
+                        "attribute-getter": {
+                            "attribute": "igmp_version"
                         }
                     }';
                 }
@@ -186,8 +186,8 @@ submodule rtbrick-access-service-profile {
                     description "Maximum IGMP membership per subscriber";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_max_members"
+                        "attribute-getter": {
+                            "attribute": "igmp_max_members"
                         }
                     }';
                 }
@@ -197,8 +197,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -209,8 +209,8 @@ submodule rtbrick-access-service-profile {
                     description "HTTP redirect url";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "http_redirect_url"
+                        "attribute-getter": {
+                            "attribute": "http_redirect_url"
                         }
                     }';
                 }
@@ -220,8 +220,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -232,8 +232,8 @@ submodule rtbrick-access-service-profile {
                     description "Ingress IPv4 subscriber ACL name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv4_acl_in"
+                        "attribute-getter": {
+                            "attribute": "ipv4_acl_in"
                         }
                     }';
                 }
@@ -244,8 +244,8 @@ submodule rtbrick-access-service-profile {
                     description "Egress IPv4 subscriber ACL name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv4_acl_out"
+                        "attribute-getter": {
+                            "attribute": "ipv4_acl_out"
                         }
                     }';
                 }
@@ -256,8 +256,8 @@ submodule rtbrick-access-service-profile {
                     description "Ingress IPv6 subscriber ACL name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv6_acl_in"
+                        "attribute-getter": {
+                            "attribute": "ipv6_acl_in"
                         }
                     }';
                 }
@@ -268,8 +268,8 @@ submodule rtbrick-access-service-profile {
                     description "Egress IPv6 subscriber ACL name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv6_acl_out"
+                        "attribute-getter": {
+                            "attribute": "ipv6_acl_out"
                         }
                     }';
                 }

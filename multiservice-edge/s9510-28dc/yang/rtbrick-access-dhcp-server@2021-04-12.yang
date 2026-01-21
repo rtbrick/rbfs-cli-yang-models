@@ -31,8 +31,8 @@ submodule rtbrick-access-dhcp-server {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.dhcp.server.config",
-                    "type"    : "dhcp_server_config_table"
+                    "table-name": "global.access.dhcp.server.config",
+                    "type": "dhcp_server_config_table"
                 }
             }';                                                      
             leaf server-name {
@@ -42,8 +42,8 @@ submodule rtbrick-access-dhcp-server {
                 description "Name of the DHCP server";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "dhcp_server_name"
+                    "attribute-getter": {
+                        "attribute": "dhcp_server_name"
                     }
                 }';
             }
@@ -52,8 +52,8 @@ submodule rtbrick-access-dhcp-server {
                 description "DHCP server address";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "dhcp_server_ipv4_address"
+                    "attribute-getter": {
+                        "attribute": "dhcp_server_ipv4_address"
                     }
                 }';
             } 
@@ -62,8 +62,8 @@ submodule rtbrick-access-dhcp-server {
                 description "Source address used for DHCP packets";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "local_source_ipv4_address"
+                    "attribute-getter": {
+                        "attribute": "local_source_ipv4_address"
                     }
                 }';
             }
@@ -74,11 +74,11 @@ submodule rtbrick-access-dhcp-server {
                 description "Instance name from which DHCP server is reachable";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "instance",
-                        "expansion-getter" : {
-                            "package":"subsMgmt",
-                            "method" :"access_instance_name_expander"
+                    "attribute-getter": {
+                        "attribute": "instance",
+                        "expansion-getter": {
+                            "package": "subsMgmt",
+                            "method": "access_instance_name_expander"
                         }
                     }
                 }';

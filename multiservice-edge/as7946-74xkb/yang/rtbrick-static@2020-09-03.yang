@@ -12,6 +12,7 @@ submodule rtbrick-static {
     import rtbrick-types {
         prefix "rtb-types";
     }
+    include rtbrick-oam;
 
     organization
       "Rtbrick";
@@ -85,9 +86,34 @@ submodule rtbrick-static {
 
     typedef compare-type {
         type enumeration {
+
             enum route-count {
                 value "0";
-                description "Conditional route compare type";
+                description "Check configured route count";
+            }
+            enum bgp-peer-established {
+                value "1";
+                description "Check configured bgp peer is established";
+            }
+            enum isis-neighbor-up {
+                value "2";
+                description "Check configured isis neighbor is up";
+            }
+            enum any-isis-neighbor-up {
+                value "3";
+                description "Check any isis neighbor is up in the configured level";
+            }
+            enum interface-up {
+                value "4";
+                description "Check interface state is up";
+            }
+            enum nexthop-count {
+                value "5";
+                description "Check for nexthop count";
+            }
+            enum bfd-session-up {
+                value "6";
+                description "Check configured BFD session is up";
             }
         }
         description "Compare type";
@@ -101,6 +127,20 @@ submodule rtbrick-static {
             }
         }
         description "Conditional route compare operation";
+    }
+
+    typedef match-isis-level-type {
+        type enumeration {
+            enum level-1 {
+                value "1";
+                description "Conditional isis level";
+            }
+            enum level-2 {
+                value "2";
+                description "Conditional isis level";
+            }
+        }
+        description "match isis level";
     }
 
     grouping nexthop-attributes {
@@ -176,8 +216,11 @@ submodule rtbrick-static {
 
         leaf out-label {
             type rtb-types:mpls-label;
+            must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                error-message "Static out-label should be between 256 and 499967 or 999936 and 1048575";
+            }
             description
-                "Label to be pushed";
+                "Label to be pushed [Range: <256-499967> or <999936-1048575>]";
             reference
             '{
                 "attribute-getter" : {
@@ -397,23 +440,176 @@ submodule rtbrick-static {
                 }
             }';
         }
+
+        leaf match-isis-level {
+            type match-isis-level-type;
+            description
+                "Conditional routing isis neighbor level";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_isis_level"
+                }
+            }';
+        }
+
+        leaf match-interface {
+            type string {
+                length "1..64";
+            }
+            description
+                "Conditional routing interface where the bgp or isis neighbor state need to checked";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_interface",
+                    "expansion-getter" : {
+                        "package":"ifm",
+                        "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                    }
+                }
+            }';
+        }
+
+        leaf match-bfd-session {
+            type string {
+                length "1..64";
+            }
+            description
+                "Conditional routing BFD static session.";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "match_oam_bfd_session",
+                    "expansion-getter" : {
+                        "package":"static",
+                        "method" : "static_bfd_session_name_expander"
+                    }
+                }
+            }';
+            must 'count(/oam/bfd/session[name = current()]) > 0' {
+                error-message "BFD session not defined or deletion not allowed when linked to the conditional-profile";
+            }
+        }
+
+
+        container match-peer {
+            description
+                "Conditional routing bgp peer";
+            container ipv4 {
+                description
+                    "Configuration ipv4 peer related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libstaticd.so",
+                        "symbol": "static_yang_get_conditional_profile_cfg_tbl_templ",
+                        "type" :  "static_conditional_profile_config_table",
+                        "inherit-attribute":["conditional_profile_name", "instance_name"]
+                    }
+                }';
+                leaf peer-address {
+                    type inet:ipv4-address-no-zone;
+                    must "not(../../ipv6/peer-address)" {
+                        error-message "Ipv4 and Ipv6 peers cannot be configured in same conditional profile";
+                    }
+                    must "../source-address" {
+                        error-message "Peer address and source address is mandatory";
+                    }
+                    must "not(../../../match-interface)" {
+                        error-message "Interface and IP addresses cannot be configured in same conditional profile";
+                    }
+                    description "Peer address to be matched in the BGP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_peer_ipv4_address"
+                        }
+                    }';
+                }
+                leaf source-address {
+                    type inet:ipv4-address-no-zone;
+                    must "../peer-address" {
+                        error-message "Peer address and source address is mandatory";
+                    }
+                    description "Source address to be matched in the BGP session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_source_ipv4_address"
+                        }
+                    }';
+                }
+            }
+            container ipv6 {
+                description
+                    "Configuration ipv6 BGP peer related attributes";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libstaticd.so",
+                        "symbol": "static_yang_get_conditional_profile_cfg_tbl_templ",
+                        "type" :  "static_conditional_profile_config_table",
+                        "inherit-attribute":["conditional_profile_name", "instance_name"]
+                    }
+                }';
+                leaf peer-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Peer address to be matched in the BGP session";
+                    must "../source-address" {
+                        error-message "Peer address and source address is mandatory";
+                    }
+                    must "not(../../../match-interface)" {
+                        error-message "Interface and IP addresses cannot be configured in same conditional profile";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_peer_ipv6_address"
+                        }
+                    }';
+                }
+                leaf source-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Source address to be matched in the BGP session";
+                    must "../peer-address" {
+                        error-message "Peer address and source address is mandatory";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_source_ipv6_address"
+                        }
+                    }';
+                }
+            }
+        }
     }
 
     grouping conditional-profile-attribute {
         description
             "Conditional profile attribute";
 
-        leaf conditional-profile {
+        leaf-list conditional-profile {
             type rtb-types:string64;
-            description
-                "Conditional profile name";
+
+            must "count(../../../conditional-profile[name = current()]) > 0"{
+                error-message "Conditional-profile not defined or deletion not allowed when linked to static route";
+            }
+
+            must "count(../conditional-profile) <= 10"{
+                error-message "Maximum of 10 conditional profiles are supported";
+            }
+            ordered-by user;
+            description "Conditional profile name";
             reference
             '{
                 "attribute-getter" : {
-                    "attribute" : "conditional_profile_name",
+                    "attribute" : "conditional_profile_list",
                     "expansion-getter" : {
                         "package":"static",
-                        "method" : "static_conditional_profile_name_expander"
+                        "method" : "static_conditional_profile_name_expander",
+                        "inherit-attribute":["instance_name"]
                     }
                 }
             }';
@@ -582,8 +778,24 @@ submodule rtbrick-static {
 
                     leaf in-label {
                         type rtb-types:mpls-label;
+                        must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                            error-message "Static in-label should be between 256 and 499967 or 999936 and 1048575";
+                        }
+                        must "count(../../../../../instance[not(name = current()/../../../../name)]/static/
+                                route/mpls/in-label[. = current()]) = 0" {
+                            error-message "Conflicting labels for in-label across instances";
+                        }
+                        must "count(../../../../../instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                            error-message "Conflicting labels for in-label and BGP";
+                        }
+                        must "count(../../../../../instance/protocol/bgp/address-family[label = current()]) = 0" {
+                            error-message "Conflicting labels for in-label and BGP unicast";
+                        }
+                        must "count(../../../../../instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                            error-message "Conflicting labels for in-label and BGP interface";
+                        }
                         description
-                            "MPLS Label incoming CFG Key";
+                            "MPLS Label incoming CFG Key [Range: <256-499967> or <999936-1048575>]";
                         reference
                         '{
                             "attribute-getter" : {
@@ -614,6 +826,10 @@ submodule rtbrick-static {
                                 "attribute" : "destination_safi"
                             }
                         }';
+
+                        must '(. != "labeled-unicast") and (. != "multicast")' {
+                            error-message "MPLS labeled-unicast or multicast static routes cannot be configured";
+                        }
                     }
 
                     uses nexthop-profile-attribute;
@@ -665,7 +881,8 @@ submodule rtbrick-static {
                     "table-getter": {
                         "library": "libstaticd.so",
                         "symbol": "static_yang_get_conditional_profile_cfg_tbl_templ",
-                        "type" :  "static_conditional_profile_config_table"
+                        "type" : "static_conditional_profile_config_table",
+                        "inherit-attribute":["instance_name"]
                     }
                 }';
 
