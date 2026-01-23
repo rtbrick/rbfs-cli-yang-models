@@ -101,6 +101,20 @@ submodule rtbrick-access-aaa-radius-profile {
         description "NAS-Port type";
     }
 
+    typedef calling-station-id-format {
+        type enumeration {
+            enum NONE {
+                value "0";
+                description "NONE";
+            }
+            enum MAC {
+                value "1";
+                description "MAC";
+            }
+        }
+        description "Calling-Station-Id format";
+    }
+
     typedef algorithm-type {
         type enumeration {
             enum DIRECT {
@@ -179,6 +193,16 @@ submodule rtbrick-access-aaa-radius-profile {
                 '{
                     "attribute-getter" : {
                         "attribute" : "nas_port_type"
+                    }
+                }';
+            }
+            leaf calling-station-id-format {
+                type calling-station-id-format;
+                description "Calling-Station-Id format";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "calling_station_id_format"
                     }
                 }';
             }
