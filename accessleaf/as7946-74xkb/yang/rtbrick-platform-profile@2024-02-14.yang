@@ -6,6 +6,10 @@ submodule rtbrick-platform-profile {
         prefix config;
     }
 
+    import clixon-autocli{
+        prefix autocli;
+    }
+
     organization
         "RtBrick";
 
@@ -38,7 +42,7 @@ submodule rtbrick-platform-profile {
         description "Platform Profiles";
     }
 
-    typedef ipoe-mode-type {
+    typedef rd-mode-type {
         type enumeration  {
             enum  standby-forwarding {
                 value "1";
@@ -61,13 +65,14 @@ submodule rtbrick-platform-profile {
                 "Top-level container for platform-profile data";
 
             list profile {
-            reference
+                reference
                 '{
                     "table-getter": {
                         "table-name" : "global.platform.profile.config",
                         "type"    : "platform_profile_table"
                     }
                 }';
+                description "Platform profile";
                 key "profile_name";
                 must 'count(../profile) <= 1' {
                     error-message "due to platform profile conflict. Only one system platform profile is allowed at a time.";
@@ -88,34 +93,45 @@ submodule rtbrick-platform-profile {
                         }
                     }';
                 }
-            leaf-list feature {
-                description "feature";
-                type string {
-                    length "1 .. 64";
-                }
-                reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "feature_name",
-                            "expansion-getter" : {
-                                "package":"fwdinfra",
-                                "method" :"fwd_infra_platform_feature_expander"
+                leaf-list feature {
+                    description "Platform feature";
+                    type string {
+                        length "1 .. 64";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "feature_name",
+                                "expansion-getter" : {
+                                    "package":"fwdinfra",
+                                    "method" :"fwd_infra_platform_feature_expander"
+                                }
                             }
-                        }
-                    }';
-            }
+                        }';
+                }
 
-            leaf ipoe-mode {
-                description "High availability ipoe operation mode";
-                type ipoe-mode-type;
-                reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "ipoe_mode"
-                        }
-                    }';
+                leaf ipoe-mode {
+                    description "High availability operation mode";
+                    autocli:hide;
+                    type rd-mode-type;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "rd_mode"
+                            }
+                        }';
+                }
 
-            }
+                leaf redundancy-mode {
+                    description "High availability (redundancy) operation mode";
+                    type rd-mode-type;
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "rd_mode"
+                            }
+                        }';
+                }
             }
         }
     }

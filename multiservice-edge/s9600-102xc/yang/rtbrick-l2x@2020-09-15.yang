@@ -15,6 +15,9 @@ submodule rtbrick-l2x {
     import rtbrick-types {
         prefix "rtb-types";
     }
+
+    include rtbrick-network-instance;
+
     organization
       "Rtbrick";
     contact
@@ -284,8 +287,39 @@ submodule rtbrick-l2x {
 
         leaf service-label {
             type types:mpls-label;
+            must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                error-message "l2x service-label should be between 256 and 499967 or 999936 and 1048575";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/static/nexthop-profile/out-label[. = current()]) = 0" {
+                error-message "Conflicting labels for static out-label and l2x service-label";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and BGP";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/bgp/address-family[label = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and BGP unicast label";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and BGP interface";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                    interface/segment-routing/ipv4/index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and ISIS ipv4";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                    interface/segment-routing/ipv6/index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and ISIS ipv6";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                    area/interface/segment-routing/index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and OSPF ipv4";
+            }
+            must "not(../direction = 'egress' or ../direction = 'bi-directional') or count(/config:instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                    area/interface/segment-routing/index = current()]) = 0" {
+                error-message "Conflicting labels for l2x service-label and OSPF ipv6";
+            }
             description
-                "Service label";
+                "Service label [Range: <256-499967> or <999936-1048575>]";
             reference
             '{
                 "attribute-getter" : {
