@@ -1,0 +1,24 @@
+submodule rtbrick-access-aaa-radius-server {
+    yang-version 1.1;
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+
+    description
+        "This sub module contains the top level configurations of dummy access-aaa-radius-server config to help rtbrick roles.
+  	This must be pre-date the older package";
+
+    revision 2020-01-01 {
+        description
+          "Dummy access-aaa-radius-server file";
+    }
+
+    grouping access-aaa-radius-server {
+        description "Dummy global access-aaa-radius-server top level config";
+    }
+}

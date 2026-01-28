@@ -1,0 +1,52 @@
+submodule rtbrick-forwarding-options {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    include rtbrick-acl;
+    include rtbrick-mirroring;
+    include rtbrick-qos;
+    include rtbrick-mtu;
+    include rtbrick-statistics;
+    include rtbrick-fragmentation;
+    include rtbrick-subscriber-acl;
+    include rtbrick-address-translation;
+    include rtbrick-traffic-sampling;
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+        "This is the forwarding-options configuration yang file";
+
+    revision 2020-08-04 {
+
+        description
+            "Initial forwarding-options configuration";
+
+        reference "None";
+    }
+
+    grouping forwarding-options-top {
+        description
+        "Top-level grouping containing a list of forwarding options.";
+        container forwarding-options {
+        description
+        "container for list of forwarding options";
+            uses acl-top;
+            uses subscriber-acl-top;
+            uses mirroring-top;
+            uses qos-top;
+            uses qos-control-plane-security;
+            uses prefix-list-top;
+            uses statistics-top;
+            uses mtu-profile-top;
+            uses fragmentation-top;
+            uses address-translation-top;
+            uses traffic-sampling-top;
+        }
+    }
+    uses forwarding-options-top;
+}

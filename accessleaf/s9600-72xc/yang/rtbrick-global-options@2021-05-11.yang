@@ -1,0 +1,48 @@
+submodule rtbrick-global-options {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+   
+    /* The below 2 submodules are included only to pass
+     * pyang validation. There is no need for submodules
+     * to include other submodules in yang 1.1.
+     * https://github.com/mbj4668/pyang/issues/323
+     */
+    include rtbrick-isis;
+    include rtbrick-bgp;
+    include rtbrick-bfd;
+    include rtbrick-interface;
+    include rtbrick-neighbor;
+
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+        "This is the multicast-options configuration yang file";
+
+    revision 2021-05-11 {
+
+        description
+            "Initial global-options configuration";
+
+        reference "None";
+    }
+
+    grouping global-top {
+        description "Global configurations top";
+        container global {
+            description "Global configurations";
+            container protocol {
+                description "Global protocol options";
+                uses isis-global-top;
+                uses bfd-global-top;
+            }
+            uses global-interface-top;
+            uses neighbor-top;
+        }
+    }
+    uses global-top;
+}
