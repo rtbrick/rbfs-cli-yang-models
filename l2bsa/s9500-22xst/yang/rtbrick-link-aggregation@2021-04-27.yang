@@ -131,7 +131,7 @@ submodule rtbrick-link-aggregation {
                     }';
                 }
                leaf description {
-                    type rtb-types:string128;
+                    type rtb-types:string1024;
                     description "Link aggregation interface description";
                     reference
                     '{

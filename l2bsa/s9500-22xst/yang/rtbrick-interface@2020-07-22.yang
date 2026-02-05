@@ -1028,7 +1028,7 @@ submodule rtbrick-interface {
             }
 
             leaf description {
-                type rtb-types:string128;
+                type rtb-types:string1024;
                 description
                     "Configure sub-interface description";
                 reference
@@ -1402,7 +1402,7 @@ submodule rtbrick-interface {
                 }';
             }
             leaf description {
-                 type rtb-types:string128;
+                 type rtb-types:string1024;
                  description
                      "Configure Physical interface description";
                  reference

@@ -67,6 +67,15 @@ submodule rtbrick-fragmentation {
         description "Fragmentation reinjection state";
     }
 
+    typedef enable-only {
+        type enumeration {
+            enum enable {
+                value "1";
+                description "Enable only";
+            }
+        }
+        description "ttl enable state";
+    }
     grouping fragmentation-top {
         description
             "Top-level fragmentation configuration";
@@ -127,6 +136,34 @@ submodule rtbrick-fragmentation {
                         }
                     }';
                 }
+            }
+        }
+    }
+    grouping global-fwd-top {
+        description
+            "Top-level forwarding configuration";
+            container ttl {
+                description
+                    "TTL forwarding-options configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.fwd.option.config",
+                        "type"    : "global_fwd_option_cfg_table",
+                        "default-attribute" : [ { "index" : "1" } ]
+                    }
+                }';
+
+                leaf propagate {
+                    type enable-only ;
+                    description
+                        "Enable TTL propagate";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ttl_propagate"
+                    }
+                }';
             }
         }
     }
