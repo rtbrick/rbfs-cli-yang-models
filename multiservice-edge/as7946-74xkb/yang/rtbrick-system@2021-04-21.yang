@@ -1277,7 +1277,7 @@ submodule rtbrick-system {
                     }';
                     leaf-list ignore-ip {
                         type inet:ip-address-and-prefix;
-                        description "List of IPs to be whitelisted by fail2ban";
+                        description "IP addresses in CIDR notation which are to be whitelisted";
                         reference
                         '{
                             "attribute-getter" : {

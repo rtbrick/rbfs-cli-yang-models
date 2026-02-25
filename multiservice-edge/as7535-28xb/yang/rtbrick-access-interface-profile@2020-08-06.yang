@@ -5,12 +5,11 @@ submodule rtbrick-access-interface-profile {
     belongs-to rtbrick-config {
         prefix config;
     }
-
     import rtbrick-types {
         prefix "rtb-types";
     }
-
     include rtbrick-link-aggregation;
+    include rtbrick-system;
     organization
       "RtBrick";
     contact
@@ -120,6 +119,12 @@ submodule rtbrick-access-interface-profile {
                 range "1..65535";
             }
             description "Restrict maximum subscribers per MAC address";
+            must "current() = 1 or (../max-subscribers-per-vlan and not((. > ../max-subscribers-per-vlan)))" {
+                error-message "max-subscribers-per-mac must not > max-subscribers-per-vlan";
+            }
+            must "current() = 1 or ../access-type = 'PPPoE'" {
+                error-message "max-subscribers-per-mac > 1 is not supported for IPoE";
+            }
             reference
             '{
                 "attribute-getter": {

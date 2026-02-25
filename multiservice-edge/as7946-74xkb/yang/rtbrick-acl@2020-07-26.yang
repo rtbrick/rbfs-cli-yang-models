@@ -1114,6 +1114,17 @@ submodule rtbrick-acl {
                                     }
                                 }';
                             }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
+                                    }
+                                }';
+                            }
                         } // container action
                         leaf priority {
                             type uint16 {
@@ -1329,6 +1340,17 @@ submodule rtbrick-acl {
                                 error-message
                                 "Mutually exclusive actions are not allowed - only one of 'permit' or 'drop' can be configured at a time.";
                             }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
+                                    }
+                                }';
+                            }
                         } // container action
                         leaf priority {
                             type uint16 {
@@ -1515,6 +1537,17 @@ submodule rtbrick-acl {
                                 '{
                                     "attribute-getter" : {
                                         "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
                                     }
                                 }';
                             }

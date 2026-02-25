@@ -2228,9 +2228,6 @@ submodule rtbrick-qos {
                     type rtb-qos-types:type-qos-string;
                     description
                         "Configure queue group name";
-                    must 'count(../queue-name) <=  (../../../queue-group[queue-group-name=current()]/queue-numbers)' {
-                        error-message "Queue count must not be greater than the queue-numbers specified for the group name";
-                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -2258,6 +2255,7 @@ submodule rtbrick-qos {
                         type rtb-qos-types:type-qos-string;
                         description
                             "Configure queue profile name";
+
                         reference
                         '{
                             "attribute-getter" : {
@@ -2394,10 +2392,6 @@ submodule rtbrick-qos {
                             "attribute" : "weight"
                         }
                     }';
-                }
-                must '((not(connection-point) or not(../../scheduler[current()]/type) or connection-point != "strict_priority_2" or ../../scheduler[current()]/type != "3sp_wfq_discrete") or
-                    (connection-point = "strict_priority_2" and ../../scheduler[current()]/type="3sp_wfq_discrete" and weight))' {
-                    error-message "Weight configuration is mandatory when scheduler type is 3sp_wfq_discrete and connection-point is strict_priority_2";
                 }
                 leaf port-connection {
                     type type-qos-scheduler-map-scheduler-connection-type;
