@@ -61,13 +61,14 @@ submodule rtbrick-platform-profile {
                 "Top-level container for platform-profile data";
 
             list profile {
-            reference
+                reference
                 '{
                     "table-getter": {
                         "table-name" : "global.platform.profile.config",
                         "type"    : "platform_profile_table"
                     }
                 }';
+                description "Platform profile";
                 key "profile_name";
                 must 'count(../profile) <= 1' {
                     error-message "due to platform profile conflict. Only one system platform profile is allowed at a time.";
@@ -89,7 +90,7 @@ submodule rtbrick-platform-profile {
                     }';
                 }
             leaf-list feature {
-                description "feature";
+                description "Platform feature";
                 type string {
                     length "1 .. 64";
                 }

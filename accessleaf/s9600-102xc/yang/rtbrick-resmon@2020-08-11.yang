@@ -53,6 +53,9 @@ submodule rtbrick-resmon {
                     leaf high-power-class {
                         type rtb-types:enable-disable-type;
                         description "Enable/Disable high power class for optical module, default enable";
+                        must 'not(contains(../interface-name, "#"))' {
+                            error-message "Only physical interface supported for high-power-class";
+                        }
                         reference
                             '{
                                 "attribute-getter" : {
