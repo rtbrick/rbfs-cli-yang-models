@@ -456,6 +456,9 @@ submodule rtbrick-bgp {
                 must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
                     error-message "evpn-vpws and vpls-vpws safi cannot be configured for default instance";
                 }
+                must '../afi != "ipv6" or . != "vpn-multicast"' {
+                    error-message "Ipv6 vpn-multicast address family is not supported";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -1386,6 +1389,9 @@ submodule rtbrick-bgp {
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
                     error-message "l2vpn afi can only be configured with evpn/vpls safi and vice-versa";
+                }
+                must '../afi != "ipv6" or . != "vpn-multicast"' {
+                    error-message "Ipv6 vpn-multicast address family is not supported";
                 }
                 type rtb-bgp-types:pg-safi;
                 description "Type safi";
