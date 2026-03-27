@@ -103,6 +103,12 @@ submodule rtbrick-access-access-profile {
                     length "1..64";
                 }
                 description "Instance name";
+                must "current() = 'default' or not(../address-family/ipv4/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv4']/safi = 'unicast'" {
+                    error-message "access-profile with IPv4 enabled references instance without address-family IPv4 unicast";
+                }
+                must "current() = 'default' or not(../address-family/ipv6/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv6']/safi = 'unicast'" {
+                    error-message "access-profile with IPv6 enabled references instance without address-family IPv6 unicast";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -513,6 +519,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if RA is enabled";
+                        }
                         description "Enable IPv6 router-advertisement";
                         reference
                         '{
@@ -523,7 +532,7 @@ submodule rtbrick-access-access-profile {
                     } 
                     leaf interval {
                         type uint8 { 
-                            range "1..255";
+                            range "0..255";
                         }
                         description "Interval in seconds";
                         reference
@@ -557,6 +566,18 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
+                    leaf router-lifetime {
+                        type uint16 { 
+                            range "0..9000";
+                        }
+                        description "Router lifetime in seconds";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "ipv6_ra_router_lifetime"
+                            }
+                        }';
+                    }
                 }
                 container dhcp {
                     description "Protocol DHCP";
@@ -570,6 +591,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv4/enable = 'true'" {
+                            error-message "IPv4 must be enabled if DHCP is enabled";
+                        }
                         description "Enable DHCP";
                         reference
                         '{
@@ -629,6 +653,9 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if DHCPv6 is enabled";
+                        }
                         description "Enable DHCPv6";
                         reference
                         '{
@@ -814,6 +841,7 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf dad-enable {
                         type rtb-types:boolean-type;
+                        autocli:hide;
                         description "Enable/disable IPv4 duplicate address detection (enabled by default)";
                         reference
                         '{
@@ -918,6 +946,7 @@ submodule rtbrick-access-access-profile {
                     }
                     leaf dad-enable {
                         type rtb-types:boolean-type;
+                        autocli:hide;
                         description "Enable/disable IPv6 duplicate address detection (enabled by default)";
                         reference
                         '{

@@ -404,4 +404,14 @@ module rtbrick-bgp-types {
         }
         description "Validation Filters";
     }
+
+    typedef bgp-ignore {
+        type enumeration {
+            enum ignore {
+                value "1";
+                description "Ignore the configuration";
+            }
+        }
+        description "Ignore common type";
+    }
 }

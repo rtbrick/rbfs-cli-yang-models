@@ -28,7 +28,7 @@
       description
         "This type defines ISIS level.";
     }
-    
+
 
     //[a-fA-F0-9]{2}(\.[a-fA-F0-9]{4}){0,7}\/(8|24|40|104)'
     // The above regex is not accepted by the pyang validator, let us stick to string
@@ -190,12 +190,6 @@
             }
         }
         description "ISIS interface type";
-    }
-
-    typedef protocol-metric {
-        type uint32 {
-            range  "0 .. 16777215";
-        }
     }
 
     typedef rib-source {

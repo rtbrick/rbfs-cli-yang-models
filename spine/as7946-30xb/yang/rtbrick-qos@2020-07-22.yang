@@ -109,6 +109,14 @@ submodule rtbrick-qos {
                 value 25;
                 description "cfm";
             }
+            enum "mpls-oam" {
+                value 26;
+                description "mpls-oam";
+            }
+            enum "bfd" {
+                value 27;
+                description "bfd";
+            }
         }
         description "protocol name type";
     }
@@ -393,29 +401,9 @@ submodule rtbrick-qos {
                 value 7;
                 description "PIM";
             }
-            enum "vrrp" {
-                value 8;
-                description "VRRP";
-            }
-            enum "dhcpv6" {
-                value 9;
-                description "DHCPv6";
-            }
-            enum "vrrpv6" {
-                value 10;
-                description "VRRPv6";
-            }
             enum "igmp" {
                 value 11;
                 description "IGMP";
-            }
-            enum "ssh" {
-                value 12;
-                description "SSH";
-            }
-            enum "snmp" {
-                value 13;
-                description "SNMP";
             }
             enum "user-defined" {
                 value 14;
@@ -441,16 +429,16 @@ submodule rtbrick-qos {
                 value 19;
                 description "LDP NBR";
             }
-            enum "iperf" {
-                value 20;
-                description "IPERF";
-            }
             enum "lag" {
                 value 23;
                 description "LAG";
             }
+            enum "oam" {
+                value 36;
+                description "OAM";
+            }
             enum "all" {
-                value 24;
+                value 30;
                 description "ALL";
             }
         }
@@ -2240,9 +2228,6 @@ submodule rtbrick-qos {
                     type rtb-qos-types:type-qos-string;
                     description
                         "Configure queue group name";
-                    must 'count(../queue-name) <=  (../../../queue-group[queue-group-name=current()]/queue-numbers)' {
-                        error-message "Queue count must not be greater than the queue-numbers specified for the group name";
-                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -2270,6 +2255,7 @@ submodule rtbrick-qos {
                         type rtb-qos-types:type-qos-string;
                         description
                             "Configure queue profile name";
+
                         reference
                         '{
                             "attribute-getter" : {
@@ -2407,10 +2393,6 @@ submodule rtbrick-qos {
                         }
                     }';
                 }
-                must '((not(connection-point) or not(../../scheduler[current()]/type) or connection-point != "strict_priority_2" or ../../scheduler[current()]/type != "3sp_wfq_discrete") or
-                    (connection-point = "strict_priority_2" and ../../scheduler[current()]/type="3sp_wfq_discrete" and weight))' {
-                    error-message "Weight configuration is mandatory when scheduler type is 3sp_wfq_discrete and connection-point is strict_priority_2";
-                }
                 leaf port-connection {
                     type type-qos-scheduler-map-scheduler-connection-type;
                     description
@@ -2426,38 +2408,6 @@ submodule rtbrick-qos {
         } // list  scheduler-map
     } //grouping qos-scheduler-map-top
 
-    grouping qos-host-path-qos-top {
-        description
-            "Top-level grouping for host path qos";
-        container ingress-qos {
-	        presence ingress-qos;
-            description
-                "Configure host path quality of service";
-            reference
-            '{
-                "table-getter": {
-                    "table-name" : "global.host-inbound.config",
-                    "type"    : "host_inbound_table",
-                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
-                }
-            }';
-            leaf state {
-                type enumeration {
-                    enum "enable" {
-                        value 1;
-                        description "enable";
-                    }
-                }
-                description "";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "host_path_qos_enable"
-                    }
-                }';
-            }
-        }
-    }
 
     grouping qos-control-plane-security {
         description
@@ -2936,12 +2886,34 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
                                         "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv4-dscp) or (../../match/ipv4-tos))' {
+                                        error-message "match ipv4-dscp and ipv4-tos are not supported with action remark-dscp-codepoint";
+                                    }
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3042,12 +3014,35 @@ submodule rtbrick-qos {
                                     type uint8 {
                                         range "0 .. 254";
                                     }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
                                     description
-                                        "Configure action remark_codepoint value";
+                                        "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv6-tc))' {
+                                        error-message "match ipv6-tc is not supported with action remark-dscp-codepoint";
+                                    }
+
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3220,7 +3215,6 @@ submodule rtbrick-qos {
             description
                 "Configure control plane QoS";
             uses qos-outbound-marking-top;
-            uses qos-host-path-qos-top;
         }
     }
 

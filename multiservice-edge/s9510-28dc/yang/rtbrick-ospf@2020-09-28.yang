@@ -14,6 +14,9 @@ submodule rtbrick-ospf {
         prefix "rtb-ospf-types";
     }
 
+    include rtbrick-policy;
+    include rtbrick-oam;
+
     organization "RtBrick";
 
     contact
@@ -97,6 +100,50 @@ submodule rtbrick-ospf {
             }';
             leaf index {
                 type uint32;
+                must "../../../../segment-routing/srgb/base" {
+                    error-message "Configure SRGB base and range";
+                }
+                must " . + ../../../../segment-routing/srgb/base <= 499968 or
+                    (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576)" {
+                    error-message "Label out of range [<256-499968> or <999936-1048576>]";
+                }
+                must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
+                    error-message "Index value out of configured srgb range for OSPF ipv6";
+                }
+                must "count(../../../../../instance-id[not(instance-id = current()/../../../../instance-id)][segment-routing/srgb/base  +
+                        area/interface/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 across OSPF instances-ids";
+                }
+                must "count(../../../../../instance-id[instance-id = current()/../../../../instance-id][segment-routing/srgb/base +
+                    area[area-id = current()/../../../area-id]/interface[not(name = current()/../../name)]/segment-routing/index =
+                                                                current()/../../../../segment-routing/srgb/base + current()]) = 0" {
+                    error-message "Conflicting labels for OSPF ipv6 interfaces";
+                }
+                must "count(../../../../../instance-id[instance-id = current()/../../../../instance-id][segment-routing/srgb/base +
+                                            area[not(area-id = current()/../../../area-id)]/interface/segment-routing/index =
+                                            current()/../../../../segment-routing/srgb/base + current()]) = 0" {
+                    error-message "Conflicting labels for OSPF ipv6 area-ids";
+                }
+                must "count(../../../../../../../../../../instance[not(name = current()/../../../../../../../../../name)]
+                            /protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 across OSPF instances";
+                }
+                must "count(../../../../../../../../../../instance/protocol/bgp/address-family/srgb[base +
+                        index = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 and BGP";
+                }
+                must "count(../../../../../../../../../../instance/protocol/bgp/address-family[label = 
+                        current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 and BGP unicast label";
+                }
+                must "count(../../../../../../../../../../instance/protocol/bgp/address-family/interface[label-base + sid-index =
+                        current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 and BGP interface";
+                }
+                must "count(../../../../../../../../../static/route/mpls/in-label[. = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv6 and static in-label";
+                }
                 description
                     "OSPF interface segment index";
                 reference
@@ -125,6 +172,48 @@ submodule rtbrick-ospf {
             }';
             leaf index {
                 type uint32;
+                must "../../../../segment-routing/srgb/base" {
+                    error-message "Configure SRGB base and range";
+                }
+                must " . + ../../../../segment-routing/srgb/base <= 499968 or
+                    (. + ../../../../segment-routing/srgb/base >= 999936 and . + ../../../../segment-routing/srgb/base <= 1048576)" {
+                    error-message "Label out of range [<256-499968> or <999936-1048576>]";
+                }
+                must ". >= 0 and  . <= ../../../../segment-routing/srgb/range" {
+                    error-message "Index value out of configured srgb range for OSPF ipv4";
+                }
+                must "count(../../../../../../../../../instance[not(name = current()/../../../../../../../../name)]
+                            /protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 across OSPF instances";
+                }
+                must "count(../../../../../../../../../instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 and OSPF ipv6";
+                }
+                must "count(../../../../../ipv4[segment-routing/srgb/base + area[area-id = current()/../../../area-id]/
+                    interface[not(name = current()/../../name)]/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) = 0" {
+                    error-message "Conflicting labels for OSPF ipv4 interfaces";
+                }
+                must "count(../../../../../ipv4[segment-routing/srgb/base + area[not(area-id = current()/../../../area-id)]/
+                    interface/segment-routing/index = current()/../../../../segment-routing/srgb/base + current()]) = 0" {
+                    error-message "Conflicting labels for OSPF ipv4 area-ids";
+                }
+                must "count(../../../../../../../../../instance/protocol/bgp/address-family/srgb[base + index =
+                        current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 and BGP";
+                }
+                must "count(../../../../../../../../../instance/protocol/bgp/address-family[label =
+                        current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 and BGP unicast label";
+                }
+                must "count(../../../../../../../../../instance/protocol/bgp/address-family/interface[label-base + sid-index =
+                        current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 and BGP interface";
+                }
+                must "count(../../../../../../../../static/route/mpls/in-label[. = current()/../../../../segment-routing/srgb/base + current()]) =  0" {
+                    error-message "Conflicting labels for OSPF ipv4 and static in-label";
+                }
                 description
                     "OSPF interface segment index";
                 reference
@@ -483,7 +572,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "OSPF interface metric, default: 10000";
@@ -567,6 +656,26 @@ submodule rtbrick-ospf {
                         "attribute" : "no_auth_check"
                     }
                 }';
+            }
+
+            leaf bfd-profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_profile",
+                        "expansion-getter" : {
+                            "package":"ospf",
+                            "method" : "ospf_get_bfd_profile_name"
+                        }
+                    }
+                }';
+                must 'count(/config:oam/bfd/profile[name = current()]) > 0' {
+                    error-message "BFD profile not defined or deletion not allowed when linked to the OSPF interface.";
+                }
             }
 
             uses ospf-interface-segment-routing-v3;
@@ -610,7 +719,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "OSPF interface metric, default: 10000";
@@ -695,7 +804,25 @@ submodule rtbrick-ospf {
                     }
                 }';
             }
-
+            leaf bfd-profile {
+                type string {
+                    length "1..64";
+                }
+                description "BFD profile name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "bfd_profile",
+                        "expansion-getter" : {
+                            "package":"ospf",
+                            "method" : "ospf_get_bfd_profile_name"
+                        }
+                    }
+                }';
+                must 'count(/config:oam/bfd/profile[name = current()]) > 0' {
+                    error-message "BFD profile not defined or deletion not allowed when linked to the OSPF interface.";
+                }
+            }
             uses ospf-interface-segment-routing;
             uses ospf-interface-timer;
         }
@@ -745,7 +872,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "Area scope default metric, default: 10000";
@@ -831,7 +958,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "Area scope default metric, default: 10000";
@@ -887,9 +1014,16 @@ submodule rtbrick-ospf {
             reference
             '{
                 "attribute-getter" : {
-                    "attribute" : "policy_name"
+                    "attribute" : "policy_name",
+                    "expansion-getter" : {
+                        "package": "policy",
+                        "method" : "policy_statement_expander"
+                    }
                 }
              }';
+            must 'count(/config:policy/statement[name=current()]) > 0' {
+                error-message "A policy statement that is not configured or has been deleted is referenced";
+            }
         }
     }
 
@@ -1034,11 +1168,14 @@ submodule rtbrick-ospf {
                 }';
                 leaf base {
                     type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "OSPF ipv6 srgb base should be between 256 and 499968 or 999936 and 1048576";
+                    }
                     must "../range" {
                         error-message "SRGB range is not configured";
                     }
                     description
-                        "Base label for segment routing global block";
+                        "Base label for segment routing global block [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -1047,7 +1184,9 @@ submodule rtbrick-ospf {
                     }';
                 }
                 leaf range {
-                    type uint32;
+                    type uint32 {
+                        range "0 .. 499968";
+                    }
                     must "../base" {
                         error-message "SRGB base is not configured";
                     }
@@ -1101,11 +1240,14 @@ submodule rtbrick-ospf {
                 }';
                 leaf base {
                     type uint32;
+                    must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                        error-message "OSPF ipv4 srgb base should be between 256 and 499968 or 999936 and 1048576";
+                    }
                     must "../range" {
                         error-message "SRGB range is not configured";
                     }
                     description
-                        "Base label for segment routing global block";
+                        "Base label for segment routing global block [Range: <256-499968> or <999936-1048576>]";
                     reference
                     '{
                         "attribute-getter" : {
@@ -1114,7 +1256,9 @@ submodule rtbrick-ospf {
                     }';
                 }
                 leaf range {
-                    type uint32;
+                    type uint32 {
+                        range "0 .. 499968";
+                    }
                     must "../base" {
                         error-message "SRGB base is not configured";
                     }
@@ -1211,7 +1355,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "Instance scope default metric, default: 10000";
@@ -1290,7 +1434,7 @@ submodule rtbrick-ospf {
             }
             leaf metric {
                 type uint32 {
-                    range "1..65535";
+                    range "0..65535";
                 }
                 description
                     "Instance scope default metric, default: 10000";
