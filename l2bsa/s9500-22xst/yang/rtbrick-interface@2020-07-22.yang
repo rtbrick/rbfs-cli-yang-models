@@ -1821,9 +1821,6 @@ submodule rtbrick-interface {
                 type uint16;
                 description
                     "Configure unit which identifies sub-interface under physical interface";
-                must 'count(../../../../interface-set/interface[name=current()/../../name]/unit[unit-id=current()]) = 1' {
-                   error-message "Interface is not allowed to associated with multiple interface-sets";
-                }
                 reference
                 '{
                     "attribute-getter" : {
