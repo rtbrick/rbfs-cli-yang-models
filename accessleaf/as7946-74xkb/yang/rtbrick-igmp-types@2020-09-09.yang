@@ -11,7 +11,7 @@
     organization "rtbrick";
 
     contact
-    "bhishma@rtbrick.com";
+      "yang-support@rtbrick.com";
 
     description
       "This module contains general data type definitions for use in IGMP YANG

@@ -41,8 +41,8 @@ submodule rtbrick-acl {
       type string {
           length "1..64";
           pattern
-              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
-              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])';
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)';
       }
       description
         "Logical Interface type, type supported are ifp and recycle";
@@ -53,6 +53,10 @@ submodule rtbrick-acl {
             enum "ingress" {
                 value 1;
                 description "ingress direction";
+            }
+            enum "egress" {
+                value 2;
+                description "egress direction";
             }
         }
         description "direction data type";
@@ -579,6 +583,28 @@ submodule rtbrick-acl {
 
             uses acl-match-ipv4-prefix-list-attributes;
 
+            must "not(source-ipv4-prefix-list = destination-ipv4-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv4-prefix and source-ipv4-prefix-list) or
+                      (destination-ipv4-prefix and destination-ipv4-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
+
+            must "not(source-ipv4-prefix-list = destination-ipv4-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv4-prefix and source-ipv4-prefix-list) or
+                      (destination-ipv4-prefix and destination-ipv4-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
+
             leaf traffic-class {
                 type rtb-qos-types:type-qos-class;
                 description
@@ -673,6 +699,20 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+            leaf instance {
+                type string {
+                    length "1..64";
+                }
+                description
+                    "Configure acl match for instance name";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "match_instance_name"
+                    }
+                }';
+            }
+
             must 'not(tcp-control) or (ip-protocol = "tcp")' {
                 error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }
@@ -695,9 +735,7 @@ submodule rtbrick-acl {
                 }
             }';
             leaf destination-ipv6-prefix {
-                type string {
-                    length "1..64";
-                }
+                type inet:ipv6-prefix;
                 description
                     "Configure acl l3 ipv6 destination prefix match.";
                 reference
@@ -765,6 +803,17 @@ submodule rtbrick-acl {
 
             uses acl-match-ipv6-prefix-list-attributes;
 
+            must "not(source-ipv6-prefix-list = destination-ipv6-prefix-list)" {
+                error-message
+                "ACL with same source and destination prefix-list name is not allowed";
+            }
+
+            must "not((source-ipv6-prefix and source-ipv6-prefix-list) or
+                      (destination-ipv6-prefix and destination-ipv6-prefix-list))" {
+                error-message
+                "ACL with both prefix and prefix-list match attributes is not allowed.";
+            }
+
             leaf traffic-class {
                 type rtb-qos-types:type-qos-class;
                 description
@@ -776,6 +825,7 @@ submodule rtbrick-acl {
                     }
                 }';
             }
+
             leaf ipv6-tc {
                 type uint8 {
                     range "0 .. 254";
@@ -979,6 +1029,10 @@ submodule rtbrick-acl {
                                     }
                                 }';
                             }
+                            must "not(permit and drop)" {
+                                error-message
+                                "Mutually exclusive actions are not allowed - only one of 'permit' or 'drop' can be configured at a time.";
+                            }
                             leaf redirect-to-cpu {
                                 type rtb-types:boolean-true;
                                 description
@@ -1001,6 +1055,7 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description
@@ -1028,6 +1083,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1036,7 +1097,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }
@@ -1048,6 +1113,17 @@ submodule rtbrick-acl {
                                 '{
                                     "attribute-getter" : {
                                         "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
                                     }
                                 }';
                             }
@@ -1176,6 +1252,21 @@ submodule rtbrick-acl {
                                         }
                                     }';
                             }
+
+                            leaf remark-codepoint {
+                                type uint8 {
+                                        range "0 .. 254";
+                                }
+                                description
+                                    "Configure remark codepoint value";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_remark_codepoint"
+                                    }
+                                }';
+                            }
+
                             leaf policer-name {
                                 type rtb-qos-types:type-qos-string;
                                 description
@@ -1203,6 +1294,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1211,7 +1308,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }
@@ -1237,6 +1338,21 @@ submodule rtbrick-acl {
                                     }
                                 }';
                             }
+                            must "not(permit and drop)" {
+                                error-message
+                                "Mutually exclusive actions are not allowed - only one of 'permit' or 'drop' can be configured at a time.";
+                            }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
+                                    }
+                                }';
+                            }
                         } // container action
                         leaf priority {
                             type uint16 {
@@ -1250,6 +1366,10 @@ submodule rtbrick-acl {
                                     "attribute" : "priority"
                                 }
                             }';
+                        }
+                        must "(match/direction or action/capture)" {
+                            error-message
+                            "At least one of 'direction' or 'capture' must be configured.";
                         }
                     }
                 }
@@ -1340,6 +1460,10 @@ submodule rtbrick-acl {
                                     }
                                 }';
                             }
+                            must "not(permit and drop)" {
+                                error-message
+                                "Mutually exclusive actions are not allowed - only one of 'permit' or 'drop' can be configured at a time.";
+                            }
                             leaf redirect-to-cpu {
                                 type rtb-types:boolean-true;
                                 description
@@ -1389,6 +1513,12 @@ submodule rtbrick-acl {
                                 }';
                             }
                             leaf mirror {
+                                must "(../../../../../../mirror[name=current()]/source/acl)='true'" {
+                                    error-message "Mirror configurations must contain source as acl";
+                                }
+                                must "(../../../../../../mirror[name=current()]/source/direction)=(../../match/direction)" {
+                                    error-message "Mirror configurations and source acl must have same direction";
+                                }
                                 type string {
                                     length "1..64";
                                 }
@@ -1397,7 +1527,11 @@ submodule rtbrick-acl {
                                 reference
                                 '{
                                     "attribute-getter" : {
-                                        "attribute" : "mirror_name"
+                                        "attribute" : "mirror_name",
+                                            "expansion-getter" : {
+                                                "package":"protoinfra",
+                                                "method" :"proto_infra_match_mirror_name_expander"
+                                            }
                                     }
                                 }';
                             }
@@ -1409,6 +1543,17 @@ submodule rtbrick-acl {
                                 '{
                                     "attribute-getter" : {
                                         "attribute" : "action_capture"
+                                    }
+                                }';
+                            }
+                            leaf traffic-sample {
+                                type rtb-types:boolean-true;
+                                description
+                                    "Configure action, traffic-sample.";
+                                reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "action_traffic_sampling"
                                     }
                                 }';
                             }

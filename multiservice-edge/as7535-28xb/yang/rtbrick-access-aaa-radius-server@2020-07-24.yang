@@ -34,8 +34,8 @@ submodule rtbrick-access-aaa-radius-server {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.radius.config",
-                    "type"    : "global_radius_config_table"
+                    "table-name": "global.access.radius.config",
+                    "type": "global_radius_config_table"
                 }
             }';
             leaf server-name {
@@ -45,8 +45,8 @@ submodule rtbrick-access-aaa-radius-server {
                 description "Name of the RADIUS server";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "radius_name"
+                    "attribute-getter": {
+                        "attribute": "radius_name"
                     }
                 }';
             }
@@ -56,8 +56,8 @@ submodule rtbrick-access-aaa-radius-server {
                 mandatory true;
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "radius_ipv4_address"
+                    "attribute-getter": {
+                        "attribute": "radius_ipv4_address"
                     }
                 }';
             } 
@@ -67,8 +67,8 @@ submodule rtbrick-access-aaa-radius-server {
                 mandatory true;
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "local_source_ipv4_address"
+                    "attribute-getter": {
+                        "attribute": "local_source_ipv4_address"
                     }
                 }';
             } 
@@ -79,10 +79,10 @@ submodule rtbrick-access-aaa-radius-server {
                 description "RADIUS secret in plain text";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "secret",
-                        "plain-text-password" : true,
-			            "secret-text-leaf-name" : "secret-encrypted-text"
+                    "attribute-getter": {
+                        "attribute": "secret",
+                        "plain-text-password": true,
+			            "secret-text-leaf-name": "secret-encrypted-text"
                     }
                 }';
             }
@@ -91,23 +91,33 @@ submodule rtbrick-access-aaa-radius-server {
                 description "RADIUS secret in encrypted text";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "secret"
+                    "attribute-getter": {
+                        "attribute": "secret"
+                    }
+                }';
+            }
+            leaf message-authenticator {
+                type rtb-types:boolean-type;
+                description "Enforce Message-Authenticator";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "message_authenticator"
                     }
                 }';
             }
             leaf routing-instance {
                 type string {
-                    length "1 .. 64";
+                    length "1..64";
                 }
                 description "Instance name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "radius_instance",
-                        "expansion-getter" : {
-                            "package":"subsMgmt",
-                            "method" :"access_instance_name_expander"
+                    "attribute-getter": {
+                        "attribute": "radius_instance",
+                        "expansion-getter": {
+                            "package": "subsMgmt",
+                            "method": "access_instance_name_expander"
                         }
                     }
                 }';
@@ -119,8 +129,8 @@ submodule rtbrick-access-aaa-radius-server {
                 description "Maximum RADIUS requests per second";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "request_rate"
+                    "attribute-getter": {
+                        "attribute": "request_rate"
                     }
                 }';
             }
@@ -129,8 +139,8 @@ submodule rtbrick-access-aaa-radius-server {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.radius.config",
-                        "type"    : "global_radius_config_table",
+                        "table-name": "global.access.radius.config",
+                        "type": "global_radius_config_table",
                         "inherit-attribute": ["radius_name"]
                     }
                 }';
@@ -139,8 +149,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Enable RADIUS authentication";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_enabled"
+                        "attribute-getter": {
+                            "attribute": "authentication_enabled"
                         }
                     }';
                 } 
@@ -151,8 +161,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "RADIUS server authentication port";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_port"
+                        "attribute-getter": {
+                            "attribute": "authentication_port"
                         }
                     }';
                 } 
@@ -163,8 +173,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Maximum retries for authentication requests";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_retry"
+                        "attribute-getter": {
+                            "attribute": "authentication_retry"
                         }
                     }';
                 } 
@@ -175,8 +185,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Authentication request timeout in seconds";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_timeout"
+                        "attribute-getter": {
+                            "attribute": "authentication_timeout"
                         }
                     }';
                 }
@@ -187,8 +197,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Maximum number of outstanding authentication requests";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_max_outstanding"
+                        "attribute-getter": {
+                            "attribute": "authentication_max_outstanding"
                         }
                     }';
                 }
@@ -198,8 +208,8 @@ submodule rtbrick-access-aaa-radius-server {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.radius.config",
-                        "type"    : "global_radius_config_table",
+                        "table-name": "global.access.radius.config",
+                        "type": "global_radius_config_table",
                         "inherit-attribute": ["radius_name"]
                     }
                 }';
@@ -208,8 +218,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Enable RADIUS accounting";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_enabled"
+                        "attribute-getter": {
+                            "attribute": "accounting_enabled"
                         }
                     }';
                 } 
@@ -220,8 +230,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "RADIUS server accounting port";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_port"
+                        "attribute-getter": {
+                            "attribute": "accounting_port"
                         }
                     }';
                 } 
@@ -232,8 +242,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Maximum retries for accounting request packets";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_retry"
+                        "attribute-getter": {
+                            "attribute": "accounting_retry"
                         }
                     }';
                 } 
@@ -244,8 +254,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Accounting request timeout in seconds";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_timeout"
+                        "attribute-getter": {
+                            "attribute": "accounting_timeout"
                         }
                     }';
                 }
@@ -256,8 +266,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Maximum number of outstanding accounting requests";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_max_outstanding"
+                        "attribute-getter": {
+                            "attribute": "accounting_max_outstanding"
                         }
                     }';
                 }
@@ -267,8 +277,8 @@ submodule rtbrick-access-aaa-radius-server {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.radius.config",
-                        "type"    : "global_radius_config_table",
+                        "table-name": "global.access.radius.config",
+                        "type": "global_radius_config_table",
                         "inherit-attribute": ["radius_name"]
                     }
                 }';
@@ -277,8 +287,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Enable Change-of-Authorization (CoA)";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "coa_enabled"
+                        "attribute-getter": {
+                            "attribute": "coa_enabled"
                         }
                     }';
                 } 
@@ -289,8 +299,8 @@ submodule rtbrick-access-aaa-radius-server {
                     description "Local RADIUS CoA port";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "coa_port"
+                        "attribute-getter": {
+                            "attribute": "coa_port"
                         }
                     }';
                 }

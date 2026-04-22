@@ -5,12 +5,11 @@ submodule rtbrick-access-interface-profile {
     belongs-to rtbrick-config {
         prefix config;
     }
-
     import rtbrick-types {
         prefix "rtb-types";
     }
-
     include rtbrick-link-aggregation;
+    include rtbrick-system;
     organization
       "RtBrick";
     contact
@@ -40,8 +39,8 @@ submodule rtbrick-access-interface-profile {
             description "Access service type";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "access_type"
+                "attribute-getter": {
+                    "attribute": "access_type"
                 }
             }';
         }   
@@ -52,11 +51,11 @@ submodule rtbrick-access-interface-profile {
             description "Access profile name";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "access_profile_name",
-                    "expansion-getter" : {
-                        "package":"subsMgmt",
-                        "method" :"access_profile_name_expander"
+                "attribute-getter": {
+                    "attribute": "access_profile_name",
+                    "expansion-getter": {
+                        "package": "subsMgmt",
+                        "method": "access_profile_name_expander"
                     }
                 }
             }';
@@ -68,11 +67,11 @@ submodule rtbrick-access-interface-profile {
             description "Service profile name";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "service_profile_name",
-                    "expansion-getter" : {
-                        "package":"subsMgmt",
-                        "method" :"access_service_profile_name_expander"
+                "attribute-getter": {
+                    "attribute": "service_profile_name",
+                    "expansion-getter": {
+                        "package": "subsMgmt",
+                        "method": "access_service_profile_name_expander"
                     }
                 }
             }';
@@ -84,11 +83,11 @@ submodule rtbrick-access-interface-profile {
             description "AAA profile name";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "aaa_profile_name",
-                    "expansion-getter" : {
-                        "package":"subsMgmt",
-                        "method" :"access_aaa_profile_name_expander"
+                "attribute-getter": {
+                    "attribute": "aaa_profile_name",
+                    "expansion-getter": {
+                        "package": "subsMgmt",
+                        "method": "access_aaa_profile_name_expander"
                     }
                 }
             }';
@@ -98,8 +97,8 @@ submodule rtbrick-access-interface-profile {
             description "Enable VLAN profiles";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "vlan_profile_enabled"
+                "attribute-getter": {
+                    "attribute": "vlan_profile_enabled"
                 }
             }';
         } 
@@ -110,8 +109,8 @@ submodule rtbrick-access-interface-profile {
             description "Restrict maximum subscribers per VLAN";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "max_subscriber_per_vlan"
+                "attribute-getter": {
+                    "attribute": "max_subscriber_per_vlan"
                 }
             }';
         } 
@@ -120,10 +119,16 @@ submodule rtbrick-access-interface-profile {
                 range "1..65535";
             }
             description "Restrict maximum subscribers per MAC address";
+            must "current() = 1 or (../max-subscribers-per-vlan and not((. > ../max-subscribers-per-vlan)))" {
+                error-message "max-subscribers-per-mac must not > max-subscribers-per-vlan";
+            }
+            must "current() = 1 or ../access-type = 'PPPoE'" {
+                error-message "max-subscribers-per-mac > 1 is not supported for IPoE";
+            }
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "max_subscriber_per_mac"
+                "attribute-getter": {
+                    "attribute": "max_subscriber_per_mac"
                 }
             }';
         }
@@ -132,11 +137,11 @@ submodule rtbrick-access-interface-profile {
             description "IPoE gateway IFL (unnumbered source IFL)";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "gateway_ifl",
-                    "expansion-getter" : {
-                        "package":"subsMgmt",
-                        "method" :"access_ifl_name_expander"
+                "attribute-getter": {
+                    "attribute": "gateway_ifl",
+                    "expansion-getter": {
+                        "package": "subsMgmt",
+                        "method": "access_ifl_name_expander"
                     }
                 }
             }';
@@ -148,8 +153,8 @@ submodule rtbrick-access-interface-profile {
             description "Redundancy session ID for this interface";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "rd_session_id"
+                "attribute-getter": {
+                    "attribute": "rd_session_id"
                 }
             }';
             must '. = ../../../../link-aggregation/interface[interface-name = current()/../interface-name]/redundancy-session-id = current()' {
@@ -163,8 +168,8 @@ submodule rtbrick-access-interface-profile {
             description "PPPoE PADO delay in seconds";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "pppoe_pado_delay"
+                "attribute-getter": {
+                    "attribute": "pppoe_pado_delay"
                 }
             }';
         } 
@@ -175,8 +180,8 @@ submodule rtbrick-access-interface-profile {
             description "DHCPv4/v6 minimum elapsed time in seconds";
             reference
             '{
-                "attribute-getter" : {
-                    "attribute" : "dhcp_min_elapsed_sec"
+                "attribute-getter": {
+                    "attribute": "dhcp_min_elapsed_sec"
                 }
             }';
         }
@@ -192,8 +197,8 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.interface.config",
-                        "type"    : "interface_config_table"
+                        "table-name": "global.access.interface.config",
+                        "type": "interface_config_table"
                     }
                 }';
                 leaf interface-name {
@@ -201,11 +206,11 @@ submodule rtbrick-access-interface-profile {
                     description "Name of the physical interface";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "interface_name",
-                            "expansion-getter" : {
-                                "package":"subsMgmt",
-                                "method" :"access_ifp_name_expander"
+                        "attribute-getter": {
+                            "attribute": "interface_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_ifp_name_expander"
                             }
                         }
                     }';
@@ -218,8 +223,8 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.interface.config",
-                        "type"    : "interface_config_table"
+                        "table-name": "global.access.interface.config",
+                        "type": "interface_config_table"
                     }
                 }';
                 leaf interface-name {
@@ -227,11 +232,11 @@ submodule rtbrick-access-interface-profile {
                     description "Name of the physical interface";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "interface_name",
-                            "expansion-getter" : {
-                                "package":"subsMgmt",
-                                "method" :"access_ifp_name_expander"
+                        "attribute-getter": {
+                            "attribute": "interface_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_ifp_name_expander"
                             }
                         }
                     }';
@@ -243,8 +248,8 @@ submodule rtbrick-access-interface-profile {
                     description "Outer VLAN min";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_min"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_min"
                         }
                     }';
                 }
@@ -255,8 +260,8 @@ submodule rtbrick-access-interface-profile {
                     description "Outer VLAN max";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_max"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_max"
                         }
                     }';
                 }
@@ -266,8 +271,8 @@ submodule rtbrick-access-interface-profile {
                     "Outer VLAN encapsulation";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_encapsulation"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_encapsulation"
                         }
                     }';
                 }
@@ -279,8 +284,8 @@ submodule rtbrick-access-interface-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.interface.config",
-                        "type"    : "interface_config_table"
+                        "table-name": "global.access.interface.config",
+                        "type": "interface_config_table"
                     }
                 }';
                 leaf interface-name {
@@ -288,11 +293,11 @@ submodule rtbrick-access-interface-profile {
                     description "Name of the physical interface";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "interface_name",
-                            "expansion-getter" : {
-                                "package":"subsMgmt",
-                                "method" :"access_ifp_name_expander"
+                        "attribute-getter": {
+                            "attribute": "interface_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_ifp_name_expander"
                             }
                         }
                     }';
@@ -304,8 +309,8 @@ submodule rtbrick-access-interface-profile {
                     description "Outer VLAN min";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_min"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_min"
                         }
                     }';
                 }
@@ -316,8 +321,8 @@ submodule rtbrick-access-interface-profile {
                     description "Outer VLAN max";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_max"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_max"
                         }
                     }';
                 }
@@ -327,8 +332,8 @@ submodule rtbrick-access-interface-profile {
                     "Outer VLAN encapsulation";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "outer_vlan_encapsulation"
+                        "attribute-getter": {
+                            "attribute": "outer_vlan_encapsulation"
                         }
                     }';
                 }
@@ -339,8 +344,8 @@ submodule rtbrick-access-interface-profile {
                     description "Inner VLAN min";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "inner_vlan_min"
+                        "attribute-getter": {
+                            "attribute": "inner_vlan_min"
                         }
                     }';
                 }
@@ -351,8 +356,8 @@ submodule rtbrick-access-interface-profile {
                     description "Inner VLAN max";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "inner_vlan_max"
+                        "attribute-getter": {
+                            "attribute": "inner_vlan_max"
                         }
                     }';
                 }

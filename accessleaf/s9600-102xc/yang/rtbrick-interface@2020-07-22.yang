@@ -9,6 +9,10 @@ submodule rtbrick-interface {
         prefix inet;
     }
 
+    import clixon-autocli {
+        prefix autocli;
+    }
+
     import rtbrick-types {
         prefix "rtb-types";
     }
@@ -19,6 +23,8 @@ submodule rtbrick-interface {
 
     include rtbrick-forwarding-options;
     include rtbrick-mtu;
+    include rtbrick-network-instance;
+    include rtbrick-l2x;
 
     organization
       "Rtbrick";
@@ -58,6 +64,22 @@ submodule rtbrick-interface {
             }
         }
         description "up/down data type";
+    }
+
+    typedef rpf-mode {
+        type enumeration {
+            enum "loose" {
+                value 1;
+                description
+                    "rpf loose";
+            }
+            enum "strict" {
+                value 2;
+                description
+                    "rpf strict";
+            }
+        }
+        description "rpf modes supported";
     }
 
     typedef interface-typedef {
@@ -160,6 +182,10 @@ submodule rtbrick-interface {
 
     typedef type-port-speed {
         type enumeration {
+            enum "100M" {
+                value 100;
+                description "100M";
+            }
             enum "1G" {
                 value 1000;
                 description "1G";
@@ -285,22 +311,15 @@ submodule rtbrick-interface {
         description "Vlan range";
     }
 
-    typedef esi-value {
-        type string {
-            pattern '0[0-5]:([0-9A-Fa-f]{2}:){8}[0-9A-Fa-f]{2}';
-            length 29;
-        }
-    }
-
-    typedef esi-mode {
+    typedef type-none {
         type enumeration {
-            enum "all-active" {
+            enum "none" {
                 value 1;
                 description
-                    "All active esi mode";
+                    "Ignore Operation";
             }
         }
-        description "esi mode";
+        description "Ignore Operation";
     }
 
     grouping subinterface-address-config {
@@ -397,14 +416,59 @@ submodule rtbrick-interface {
                 }
                 leaf label {
                     type rtb-types:mpls-label;
+                    must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                        error-message "Interface label should be between 256 and 499967 or 999936 and 1048575";
+                    }
+                    must "count(/config:l2x/name/service-label[. = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and l2x service-label";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and BGP";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family[label = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and BGP unicast label";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and BGP interface";
+                    }
+                    must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                            interface/segment-routing/ipv4/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and ISIS ipv4";
+                    }
+                    must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                            interface/segment-routing/ipv6/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and ISIS ipv6";
+                    }
+                    must "count(/config:instance/protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and OSPF ipv4";
+                    }
+                    must "count(/config:instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv4 and OSPF ipv6";
+                    }
                     description
-                        "Configure label associated with the address";
+                        "Configure label associated with the address [Range: <256-499967> or <999936-1048575>]";
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "label"
                             }
                         }';
+                }
+                leaf no-local-routing {
+                    type rtb-types:boolean-true;
+                    description
+                        "Disable local routing";
+                    must '(contains(../../../../name, "lo-"))' {
+                        error-message "no-local-routing is supported only for loopback interface";
+                    }
+                    reference
+                    '{
+                            "attribute-getter" : {
+                                "attribute" : "no_local_routing"
+                        }
+                    }';
                 }
             }
             list ipv6
@@ -460,8 +524,45 @@ submodule rtbrick-interface {
                 }
                 leaf label {
                     type rtb-types:mpls-label;
+                    must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                        error-message "Interface label should be between 256 and 499967 or 999936 and 1048575";
+                    }
+                    must "not(current() =../../ipv4/label)" {
+                        error-message "Conflicting labels for interface ipv4 and ipv6";
+                    }
+                    must "count(/config:instance/static/route/mpls/in-label[. = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and static in-label";
+                    }
+                    must "count(/config:l2x/name/service-label[. = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and l2x service-label";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and BGP";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family[label = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and BGP unicast label";
+                    }
+                    must "count(/config:instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and BGP interface";
+                    }
+                    must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                            interface/segment-routing/ipv4/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and ISIS ipv4";
+                    }
+                    must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                            interface/segment-routing/ipv6/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and ISIS ipv6";
+                    }
+                    must "count(/config:instance/protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and OSPF ipv4";
+                    }
+                    must "count(/config:instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                            area/interface/segment-routing/index = current()]) = 0" {
+                        error-message "Conflicting labels for interface ipv6 and OSPF ipv6";
+                    }
                     description
-                        "Configure label associated with the address";
+                        "Configure label associated with the address [Range: <256-499967> or <999936-1048575>]";
                     reference
                         '{
                             "attribute-getter" : {
@@ -509,10 +610,10 @@ submodule rtbrick-interface {
                                 "attribute" : "address4"
                             }
                      }';
-                } 
+                }
                 choice mac-config {
                     case static {
-                        description 
+                        description
                             "Configure MAC address of neighbor statically or dynamically.";
                         leaf mac {
                             type ietfyang:mac-address;
@@ -537,7 +638,7 @@ submodule rtbrick-interface {
                                     }
                             }';
                         }
-                    }                        
+                    }
                 }
 
             }
@@ -571,7 +672,7 @@ submodule rtbrick-interface {
                 }
                 choice mac-config {
                     case static {
-                        description 
+                        description
                             "Configure MAC address of neighbor statically or dynamically.";
                         leaf mac {
                             type ietfyang:mac-address;
@@ -596,7 +697,7 @@ submodule rtbrick-interface {
                                     }
                             }';
                         }
-                    }                        
+                    }
                 }
             }
         }  // list neighbor
@@ -630,45 +731,6 @@ submodule rtbrick-interface {
                         "attribute" : "logical_unit_id"
                     }
                 }';
-            }
-
-            container esi {
-                presence "esi";
-                description
-                    "Configure Ethernet Segment Identifier for l2 interface";
-                reference
-                    '{
-                        "table-getter": {
-                            "table-name": "global.interface.logical.config",
-                            "type" :  "ifl_config_table",
-                            "inherit-attribute" : [ "ifp_name", "logical_unit_id" ]
-                        }
-                    }';
-                must '../interface-type = "l2vpn-vpws"' {
-                    error-message "esi should only be configure for l2vpn-vpws interface";
-                }
-                leaf value {
-                    type esi-value;
-                    description
-                        "Configure esi value";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "esi_value"
-                        }
-                    }';
-                }
-                leaf mode {
-                    type esi-mode;
-                    description
-                        "Configure esi mode";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "esi_mode"
-                        }
-                    }';
-                }
             }
 
             leaf interface-type {
@@ -834,7 +896,7 @@ submodule rtbrick-interface {
                     }';
                 }
             }
-           container output-vlan-map {
+            container output-vlan-map {
 	           presence output-vlan-map;
                 description "Configure Output Vlan Mapping";
                 reference
@@ -917,6 +979,20 @@ submodule rtbrick-interface {
                     }';
                 }
 
+                leaf vlan-priority-operation {
+                    type type-none;
+                    description
+                        "Vlan Priority operation";
+                    must '(../../interface-type = "l2vpn-vpws")' {
+                        error-message "Configuration supported only for l2vpn-vpws interface";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "output_vlan_map_priority_oper"
+                        }
+                    }';
+                }
                 leaf vlan-id {
                     type vlan-range;
                     description
@@ -960,7 +1036,7 @@ submodule rtbrick-interface {
             }
 
             leaf description {
-                type rtb-types:string128;
+                type rtb-types:string1024;
                 description
                     "Configure sub-interface description";
                 reference
@@ -1235,7 +1311,7 @@ submodule rtbrick-interface {
             }
             must '(count(address/ipv4) = 0 and count(address/ipv6) = 0) or count(unnumbered/interface) = 0' {
                 error-message "Unnumbered ifl cannot be configured with an address";
-            } 
+            }
 
             uses subinterface-address-config;
             uses subinterface-neighbor-config;
@@ -1284,7 +1360,30 @@ submodule rtbrick-interface {
                     }
                 }';
             }
-            must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0)" {
+            leaf rpf {
+                type rpf-mode;
+                description "Configure uRPF mode on logical interface";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "ifl_rpf_mode"
+                    }
+                }';
+            }
+            leaf neighbor-preference {
+                 type uint16 {
+                     range "0 .. 300";
+                 }
+                autocli:hide;
+                description "Configure arp-nd preference on logical interface def values:(direct-0, static-5, arp-nd-6, ipoe-7, ppp-8, ldp-9, ospf-10, isis-level-1-15, isis-level-2-18, ibgp-200, ebgp-20)";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "neighbor_preference"
+                    }
+                }';
+            }
+            must "not(interface-type = 'l2vpn-vpws') or (count(address) = 0 and count(neighbor) = 0 and count(unnumbered/interface) = 0 and count(address-translation) = 0 and count(ip-mtu-profile) = 0 and count(ipv4-admin-status) = 0 and count(ipv4-mtu-profile) = 0 and count(ipv6-admin-status) = 0 and count(ipv6-mtu-profile) = 0 and count(mpls-admin-status) = 0 and count(mpls-mtu) = 0 and count(rpf) = 0)" {
                 error-message "Invalid parameters configured on logical interface";
             }
         }  // list subinterface
@@ -1324,7 +1423,7 @@ submodule rtbrick-interface {
                 }';
             }
             leaf description {
-                 type rtb-types:string128;
+                 type rtb-types:string1024;
                  description
                      "Configure Physical interface description";
                  reference
@@ -1504,7 +1603,7 @@ submodule rtbrick-interface {
                         "attribute" : "fec"
                     }
                 }';
-            }
+            }            
             leaf holddown {
                 type type-holddown-mode;
                 description
@@ -1569,12 +1668,61 @@ submodule rtbrick-interface {
                     type rtb-types:boolean-true;
                     description
                         "Configure PTP for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "PTP cannot be configured on loopback or LAG interfaces";
+                    }
+
                     reference
                         '{
                             "attribute-getter" : {
                                 "attribute" : "ptp"
                             }
                         }';
+                }
+            }
+            container synce {
+                description "Configure SyncE for physical interface";
+                presence synce;
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.interface.physical.config",
+                        "type" :  "ifp_config_table",
+                        "inherit-attribute" : [ "ifp_name" ]
+                    }
+                }';
+                leaf enable
+                {
+                    type rtb-types:boolean-true;
+                    description
+                        "Configure SyncE for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "SyncE cannot be configured on loopback or LAG interfaces";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "synce"
+                         }
+                     }';
+                }
+                leaf esmc
+                {
+                    type rtb-types:boolean-true;
+                    description
+                        "Configure ESMC for the interface";
+
+                    must 'not(contains(../../name, "lo-")) and not(contains(../../name, "lag-"))' {
+                        error-message "ESMC cannot be configured on loopback or LAG interfaces";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "esmc"
+                         }
+                    }';
                 }
             }
             container breakout {
@@ -1601,6 +1749,17 @@ submodule rtbrick-interface {
                         }';
                 }
             }
+            leaf forward-error-correction-bypass {
+                type type-holddown-mode;
+                description
+                    "Configure to forward error correction bypass";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "fec_bypass"
+                    }
+                }';
+            }            
             uses subinterface-top;
         }  // list interface
     }  // grouping interface-top
@@ -1683,9 +1842,6 @@ submodule rtbrick-interface {
                 type uint16;
                 description
                     "Configure unit which identifies sub-interface under physical interface";
-                must 'count(../../../../interface-set/interface[name=current()/../../name]/unit[unit-id=current()]) = 1' {
-                   error-message "Interface is not allowed to associated with multiple interface-sets";
-                }
                 reference
                 '{
                     "attribute-getter" : {

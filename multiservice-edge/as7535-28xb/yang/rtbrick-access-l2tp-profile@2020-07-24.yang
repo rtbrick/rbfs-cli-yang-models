@@ -14,6 +14,10 @@ submodule rtbrick-access-l2tp-profile {
         prefix "rtb-types";
     }
 
+    include rtbrick-network-instance;
+    include rtbrick-l2x;
+    include rtbrick-interface;
+
     organization
       "RtBrick";
     contact
@@ -58,17 +62,17 @@ submodule rtbrick-access-l2tp-profile {
 
     grouping access-l2tp-profile {
         description "Global access L2TPv2 profile configuration";
-        
+
         list l2tp-profile {
             key "profile-name";
             description "Global L2TPv2 profile configuration";
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.l2tp.profile.config",
-                    "type"    : "l2tp_profile_config_table"
+                    "table-name": "global.access.l2tp.profile.config",
+                    "type": "l2tp_profile_config_table"
                 }
-            }';                                                      
+            }';
             leaf profile-name {
                 type string {
                     length "1 .. 64";
@@ -76,139 +80,139 @@ submodule rtbrick-access-l2tp-profile {
                 description "Name of the L2TP profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "name"
+                    "attribute-getter": {
+                        "attribute": "name"
                     }
                 }';
             }
             leaf receive-window {
-                type uint16 { 
+                type uint16 {
                     range "1..256";
                 }
                 description "L2TP tunnel receive window";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "receive_window"
+                    "attribute-getter": {
+                        "attribute": "receive_window"
                     }
                 }';
             }
             leaf session-limit {
-                type uint16 { 
+                type uint16 {
                     range "1..65535";
                 }
                 description "L2TP tunnel session limit";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "session_limit"
+                    "attribute-getter": {
+                        "attribute": "session_limit"
                     }
                 }';
-            } 
+            }
             leaf retransmit-interval {
-                type uint32 { 
+                type uint32 {
                     range "1..30";
                 }
                 description "L2TP tunnel retransmission interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "retransmit_interval"
+                    "attribute-getter": {
+                        "attribute": "retransmit_interval"
                     }
                 }';
-            } 
+            }
             leaf hello-interval {
-                type uint32 { 
+                type uint32 {
                     range "0..86400";
                 }
                 description "L2TP tunnel hello interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "hello_interval"
+                    "attribute-getter": {
+                        "attribute": "hello_interval"
                     }
                 }';
-            } 
+            }
             leaf idle-timeout-interval {
-                type uint32 { 
+                type uint32 {
                     range "0..4294966";
                 }
                 description "L2TP tunnel idle timeout interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "idle_timeout_interval"
+                    "attribute-getter": {
+                        "attribute": "idle_timeout_interval"
                     }
                 }';
-            } 
+            }
             leaf dead-timeout-interval {
-                type uint32 { 
+                type uint32 {
                     range "1..4294966";
                 }
                 description "L2TP tunnel dead timeout interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "dead_timeout_interval"
+                    "attribute-getter": {
+                        "attribute": "dead_timeout_interval"
                     }
                 }';
-            } 
+            }
             leaf inactive-timeout-interval {
-                type uint32 { 
+                type uint32 {
                     range "1..4294966";
                 }
                 description "L2TP tunnel inactive timeout interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "inactive_timeout_interval"
+                    "attribute-getter": {
+                        "attribute": "inactive_timeout_interval"
                     }
                 }';
-            } 
+            }
             leaf request-timeout-interval {
-                type uint32 { 
+                type uint32 {
                     range "1..30";
                 }
                 description "L2TP session request timeout interval in seconds";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "request_timeout_interval"
+                    "attribute-getter": {
+                        "attribute": "request_timeout_interval"
                     }
                 }';
-            } 
+            }
             leaf request-retries {
-                type uint16 { 
+                type uint16 {
                     range "1..600";
                 }
                 description "L2TP session request retries";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "request_retry_count"
+                    "attribute-getter": {
+                        "attribute": "request_retry_count"
                     }
                 }';
-            } 
+            }
             leaf selection-algorithm {
                 type selection-algorithm;
                 description "L2TP tunnel selection algorithm";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "selection_algorithm"
+                    "attribute-getter": {
+                        "attribute": "selection_algorithm"
                     }
                 }';
-            } 
+            }
             leaf hide-authentication {
                 type rtb-types:boolean-type;
                 description "Hide L2TP tunnel authentication";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "hide_authentication"
+                    "attribute-getter": {
+                        "attribute": "hide_authentication"
                     }
                 }';
-            } 
+            }
             leaf instance {
                 type string {
                     length "1..64";
@@ -216,15 +220,15 @@ submodule rtbrick-access-l2tp-profile {
                 description "Instance name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "instance",
-                        "expansion-getter" : {
-                            "package":"subsMgmt",
-                            "method" :"access_instance_name_expander"
+                    "attribute-getter": {
+                        "attribute": "instance",
+                        "expansion-getter": {
+                            "package": "subsMgmt",
+                            "method": "access_instance_name_expander"
                         }
                     }
                 }';
-            } 
+            }
             leaf pool-name {
                 type string {
                     length "1..64";
@@ -232,11 +236,11 @@ submodule rtbrick-access-l2tp-profile {
                 description "L2TP tunnel pool name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "lns_pool_name"
+                    "attribute-getter": {
+                        "attribute": "lns_pool_name"
                     }
                 }';
-            } 
+            }
             leaf client-name {
                 type string {
                     length "1..64";
@@ -244,48 +248,82 @@ submodule rtbrick-access-l2tp-profile {
                 description "Default value for L2TP tunnel client name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "client_name"
+                    "attribute-getter": {
+                        "attribute": "client_name"
                     }
                 }';
-            } 
+            }
             leaf client-ipv4 {
                 type inet:ipv4-address;
                 description "Default value for L2TP tunnel client IPv4 address";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "client_ipv4"
+                    "attribute-getter": {
+                        "attribute": "client_ipv4"
                     }
                 }';
-            } 
+            }
             leaf service-label {
                 type rtb-types:mpls-label;
-                description "MPLS service label";
+                must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                    error-message "l2tp service-label should be between 256 and 499967 or 999936 and 1048575";
+                }
+                must "count(/config:instance/static/route/mpls/in-label[. = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and static in-label";
+                }
+                must "count(/config:l2x/name/service-label[. = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and l2x service-label";
+                }
+                must "count(/config:instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP";
+                }
+                must "count(/config:instance/protocol/bgp/address-family[label = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP unicast";
+                }
+                must "count(/config:instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP interface";
+                }
+                must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                        interface/segment-routing/ipv4/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and ISIS ipv4";
+                }
+                must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                        interface/segment-routing/ipv6/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and ISIS ipv6";
+                }
+                must "count(/config:instance/protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                        area/interface/segment-routing/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and OSPF ipv4";
+                }
+                must "count(/config:instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                        area/interface/segment-routing/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and OSPF ipv6";
+                }
+                description "MPLS service label [Range: <256-499967> or <999936-1048575>]";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "service_label"
+                    "attribute-getter": {
+                        "attribute": "service_label"
                     }
                 }';
-            } 
+            }
             leaf connect-speed-update {
                 type rtb-types:boolean-type;
                 description "Enable L2TP Connect-Speed-Update-Notification (CSUN)";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "connect_speed_update_enabled"
+                    "attribute-getter": {
+                        "attribute": "connect_speed_update_enabled"
                     }
                 }';
-            } 
+            }
             leaf pon-access-line-version {
                 type pon-access-line-version;
                 description "PON Access Line Information Version";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "pon_access_line_version"
+                    "attribute-getter": {
+                        "attribute": "pon_access_line_version"
                     }
                 }';
             }
