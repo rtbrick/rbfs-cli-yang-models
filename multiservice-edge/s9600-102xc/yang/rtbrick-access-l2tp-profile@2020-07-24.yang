@@ -14,6 +14,10 @@ submodule rtbrick-access-l2tp-profile {
         prefix "rtb-types";
     }
 
+    include rtbrick-network-instance;
+    include rtbrick-l2x;
+    include rtbrick-interface;
+
     organization
       "RtBrick";
     contact
@@ -261,6 +265,40 @@ submodule rtbrick-access-l2tp-profile {
             } 
             leaf service-label {
                 type rtb-types:mpls-label;
+                must "((. >= 256 and . <= 499968) or (. >= 999936 and . <= 1048576))" {
+                    error-message "l2tp service-label should be between 256 and 499968 or 999936 and 1048576";
+                }
+                must "count(/config:instance/static/route/mpls/in-label[. = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and static in-label";
+                }
+                must "count(/config:l2x/name/service-label[. = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and l2x service-label";
+                }
+                must "count(/config:instance/protocol/bgp/address-family/srgb[base + index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP";
+                }
+                must "count(/config:instance/protocol/bgp/address-family[label = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP unicast";
+                }
+                must "count(/config:instance/protocol/bgp/address-family/interface[label-base + sid-index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and BGP interface";
+                }
+                must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                        interface/segment-routing/ipv4/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and ISIS ipv4";
+                }
+                must "count(/config:instance/protocol/isis[segment-routing/srgb/base +
+                        interface/segment-routing/ipv6/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and ISIS ipv6";
+                }
+                must "count(/config:instance/protocol/ospf/address-family/ipv4[segment-routing/srgb/base +
+                        area/interface/segment-routing/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and OSPF ipv4";
+                }
+                must "count(/config:instance/protocol/ospf/address-family/ipv6/instance-id[segment-routing/srgb/base +
+                        area/interface/segment-routing/index = current()]) = 0" {
+                    error-message "Conflicting labels for l2tp service-label and OSPF ipv6";
+                }
                 description "MPLS service label";
                 reference
                 '{
