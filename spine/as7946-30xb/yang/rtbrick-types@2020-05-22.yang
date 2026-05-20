@@ -60,6 +60,16 @@ module rtbrick-types {
         description "Boolean data type - True";
     }
 
+    typedef boolean-false {
+        type enumeration {
+            enum false {
+                value "0";
+                description "False";
+            }
+        }
+        description "Boolean data type - False";
+    }
+
     typedef enable-disable-type {
         type enumeration {
             enum disable {

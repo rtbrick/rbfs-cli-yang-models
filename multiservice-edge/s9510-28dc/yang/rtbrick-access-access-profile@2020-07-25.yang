@@ -749,8 +749,12 @@ submodule rtbrick-access-access-profile {
                         }
                     }';
                     leaf ip-mtu-profile {
-                        type leafref {
-                            path "../../../../../forwarding-options/mtu-profile/mtu-profile-name";
+                        type string {
+                            length "1..64";
+                        }
+
+                        must 'count(../../../../../forwarding-options/mtu-profile[mtu-profile-name = current()]) > 0' {
+                            error-message "MTU profile does not exist";
                         }
 
                         must '(../../../../../forwarding-options/mtu-profile[mtu-profile-name=current()]/type = "ip")' {
@@ -766,6 +770,42 @@ submodule rtbrick-access-access-profile {
                                     "package": "subsMgmt",
                                     "method": "access_ip_mtu_profile_expander"
                                 }
+                            }
+                        }';
+                    }
+                    leaf username-suffix {
+                        type string {
+                            length "0..64";
+                        }
+                        description "IPoE username suffix (default @ipoe)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_username_suffix"
+                            }
+                        }';
+                    }
+                    leaf password-plain-text {
+                        type string {
+                            length "1..64";
+                        }
+                        description "IPoE password in plain text (default ipoe)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_password",
+                                "plain-text-password": true,
+                                "secret-text-leaf-name": "password-encrypted-text"
+                            }
+                        }';
+                    }
+                    leaf password-encrypted-text {
+                        type rtb-types:secret-string-type;
+                        description "IPoE password in encrypted text";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_password"
                             }
                         }';
                     } 

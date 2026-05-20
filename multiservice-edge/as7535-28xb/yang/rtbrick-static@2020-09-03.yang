@@ -162,8 +162,8 @@ submodule rtbrick-static {
         }
 
         leaf resolve-direct {
-            type rtb-types:boolean-true;
-            description "Resolve only via direct routes";
+            type rtb-types:boolean-type;
+            description "Resolve via any routes";
             reference
             '{
                 "attribute-getter" : {
@@ -868,7 +868,6 @@ submodule rtbrick-static {
                 }
 
                 uses nexthop-attributes;
-
             }
 
             list conditional-profile

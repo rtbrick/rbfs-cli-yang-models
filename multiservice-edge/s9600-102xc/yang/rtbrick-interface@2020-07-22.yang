@@ -9,10 +9,6 @@ submodule rtbrick-interface {
         prefix inet;
     }
 
-    import clixon-autocli {
-        prefix autocli;
-    }
-
     import rtbrick-types {
         prefix "rtb-types";
     }
@@ -1374,7 +1370,6 @@ submodule rtbrick-interface {
                  type uint16 {
                      range "0 .. 300";
                  }
-                autocli:hide;
                 description "Configure arp-nd preference on logical interface def values:(direct-0, static-5, arp-nd-6, ipoe-7, ppp-8, ldp-9, ospf-10, isis-level-1-15, isis-level-2-18, ibgp-200, ebgp-20)";
                 reference
                 '{

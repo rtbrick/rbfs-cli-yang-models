@@ -79,15 +79,14 @@ submodule rtbrick-traffic-sampling {
           '{
                "table-getter": {
                    "table-name" : "global.traffic.sampling.collector.config",
-                   "type"    : "global_traffic_sampling_collector_config",
-                   "default-attribute" : [ { "num_of_samples" : "1" } ]
+                   "type"    : "global_traffic_sampling_collector_config"
                }
            }';
         leaf collector-id {
           description
             "Collector identifier";
           type int8 {
-            range "1 .. 4";
+            range "1";
           }
           reference
             '{

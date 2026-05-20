@@ -118,6 +118,15 @@ submodule rtbrick-system {
               '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
         }
     }
+    typedef smgmt-username {
+        type string  {
+            length "1..32";
+            pattern '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
+            pattern '[a-zA-Z][a-zA-Z0-9._-]{2,31}' {
+                error-message "Username [<=32 chars] should always begin with a letter";
+            }
+        }
+    }
     typedef ipmi-interface {
         type enumeration  {
             enum  lan {
@@ -410,7 +419,7 @@ submodule rtbrick-system {
                 }
             }';
             leaf username {
-                type smgmt-string;
+                type smgmt-username;
                 mandatory true;
                 description "User name";
                 reference

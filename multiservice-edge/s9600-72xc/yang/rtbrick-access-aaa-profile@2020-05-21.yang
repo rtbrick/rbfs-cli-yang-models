@@ -71,6 +71,24 @@ submodule rtbrick-access-aaa-profile {
         description "Accounting-Session-Id format";
     }
 
+    typedef metric-key {
+        type enumeration {
+            enum USERNAME {
+                value "0";
+                description "Default username";
+            }
+            enum REMOTE_ID {
+                value "1";
+                description "Agent-Remote-Id";
+            }
+            enum CIRCUIT_ID {
+                value "2";
+                description "Agent-Circuit-id";
+            }
+        }
+        description "Accounting metric-key type";
+    }
+
     typedef accounting-source-ingress {
         type enumeration {
             enum IFL {
@@ -234,6 +252,16 @@ submodule rtbrick-access-aaa-profile {
                     '{
                         "attribute-getter": {
                             "attribute": "accounting_interim_interval"
+                        }
+                    }';
+                }
+                leaf metric-key {
+                    type metric-key;
+                    description "Accounting metric-key type";
+                    reference
+                    '{
+                        "attribute-getter": {
+                            "attribute": "accounting_metric_key"
                         }
                     }';
                 }
