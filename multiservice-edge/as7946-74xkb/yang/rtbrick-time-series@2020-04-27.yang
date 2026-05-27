@@ -201,7 +201,7 @@ submodule rtbrick-time-series {
             }
             leaf append-timestamp {
                 type rtb-types:boolean-type;
-                description "Specifies if the sample timestamp should be appended.";
+                description "Specifies if the sample timestamp should be appended";
                 reference
                 '{
                     "attribute-getter": {
@@ -488,7 +488,7 @@ submodule rtbrick-time-series {
                     "table-name": "global.time-series.alert.profile.config",
                     "type": "time_series_alert_profile_config_table",
                     "default-attribute": [{"repeat-interval": "4h"}, {"group-by": "..."}],
-                     "notification-type" : "table-change",                    
+                     "notification-type" : "table-change",
                      "notification-interval": 500
                 }
             }';
@@ -701,13 +701,13 @@ submodule rtbrick-time-series {
                     "table-name": "global.time-series.self-monitoring",
                     "type": "time_series_self_monitoring_table",
                     "default-attribute": [{"configuration_name": "rtbrick"}, {"scrape-interval": "5s"}, {"enable": "false"}],
-                    "notification-type" : "table-change",                    
+                    "notification-type" : "table-change",
                     "notification-interval": 500
                 }
             }';
             leaf enable {
                 type rtb-types:boolean-type;
-                description "Specifies if self monitoring should be enabled.";
+                description "Specifies if self monitoring should be enabled";
                 reference
                 '{
                     "attribute-getter": {

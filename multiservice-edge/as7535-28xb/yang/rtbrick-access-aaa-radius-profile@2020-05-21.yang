@@ -101,6 +101,20 @@ submodule rtbrick-access-aaa-radius-profile {
         description "NAS-Port type";
     }
 
+    typedef calling-station-id-format {
+        type enumeration {
+            enum NONE {
+                value "0";
+                description "NONE";
+            }
+            enum MAC {
+                value "1";
+                description "MAC";
+            }
+        }
+        description "Calling-Station-Id format";
+    }
+
     typedef algorithm-type {
         type enumeration {
             enum DIRECT {
@@ -124,8 +138,8 @@ submodule rtbrick-access-aaa-radius-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.aaa.radius.config",
-                    "type"    : "aaa_radius_profile_config_table"
+                    "table-name": "global.access.aaa.radius.config",
+                    "type": "aaa_radius_profile_config_table"
                 }
             }';
             leaf profile-name {
@@ -135,8 +149,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 description "Name of the RADIUS profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "aaa_radius_profile_name"
+                    "attribute-getter": {
+                        "attribute": "aaa_radius_profile_name"
                     }
                 }';
             }
@@ -147,8 +161,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 description "NAS identifier";
                 reference
                 '{
-                    "attribute-getter" : {
-                       "attribute" : "nas_identifier"
+                    "attribute-getter": {
+                       "attribute": "nas_identifier"
                     }
                 }';
             }
@@ -157,8 +171,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 description "NAS IP address (IPv4 Address)";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "nas_ip_address"
+                    "attribute-getter": {
+                        "attribute": "nas_ip_address"
                     }
                 }';
             }
@@ -167,8 +181,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 description "NAS-Port format";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "nas_port_format"
+                    "attribute-getter": {
+                        "attribute": "nas_port_format"
                     }
                 }';
             }
@@ -177,8 +191,18 @@ submodule rtbrick-access-aaa-radius-profile {
                 description "NAS-Port type";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "nas_port_type"
+                    "attribute-getter": {
+                        "attribute": "nas_port_type"
+                    }
+                }';
+            }
+            leaf calling-station-id-format {
+                type calling-station-id-format;
+                description "Calling-Station-Id format";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "calling_station_id_format"
                     }
                 }';
             }
@@ -187,8 +211,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.aaa.radius.config",
-                        "type"    : "aaa_radius_profile_config_table",
+                        "table-name": "global.access.aaa.radius.config",
+                        "type": "aaa_radius_profile_config_table",
                         "inherit-attribute": ["aaa_radius_profile_name"]
                     }
                 }';
@@ -199,8 +223,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "RADIUS server profile name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_server_list"
+                        "attribute-getter": {
+                            "attribute": "authentication_server_list"
                         }
                     }';
                 }
@@ -209,8 +233,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Authentication redundancy algorithm";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_algorithm"
+                        "attribute-getter": {
+                            "attribute": "authentication_algorithm"
                         }
                     }';
                 }
@@ -220,8 +244,8 @@ submodule rtbrick-access-aaa-radius-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.aaa.radius.config",
-                        "type"    : "aaa_radius_profile_config_table",
+                        "table-name": "global.access.aaa.radius.config",
+                        "type": "aaa_radius_profile_config_table",
                         "inherit-attribute": ["aaa_radius_profile_name"]
                     }
                 }';
@@ -232,8 +256,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "RADIUS server profile name";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_server_list"
+                        "attribute-getter": {
+                            "attribute": "accounting_server_list"
                         }
                     }';
                 }
@@ -242,8 +266,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Accounting redundancy algorithm";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_algorithm"
+                        "attribute-getter": {
+                            "attribute": "accounting_algorithm"
                         }
                     }';
                 }
@@ -252,8 +276,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Send accounting-stop on authentication reject";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_stop_on_reject"
+                        "attribute-getter": {
+                            "attribute": "accounting_stop_on_reject"
                         }
                     }';
                 }
@@ -262,8 +286,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Send accounting-stop on failure";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_stop_on_failure"
+                        "attribute-getter": {
+                            "attribute": "accounting_stop_on_failure"
                         }
                     }';
                 }
@@ -272,8 +296,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Enable accounting on/off";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_on_off"
+                        "attribute-getter": {
+                            "attribute": "accounting_on_off"
                         }
                     }';
                 }
@@ -282,8 +306,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Wait for accounting-on response before sending authentication requests";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_on_wait"
+                        "attribute-getter": {
+                            "attribute": "accounting_on_wait"
                         }
                     }';
                 }
@@ -292,8 +316,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Enable backup accounting";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_backup"
+                        "attribute-getter": {
+                            "attribute": "accounting_backup"
                         }
                     }';
                 }
@@ -304,8 +328,8 @@ submodule rtbrick-access-aaa-radius-profile {
                     description "Max backup accounting hold time in seconds";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_backup_max"
+                        "attribute-getter": {
+                            "attribute": "accounting_backup_max"
                         }
                     }';
                 }

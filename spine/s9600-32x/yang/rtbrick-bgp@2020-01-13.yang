@@ -14,6 +14,9 @@ submodule rtbrick-bgp {
         prefix "rtb-bgp-types";
     }
 
+    include rtbrick-oam;
+    include rtbrick-policy;
+
     organization "RtBrick";
 
     contact
@@ -61,93 +64,16 @@ submodule rtbrick-bgp {
             reference
             '{
                 "attribute-getter" : {
-                    "attribute" : "policy_name"
+                    "attribute" : "policy_name",
+                    "expansion-getter" : {
+                        "package": "policy",
+                        "method" : "policy_statement_expander"
+                    }
                 }
             }';
-        }
-    }
 
-    grouping bgp-bfd {
-        description "BGP BFD peer grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_peer_table_tmpl_get",
-                    "type" :  "bgp.peer_config_table",
-                    "inherit-attribute":["peer_ipv4_address", "source_ipv4_address"]
-                }
-            }';
-            leaf admin-status {
-                type rtb-types:boolean-type;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-            leaf profile {
-                type string {
-                    length "1..64";
-                }
-                description "BFD profile name";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "profile",
-                        "expansion-getter" : {
-                            "package":"bgp",
-                            "method" : "bgp_get_bfd_profile_name"
-                        }
-                    }
-                }';
-            }
-        }
-    }
-    grouping bgp-bfd-pg {
-        description "BGP BFD peer group grouping";
-        container bfd {
-            presence bfd;
-            description "BGP BFD configuration";
-            reference
-            '{
-                "table-getter": {
-                    "library": "libbgpyang.so",
-                    "symbol": "bgp_yang_pg_table_tmpl_get",
-                    "type" :  "bgp.pg_config_table",
-                    "inherit-attribute":["pg_name"]
-                }
-            }';
-            leaf admin-status {
-                type rtb-types:boolean-type;
-                description "BFD status";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "bfd_status"
-                    }
-                }';
-            }
-            leaf profile {
-                type string {
-                    length "1..64";
-                }
-                description "BFD profile name";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "profile",
-                        "expansion-getter" : {
-                            "package":"bgp",
-                            "method" : "bgp_get_bfd_profile_name"
-                        }
-                    }
-                }';
+            must 'count(/config:policy/statement[name=current()]) > 0' {
+                error-message "A policy statement that is not configured or has been deleted is referenced";
             }
         }
     }
@@ -155,9 +81,7 @@ submodule rtbrick-bgp {
     grouping bgp-pg-name {
         description "BGP peer group name";
         leaf peer-group {
-            type string {
-                length "1..64";
-            }
+            type rtb-types:pg-name;
             mandatory true;
             description "BGP peer group name";
             reference
@@ -346,7 +270,7 @@ submodule rtbrick-bgp {
         }
     }
 
-grouping bgp-export-label-block {
+    grouping bgp-export-label-block {
         description "Segment routing global block related configuration";
         container export-label-block {
             when '../afi = "l2vpn" or ../safi = "vpn-unicast"';
@@ -366,6 +290,9 @@ grouping bgp-export-label-block {
                 }
                 must "../range" {
                     error-message "configure/un-configure Stitching label base and range";
+                }
+                must "count(../../../address-family/export-label-block[base = current()]) <= 1" {
+                    error-message "Export-label base should be unique across address families";
                 }
                 description "Stitching Label base (greater than 15)";
                 reference
@@ -406,13 +333,14 @@ grouping bgp-export-label-block {
                 }
             }';
             leaf base {
-                type uint32 {
-                    range "16..16777215";
+                type uint32;
+                must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                    error-message "BGP srgb base should be between 256 and 499967 or 999936 and 1048575";
                 }
                 must "../range" {
                     error-message "configure/un-configure SRGB base and range";
                 }
-                description "SRGB base (greater than 15)";
+                description "SRGB base [Range: <256-499967> or <999936-1048575>]";
                 reference
                 '{
                     "attribute-getter" : {
@@ -421,7 +349,9 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf range {
-                type uint32;
+                type uint32 {
+                    range "0 .. 499967";
+                }
                 must "../base" {
                     error-message "configure/un-configure SRGB base and range";
                 }
@@ -434,8 +364,26 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf index {
-                type uint32 {
-                    range "0..4294967294";
+                type uint32;
+                must "../base" {
+                    error-message "configure/un-configure SRGB base and range";
+                }
+                must ". + ../base <= 499967 or (. + ../base >= 999936 and . + ../base <= 1048575)" {
+                    error-message "Label out of the range [<256-499967> or <999936-1048575>]";
+                }
+                must ". >= 0 and  . <= ../range" {
+                    error-message "Index out of configured srgb range for BGP";
+                }
+                must "count(../../../../../../instance[not(name = current()/../../../../../name)]
+                        /protocol/bgp/address-family/srgb[base + index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label across BGP instances";
+                }
+                must "count(../../../address-family[not(afi = current()/../../afi)]/srgb[base + index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP ipv4 and ipv6";
+                }
+                must "count(../../../../../../instance/protocol/bgp/address-family/interface
+                        [label-base + sid-index = current()/../base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label and BGP interface label";
                 }
                 description "SRGB segment index";
                 reference
@@ -445,6 +393,32 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
+        }
+    }
+
+    grouping bgp-protocol-preference-para {
+        description "Protocol preference related configuration";
+        leaf internal {
+            type rtb-bgp-types:protocol-pref;
+            description
+                "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ibgp_protocol_preference"
+                }
+            }';
+        }
+        leaf external {
+            type rtb-bgp-types:protocol-pref;
+            description
+                "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "ebgp_protocol_preference"
+                }
+            }';
         }
     }
 
@@ -481,6 +455,9 @@ grouping bgp-export-label-block {
                 }
                 must '../../../../name != "default" or (../../../../name = "default" and . != "evpn-vpws" and . != "vpls-vpws")' {
                     error-message "evpn-vpws and vpls-vpws safi cannot be configured for default instance";
+                }
+                must '../afi != "ipv6" or . != "vpn-multicast"' {
+                    error-message "Ipv6 vpn-multicast address family is not supported";
                 }
                 reference
                 '{
@@ -547,6 +524,17 @@ grouping bgp-export-label-block {
                     }
                 }';
             }
+            leaf inter-as-option-ab {
+                when '../safi = "vpn-unicast" ';
+                type rtb-bgp-types:enable-disable;
+                description "Use static label of a instance as option-B label for re-advertisement";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "inter_as_option_ab"
+                    }
+                }';
+            }
             leaf allow-missing-export-policy {
                 when '../afi != "l2vpn"';
                 type rtb-types:boolean-type;
@@ -559,7 +547,10 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf export-filter {
-                when '../safi = "vpls-vpws" or ../safi = "vpls"';
+                when '../safi = "evpn" or ../safi = "vpls"';
+                must '(../../../../name != "default" or ../safi != "evpn")' {
+                    error-message "Export filter is supported only on non-default evpn instance";
+                }
                 description "Apply remote site id based filters";
                 type rtb-bgp-types:export-filter;
                 reference
@@ -579,13 +570,45 @@ grouping bgp-export-label-block {
                 }
 
                 description "Index to be used in transit labels";
-                type uint32 {
-                    range "0..4294967294";
+                type uint32;
+                must "((. <= 499967) or (. >= 999936 and . <= 1048575))" {
+                    error-message "Unicast label should be between 0 and 499967 or 999936 and 1048575";
                 }
                 reference
                 '{
                     "attribute-getter" : {
                         "attribute" : "sid_index"
+                    }
+                }';
+            }
+            leaf label {
+                type rtb-types:mpls-label;
+                must "((. <= 499967) or (. >= 999936 and . <= 1048575))" {
+                    error-message "Unicast label should be between 0 and 499967 or 999936 and 1048575";
+                }
+                must '../../../../name != "default" and ../safi = "unicast"' {
+                    error-message "Static Label cannot be configured for default instance or non-unicast address families";
+                }
+                must "count(../../../../../instance/protocol/bgp/address-family/srgb
+                            [base + index = current()]) = 0" {
+                        error-message "Conflicting labels for BGP srgb label and BGP unicast label";
+                }
+                must "count(../../../../../instance[not(name = current()/../../../../name)]
+                        /protocol/bgp/address-family[label = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast across BGP instances";
+                }
+                must "count(../../address-family[not(afi = current()/../afi)]/label[. = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast for BGP ipv4 and ipv6";
+                }
+                must "count(../../../../../instance/protocol/bgp/address-family/interface
+                        [label-base + sid-index = current()]) = 0" {
+                        error-message "Conflicting labels for BGP unicast label and BGP interface label";
+                }
+                description "Configure static label associated with the instance [Range: <0-499967> or <999936-1048575>]";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "label"
                     }
                 }';
             }
@@ -720,10 +743,17 @@ grouping bgp-export-label-block {
                 }
                 leaf label-base {
                     mandatory true;
-                    when '../../safi = "vpls-vpws" or ../../safi = "vpls"';
-                    description "SRGB base";
-                    type uint32 {
-                        range "200001..300000";
+                    when '../../safi = "vpls-vpws"';
+                    description "SRGB base [Range: <256-499967> or <999936-1048575>]";
+                    must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base = current()]) <= 1" {
+                        error-message "Label-base needs to be unique across BGP interfaces and BGP instances";
+                    }
+                    must "count(../../../../../../instance/protocol/bgp/address-family/interface[label-base + 1 = current()]) = 0" {
+                        error-message "Label-base with range 2 needs to be unique across BGP interfaces and BGP instances";
+                    }
+                    type uint32;
+                    must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
+                        error-message "BGP label base should be between 256 and 499967 or 999936 and 1048575";
                     }
                     reference
                         '{
@@ -736,6 +766,10 @@ grouping bgp-export-label-block {
                     when '../../safi = "evpn-vpws" or ../../safi = "evpn"';
                     description "Index to be used in transit labels";
                     type uint32;
+                    must "count(../../../../../../instance[not(name = current()/../../../../../name)]
+                        /protocol/bgp/address-family/interface[label-base + sid-index = current()/../label-base + current()]) = 0" {
+                        error-message "Conflicting labels for BGP interface across BGP instances";
+                    }
                     reference
                         '{
                             "attribute-getter" : {
@@ -753,6 +787,19 @@ grouping bgp-export-label-block {
                             }
                         }';
                 }
+            }
+            container protocol-preference {
+                description "Protocol preference";
+                reference
+                '{
+                    "table-getter": {
+                        "library": "libbgpyang.so",
+                        "symbol": "bgp_yang_af_table_tmpl_get",
+                        "type" :  "bgp.af_config_table",
+                        "inherit-attribute":["afi", "safi"]
+                    }
+                }';
+                uses bgp-protocol-preference-para;
             }
             uses bgp-resolve;
             uses bgp-srgb;
@@ -817,6 +864,26 @@ grouping bgp-export-label-block {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
             }
@@ -850,6 +917,9 @@ grouping bgp-export-label-block {
                             "attribute" : "source_ipv4_address"
                         }
                     }';
+                    must "not(current() = ../peer-address)" {
+                        error-message "Source IP and Peer IP cannot be the same";
+                    }
                 }
                 leaf allow-as-in {
                     type uint8 {
@@ -875,9 +945,28 @@ grouping bgp-export-label-block {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
-                uses bgp-bfd;
             }
             list ipv6 {
                 key "peer-address update-source";
@@ -909,6 +998,9 @@ grouping bgp-export-label-block {
                             "attribute" : "source_ipv6_address"
                         }
                     }';
+                    must "not(current() = ../peer-address)" {
+                        error-message "Source IP and Peer IP cannot be the same";
+                    }
                 }
                 leaf allow-as-in {
                     type uint8 {
@@ -934,9 +1026,28 @@ grouping bgp-export-label-block {
                         }
                     }';
                 }
+                leaf bfd-profile {
+                    type string {
+                        length "1..64";
+                    }
+                    description "BFD profile name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile",
+                            "expansion-getter" : {
+                                "package":"bgp",
+                                "method" : "bgp_get_bfd_profile_name"
+                            }
+                        }
+                    }';
+                    must "/config:oam/bfd/profile[name = current()]" {
+                        error-message
+                        "BFD profile not defined or deletion not allowed when linked to the BGP peer.";
+                    }
+                }
                 uses bgp-pg-name;
                 uses bgp-deactivate;
-                //uses bgp-bfd;
             }
         }
     }
@@ -1035,9 +1146,16 @@ grouping bgp-export-label-block {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "import_route_map"
+                        "attribute" : "import_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
             leaf-list export {
                 type rtb-types:policy-name-type;
@@ -1049,9 +1167,16 @@ grouping bgp-export-label-block {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "export_route_map"
+                        "attribute" : "export_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
         }
     }
@@ -1060,6 +1185,7 @@ grouping bgp-export-label-block {
         description "Update-nexthop related configuration";
         container update-nexthop {
             description "Updating the nexthop for updates advertised";
+            presence update-nexthop;
             reference
             '{
                 "table-getter": {
@@ -1069,6 +1195,9 @@ grouping bgp-export-label-block {
                     "inherit-attribute":["instance_name", "pg_name", "afi", "safi"]
                 }
             }';
+            must "not(../nexthop-self) and not(../nexthop-unchanged)" {
+                error-message "Only one of nexthop-self, nexthop-unchanged, or update-nexthop can be configured";
+            }
             choice address-type {
                 description "Choice between ipv4 and ipv6 addresses";
                 case ipv4 {
@@ -1126,6 +1255,10 @@ grouping bgp-export-label-block {
                         "attribute" : "addpath_count"
                     }
                 }';
+
+                must "../option" {
+                    error-message "Please configure both add path flag and add path count";
+                }
             }
             leaf option {
                 type rtb-bgp-types:add-path-opt;
@@ -1163,6 +1296,9 @@ grouping bgp-export-label-block {
                     "attribute" : "nexthop_self"
                 }
             }';
+            must "not(../nexthop-unchanged) and not(../update-nexthop/ipv4-address) and not(../update-nexthop/ipv6-address)" {
+                error-message "Any one (nexthop-self, nexthop-unchanged, update-nexthop) can be configured";
+            }
         }
         leaf nexthop-unchanged {
             type rtb-types:boolean-type;
@@ -1173,6 +1309,9 @@ grouping bgp-export-label-block {
                     "attribute" : "nexthop_unchanged"
                 }
             }';
+            must "not(../nexthop-self) and not(../update-nexthop/ipv4-address) and not(../update-nexthop/ipv6-address)" {
+                error-message "Any one (nexthop-self, nexthop-unchanged, update-nexthop) can be configured";
+            }
         }
         leaf remove-private-as {
             type rtb-types:boolean-type;
@@ -1186,12 +1325,28 @@ grouping bgp-export-label-block {
         }
         leaf send-label {
             when '../afi != "l2vpn"';
+            must '../afi = "ipv6" and ../safi = "unicast"' {
+                error-message "Send label can only be set for ipv6/unicast";
+            }
             type rtb-types:boolean-type;
             description "Advertise labels for unicast address prefixes";
             reference
             '{
                 "attribute-getter" : {
                     "attribute" : "send_label"
+                }
+            }';
+        }
+        leaf multi-label-capability {
+            must '../safi = "labeled-unicast"' {
+                error-message "Multiple label capability can be configured only for labeled unicast address families";
+            }
+            type rtb-types:boolean-type;
+            description "Support more than one label binding for a prefix";
+            reference
+            '{
+                "attribute-getter" : {
+                    "attribute" : "multi_label_capability"
                 }
             }';
         }
@@ -1227,10 +1382,16 @@ grouping bgp-export-label-block {
                 }';
             }
             leaf safi {
+                must '(. != "evpn-vpws" and . != "vpls-vpws")' {
+                    error-message "Advertisement of evpn-vpws/vpls-vpws address families is not supported";
+                }
                 must '(../afi != "l2vpn" and . != "evpn" and . != "evpn-vpws" and .
                 != "vpls-vpws" and . != "vpls") or (../afi = "l2vpn" and
                 (. = "evpn" or . = "evpn-vpws" or . = "vpls-vpws" or . = "vpls"))' {
-                    error-message "l2vpn afi can only be configured with evpn/evpn-vpws/vpls-vpws safi and vice-versa";
+                    error-message "l2vpn afi can only be configured with evpn/vpls safi and vice-versa";
+                }
+                must '../afi != "ipv6" or . != "vpn-multicast"' {
+                    error-message "Ipv6 vpn-multicast address family is not supported";
                 }
                 type rtb-bgp-types:pg-safi;
                 description "Type safi";
@@ -1339,9 +1500,7 @@ grouping bgp-export-label-block {
                 }
             }';
             leaf pg-name {
-                type string {
-                    length "1..64";
-                }
+                type rtb-types:pg-name;
                 description "Peer group name";
                 reference
                 '{
@@ -1359,6 +1518,9 @@ grouping bgp-export-label-block {
                         "attribute" : "any_as"
                     }
                 }';
+                must "not(boolean(current()) and boolean(../remote-as))" {
+                    error-message "Remote-as and any-as are mutually exclusive";
+                }
             }
             leaf ebgp-multihop {
                 type uint8 {
@@ -1471,7 +1633,6 @@ grouping bgp-export-label-block {
                 }';
             }
             uses bgp-pg-address-family;
-            uses bgp-bfd-pg;
         }
     }
 
@@ -1656,6 +1817,13 @@ grouping bgp-export-label-block {
                 must "../keepalive" {
                     error-message "Keepalive timer is not configured";
                 }
+                must "current() >= ../keepalive" {
+                    error-message "Hold-timer should be greater than or equal to keepalive timer";
+                }
+                must "not(current() = 1) and not(current() = 2)" {
+                    error-message "Please enter a valid hold-timer";
+
+                }
                 description
                     "Hold time";
                 reference
@@ -1696,28 +1864,7 @@ grouping bgp-export-label-block {
                     "inherit-attribute":["instance_name"]
                 }
             }';
-            leaf internal {
-                type rtb-bgp-types:protocol-pref;
-                description
-                    "Distance value for internal BGP(IBGP) routes [Range: <1-255>]";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "protocol_preference"
-                    }
-                }';
-            }
-            leaf external {
-                type rtb-bgp-types:protocol-pref;
-                description
-                    "Distance value for external BGP(EBGP) routes [Range: <1-255>]";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "ebgp_protocol_preference"
-                    }
-                }';
-            }
+            uses bgp-protocol-preference-para;
         }
     }
 
@@ -1736,8 +1883,7 @@ grouping bgp-export-label-block {
                 }
             }';
             leaf cluster-id {
-                type rtb-types:router-id-type;
-
+                type inet:ipv4-address-no-zone;
                 description
                     "BGP cluster identifier (ipv4 format: A.B.C.D)";
                 reference
@@ -1847,6 +1993,17 @@ grouping bgp-export-label-block {
                             "package":"ifm",
                             "method" :"ifm_instance_name_expander"
                         }
+                    }
+                }';
+            }
+            leaf malformed-update {
+                type rtb-bgp-types:bgp-ignore;
+                description
+                    "Malformed update packet is ignored and session is not reset";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "malformed_update"
                     }
                 }';
             }
