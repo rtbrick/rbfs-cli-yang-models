@@ -1141,6 +1141,10 @@ submodule rtbrick-acl {
                                 }
                             }';
                         }
+                        must "(match/direction or action/capture)" {
+                            error-message
+                            "Either 'direction' or 'capture' must be configured.";
+                        }
                     }
                 }
             } // container l2
@@ -1369,7 +1373,7 @@ submodule rtbrick-acl {
                         }
                         must "(match/direction or action/capture)" {
                             error-message
-                            "At least one of 'direction' or 'capture' must be configured.";
+                            "Either 'direction' or 'capture' must be configured.";
                         }
                     }
                 }
@@ -1570,6 +1574,10 @@ submodule rtbrick-acl {
                                     "attribute" : "priority"
                                 }
                             }';
+                        }
+                        must "(match/direction or action/capture)" {
+                            error-message
+                            "Either 'direction' or 'capture' must be configured.";
                         }
                     }
                 }

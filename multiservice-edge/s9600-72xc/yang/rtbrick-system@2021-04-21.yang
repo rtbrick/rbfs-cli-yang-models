@@ -1074,7 +1074,7 @@ submodule rtbrick-system {
                             type string{
                                 length "1..128";
                             }
-                            description "Allow particular regex filter for Log";
+                            description "Regex filter to export matching log messages to the endpoint";
                             reference
                             '{
                                 "attribute-getter" : {
@@ -1086,7 +1086,7 @@ submodule rtbrick-system {
                             type string{
                                 length "1..128";
                             }
-                            description "Disallow particular regex filter for Log";
+                            description "Regex filter to prevent matching log messages from being exported to the endpoint";
                             reference
                             '{
                                 "attribute-getter" : {

@@ -155,6 +155,17 @@ submodule rtbrick-link-aggregation {
                     }';
                 }
 
+                leaf member-follow-lag-admin-state {
+                    type rtb-types:boolean-false;
+                    description "Whether to make member admin down when LAG admin down is configured";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                        "attribute" : "member_follow_lag_admin_state"
+                        }
+                    }';
+                }
+
                 leaf redundancy-session-id {
                     type uint16 {
                         range "1..65535";

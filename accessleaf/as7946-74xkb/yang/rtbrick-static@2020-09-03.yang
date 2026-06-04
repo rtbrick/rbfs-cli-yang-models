@@ -5,6 +5,10 @@ submodule rtbrick-static {
        prefix config;
     }
 
+    import clixon-autocli{
+        prefix autocli;
+    }
+
     import ietf-inet-types {
         prefix inet;
     }
@@ -719,6 +723,7 @@ submodule rtbrick-static {
 
                 list multicast4
                 {
+                    autocli:hide;
                     key "source group nexthop-profile";
                     description
                         "Static multicast route configuration commands";
