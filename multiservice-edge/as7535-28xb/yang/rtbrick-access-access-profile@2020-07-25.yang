@@ -609,6 +609,19 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
+                    leaf asymmetric {
+                        type rtb-types:boolean-type;
+                        must "(../mode = 'relay')" {
+                            error-message "DHCP asymmetric leases are supported in relay mode only";
+                        }
+                        description "Enable DHCP asymmetric lease time";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_asymmetric"
+                            }
+                        }';
+                    } 
                     leaf lease-time {
                         type uint32 { 
                             range "1..4294967295";
@@ -618,6 +631,39 @@ submodule rtbrick-access-access-profile {
                         '{
                             "attribute-getter": {
                                 "attribute": "ipv4_dhcp_lease_time"
+                            }
+                        }';
+                    }
+                    leaf renewal-time {
+                        type uint32 { 
+                            range "1..4294967295";
+                        }
+                        must "not(../lease-time) or (. < ../lease-time)" {
+                            error-message "DHCP renewal-time must be < lease-time";
+                        }
+                        description "DHCP renewal time in seconds (T1)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_renewal_time"
+                            }
+                        }';
+                    }
+                    leaf rebind-time {
+                        type uint32 { 
+                            range "1..4294967295";
+                        }
+                        must "not(../lease-time) or (. < ../lease-time)" {
+                            error-message "DHCP rebind-time must be < lease-time";
+                        }                        
+                        must "not(../renewal-time) or (. > ../renewal-time)" {
+                            error-message "DHCP rebind-time must be > renewal-time";
+                        }
+                        description "DHCP rebind time in seconds (T2)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_rebind_time"
                             }
                         }';
                     }
@@ -671,6 +717,19 @@ submodule rtbrick-access-access-profile {
                             }
                         }';
                     }
+                    leaf asymmetric {
+                        type rtb-types:boolean-type;
+                        must "(../mode = 'relay')" {
+                            error-message "DHCPv6 asymmetric leases are supported in relay mode only";
+                        }
+                        description "Enable DHCPv6 asymmetric lease time";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_asymmetric"
+                            }
+                        }';
+                    } 
                     leaf lifetime {
                         type uint32 {
                             range "30..4294967295";
@@ -695,6 +754,39 @@ submodule rtbrick-access-access-profile {
                         '{
                             "attribute-getter": {
                                 "attribute": "ipv6_dhcpv6_preferred_lifetime"
+                            }
+                        }';
+                    }
+                    leaf renewal-time {
+                        type uint32 {
+                            range "0..4294967295";
+                        }
+                        must "not(../lifetime) or (. < ../lifetime)" {
+                            error-message "DHCPv6 renewal-time must be < lifetime";
+                        }
+                        description "DHCPv6 renewal time in seconds (T1)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_t1"
+                            }
+                        }';
+                    }
+                    leaf rebind-time  {
+                        type uint32 {
+                            range "0..4294967295";
+                        }
+                        must "not(../lifetime) or (. < ../lifetime)" {
+                            error-message "DHCPv6 rebind-time must be < lifetime";
+                        }
+                        must "not(../renewal-time) or (. >= ../renewal-time)" {
+                            error-message "DHCPv6 rebind-time must be >= renewal-time";
+                        }
+                        description "DHCPv6 rebind time in seconds (T2)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_t2"
                             }
                         }';
                     }

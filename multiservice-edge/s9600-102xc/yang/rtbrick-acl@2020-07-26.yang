@@ -41,7 +41,7 @@ submodule rtbrick-acl {
       type string {
           length "1..64";
           pattern
-              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
               + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)';
       }
       description
@@ -633,7 +633,7 @@ submodule rtbrick-acl {
 
             leaf ipv4-tos {
                 type uint8 {
-                    range "0 .. 254";
+                    range "0 .. 255";
                 }
                 description
                     "Configure ipv4 tos value";
@@ -942,10 +942,10 @@ submodule rtbrick-acl {
             "Top-level grouping containing a list of acl config.";
         container acl {
             description
-                "container for list of acl config.";
+                "ACL configuration";
             container l2 {
                 description
-                    "container for l2 acl config.";
+                    "ACL type";
                 list rule {
                     key "rule-name";
                     description
@@ -998,7 +998,7 @@ submodule rtbrick-acl {
                         uses acl-match-l2;
                         container action {
                             description
-                                "Container for acl action parameters.";
+                                "Configure acl action parameters.";
                             reference
                             '{
                                 "table-getter": {
@@ -1150,7 +1150,7 @@ submodule rtbrick-acl {
             } // container l2
             container l3v4 {
                 description
-                    "container for l3v4 acl config.";
+                    "ACL type";
                 list rule {
                     key "rule-name";
                     description
@@ -1203,7 +1203,7 @@ submodule rtbrick-acl {
                         uses acl-match-l3v4;
                         container action {
                             description
-                                "Container for acl action parameters.";
+                                "Configure acl action parameters.";
                             reference
                             '{
                                 "table-getter": {
@@ -1380,7 +1380,7 @@ submodule rtbrick-acl {
             } // container l3v4
             container l3v6 {
                 description
-                    "container for l3v6 acl config.";
+                    "ACL type";
                 list rule {
                     key "rule-name";
                     description
@@ -1433,7 +1433,7 @@ submodule rtbrick-acl {
                         uses acl-match-l3v6;
                         container action {
                             description
-                                "Container for acl action parameters.";
+                                "Configure acl action parameters.";
                             reference
                             '{
                                 "table-getter": {
