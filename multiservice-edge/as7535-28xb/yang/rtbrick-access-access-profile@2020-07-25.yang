@@ -22,7 +22,7 @@ submodule rtbrick-access-access-profile {
     contact
       "yang-support@rtbrick.com";
     description
-      "This sub-module defines the YANG structure for the access profile.";
+      "This sub-module defines the YANG structure for the access profile";
     revision 2020-07-25 {
         description "First revision";
         reference "None";

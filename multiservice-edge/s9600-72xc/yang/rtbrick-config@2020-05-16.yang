@@ -68,6 +68,14 @@ module rtbrick-config {
     include rtbrick-oam;
 
     import ietf-yang-types { prefix yang; }
+    import rtbrick-types { prefix rtb-types; }
+    import rtbrick-qos-types { prefix rtb-qos-types; }
+    import ietf-inet-types { prefix inet; }
+    import rtbrick-isis-types { prefix rtb-isis-types; }
+    import rtbrick-bgp-types { prefix rtb-bgp-types; }
+    import rtbrick-ldp-types { prefix rtb-ldp-types; }
+    import rtbrick-ospf-types { prefix rtb-ospf-types; }
+    import rtbrick-pim-types { prefix rtb-pim-types; }
 
     organization
       "Rtbrick";
@@ -75,13 +83,13 @@ module rtbrick-config {
       "yang-support@rtbrick.com";
     description
       "This is the Rtbrick main YANG module file.
-      All the other YANG files will be registered as submodules to this file.";
+      All the other YANG files will be registered as submodules to this file";
 
     revision 2020-05-16 {
         description
           "This is the first revision of the Rtbrick YANG file.
           It defines the root module of the Rtbrick configuration,
-          applications need to add their submodule here with an include statement.";
+          applications need to add their submodule here with an include statement";
         reference "None";
     }
 
@@ -89,7 +97,7 @@ module rtbrick-config {
 	    description
 		"The <rollback> operation loads a configuration that
 		is backwards n steps specified by a rollback-id or
-		commit-id.";
+		commit-id";
 
 	    input {
 		choice get_commit_path {
@@ -290,6 +298,17 @@ module rtbrick-config {
                     length "0..1024";
                 }
                 description "List of history commands to load";
+            }
+        }
+    }
+
+    rpc get_candidate_diff_status {
+        description "RPC to check if candidate db contains diff";
+
+        output {
+            leaf diff-exists {
+                type int32;
+                description "Denotes if there is a diff between candidate and running db";
             }
         }
     }

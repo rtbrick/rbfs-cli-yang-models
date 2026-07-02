@@ -13,7 +13,7 @@ submodule rtbrick-access-aaa-profile {
     contact
       "yang-support@rtbrick.com";
     description
-      "This sub-module defines the YANG structure for the access AAA profile.";
+      "This sub-module defines the YANG structure for the access AAA profile";
     revision 2020-05-21 {
         description "First revision";
         reference "None";

@@ -1,7 +1,7 @@
 module rtbrick-types {
     yang-version 1.1;
     namespace "urn:types:rtbrick";
-    prefix types;
+    prefix rtb-types;
     import ietf-inet-types {
         prefix "inet";
     }
@@ -102,20 +102,20 @@ module rtbrick-types {
         type enumeration {
             enum ACCESSLEAF {
                 value "0";
-                description "access-leaf";
+                description "Access-leaf";
             }
             enum BORDERLEAF {
                 value "1";
-                description "border-leaf";
+                description "Border-leaf";
 
             }
             enum SPINE {
                 value "2";
-                description "spine";
+                description "Spine";
             }
             enum UNKNOWN {
                 value "3";
-                description "spine";
+                description "Spine";
             }
         }
         description "Rtbrick element roles";
@@ -334,7 +334,7 @@ module rtbrick-types {
     }
 
     typedef non-reserved-ipv6-address-no-zone {
-        type types:non-reserved-ipv6-address {
+        type rtb-types:non-reserved-ipv6-address {
             pattern '[0-9a-fA-F:\.]*';
         }
         description
@@ -481,7 +481,7 @@ module rtbrick-types {
         description
             "L2 prefix:
             ESI:TAG[MAC][IP][/LEN]
-            Matches L2VPN RIB display format.";
+            Matches L2VPN RIB display format";
     }
 
     typedef rtb-unicast-mac-type {
@@ -1050,7 +1050,7 @@ module rtbrick-types {
             }
             enum "manet" {
                 value 138;
-                description "manet";
+                description "Manet";
             }
             enum "hip" {
                 value 139;
@@ -1069,46 +1069,46 @@ module rtbrick-types {
                 description "ROH";
             }
         }
-        description "ip protocol type";
+        description "Ip protocol type";
     }
 
     typedef log-level {
         type enumeration {
             enum emergency {
                 value "0";
-                description "emergency";
+                description "Log level emergency";
             }
             enum alert {
                 value "1";
-                description "alert";
+                description "Log level alert";
             }
             enum critical {
                 value 2;
-                description "critical";
+                description "Log level critical";
             }
             enum error {
                 value 3;
-                description "error";
+                description "Log level error";
             }
             enum warning {
                 value "4";
-                description "warning";
+                description "Log level warning";
             }
             enum notice {
                 value "5";
-                description "notice";
+                description "Log level notice";
             }
             enum info {
                 value "6";
-                description "info";
+                description "Log level info";
             }
             enum debug {
                 value "7";
-                description "debug";
+                description "Log level debug";
             }
             enum none {
                 value "8";
-                description "none";
+                description "Log level none";
             }
 
         }

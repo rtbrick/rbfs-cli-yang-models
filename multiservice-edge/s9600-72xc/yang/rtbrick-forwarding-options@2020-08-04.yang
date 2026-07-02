@@ -5,6 +5,10 @@ submodule rtbrick-forwarding-options {
         prefix config;
     }
 
+    import rtbrick-qos-types {
+        prefix rtb-qos-types;
+    }
+
     include rtbrick-acl;
     include rtbrick-mirroring;
     include rtbrick-qos;

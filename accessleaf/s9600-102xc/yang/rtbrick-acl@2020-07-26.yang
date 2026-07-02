@@ -10,7 +10,7 @@ submodule rtbrick-acl {
     }
 
     import ietf-yang-types {
-        prefix ietfyang;
+        prefix yang;
     }
 
     import rtbrick-types {
@@ -19,6 +19,10 @@ submodule rtbrick-acl {
 
     import rtbrick-qos-types {
         prefix "rtb-qos-types";
+    }
+
+    import clixon-autocli{
+        prefix autocli;
     }
 
     organization
@@ -266,7 +270,7 @@ submodule rtbrick-acl {
                 }
             }';
             leaf destination-mac {
-                type ietfyang:mac-address;
+                type yang:mac-address;
                 description
                     "Configure acl l2 destination mac match.";
                 reference
@@ -277,7 +281,7 @@ submodule rtbrick-acl {
                 }';
             }
             leaf source-mac {
-                type ietfyang:mac-address;
+                type yang:mac-address;
                 description
                     "Configure acl l2 source mac match.";
                 reference
@@ -384,7 +388,9 @@ submodule rtbrick-acl {
                 }';
             }
             leaf inner-vlan-priority {
-                type uint8;
+                type uint8 {
+                    range "0 .. 7";
+                }
                 description
                     "Configure acl l2 inner vlan priority match.";
                 reference
@@ -395,7 +401,9 @@ submodule rtbrick-acl {
                 }';
             }
             leaf outer-vlan-priority {
-                type uint8;
+                type uint8 {
+                    range "0 .. 7";
+                }
                 description
                     "Configure acl l2 outer vlan priority match.";
                 reference
@@ -406,7 +414,9 @@ submodule rtbrick-acl {
                 }';
             }
             leaf inner-vlan-cfi {
-                type uint8;
+                type uint8 {
+                    range "0 .. 1";
+                }
                 description
                     "Configure acl l2 inner vlan cfi match.";
                 reference
@@ -417,7 +427,9 @@ submodule rtbrick-acl {
                 }';
             }
             leaf outer-vlan-cfi {
-                type uint8;
+                type uint8 {
+                    range "0 .. 1";
+                }
                 description
                     "Configure acl l2 outer vlan cfi match.";
                 reference
@@ -428,6 +440,7 @@ submodule rtbrick-acl {
                 }';
             }
             leaf traffic-class {
+                autocli:hide;
                 type rtb-qos-types:type-qos-class;
                 description
                     "Configure forward class value";
@@ -606,6 +619,7 @@ submodule rtbrick-acl {
             }
 
             leaf traffic-class {
+                autocli:hide;
                 type rtb-qos-types:type-qos-class;
                 description
                     "Configure traffic class value";
@@ -717,7 +731,6 @@ submodule rtbrick-acl {
                 error-message "If tcp-control is matched, then ip-protocol should be 'tcp'";
             }
         }
-
     }
 
     grouping acl-match-l3v6 {
@@ -815,6 +828,7 @@ submodule rtbrick-acl {
             }
 
             leaf traffic-class {
+                autocli:hide;
                 type rtb-qos-types:type-qos-class;
                 description
                     "Configure traffic class value";

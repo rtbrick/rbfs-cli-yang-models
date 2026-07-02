@@ -10,10 +10,7 @@ submodule rtbrick-l2x {
     }
 
     import rtbrick-types {
-       prefix types;
-    }
-    import rtbrick-types {
-        prefix "rtb-types";
+       prefix rtb-types;
     }
 
     include rtbrick-network-instance;
@@ -168,7 +165,7 @@ submodule rtbrick-l2x {
         "L2X attributes";
 
         leaf description {
-            type types:string128;
+            type rtb-types:string128;
             description
                 "L2X description";
             reference
@@ -286,7 +283,7 @@ submodule rtbrick-l2x {
         }
 
         leaf service-label {
-            type types:mpls-label;
+            type rtb-types:mpls-label;
             must "((. >= 256 and . <= 499967) or (. >= 999936 and . <= 1048575))" {
                 error-message "l2x service-label should be between 256 and 499967 or 999936 and 1048575";
             }
@@ -369,7 +366,7 @@ submodule rtbrick-l2x {
         }
 
         leaf egress-vlan-encapsulation {
-            type types:vlan-encapsulation-type;
+            type rtb-types:vlan-encapsulation-type;
             description
                 "Egress vlan encapsulation";
             reference
@@ -406,7 +403,7 @@ submodule rtbrick-l2x {
         }
 
         leaf match-tp-id {
-            type types:vlan-encapsulation-type;
+            type rtb-types:vlan-encapsulation-type;
             description
                 "Match this TPID at the ingress";
             reference
@@ -430,7 +427,7 @@ submodule rtbrick-l2x {
         }
 
         leaf ingress-vlan-encapsulation {
-            type types:vlan-encapsulation-type;
+            type rtb-types:vlan-encapsulation-type;
             description
                 "Ingress vlan encapsulation";
             reference
@@ -496,7 +493,7 @@ submodule rtbrick-l2x {
 
 
                         leaf name {
-                            type types:string64;
+                            type rtb-types:string64;
                             description
                                 "L2X name";
                             reference

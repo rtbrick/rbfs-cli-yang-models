@@ -74,7 +74,7 @@ submodule rtbrick-fragmentation {
                 description "Enable only";
             }
         }
-        description "ttl enable state";
+        description "TTL enable state";
     }
     grouping fragmentation-top {
         description

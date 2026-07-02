@@ -15,7 +15,7 @@ submodule rtbrick-access-interface-profile {
     contact
       "yang-support@rtbrick.com";
     description
-      "This sub-module defines the YANG structure for the access interface profile.";
+      "This sub-module defines the YANG structure for the access interface profile";
     revision 2020-08-06 {
         description "First revision";
         reference "None";

@@ -9,7 +9,31 @@ submodule rtbrick-network-instance {
         prefix "inet";
     }
     import rtbrick-types {
-       prefix types;
+       prefix rtb-types;
+    }
+
+    import rtbrick-isis-types {
+        prefix rtb-isis-types;
+    }
+
+    import rtbrick-bgp-types {
+        prefix rtb-bgp-types;
+    }
+
+    import rtbrick-ldp-types {
+        prefix rtb-ldp-types;
+    }
+
+    import rtbrick-ospf-types {
+        prefix rtb-ospf-types;
+    }
+
+    import rtbrick-pim-types {
+        prefix rtb-pim-types;
+    }
+
+    import rtbrick-igmp-types {
+        prefix rtb-igmp-types;
     }
 
     include rtbrick-isis;
@@ -62,7 +86,7 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf-list import {
-                type types:policy-name-type;
+                type rtb-types:policy-name-type;
                 must "count(../import) <= 10"{
                     error-message "Maximum of 10 polices are supported in a policy chain";
                 }
@@ -83,7 +107,7 @@ submodule rtbrick-network-instance {
                 }
             }
             leaf-list export {
-                type types:policy-name-type;
+                type rtb-types:policy-name-type;
                 must "count(../export) <= 10"{
                     error-message "Maximum of 10 polices are supported in a policy chain";
                 }
@@ -120,7 +144,7 @@ submodule rtbrick-network-instance {
             }';
             leaf-list import {
 
-                type types:route-target-type;
+                type rtb-types:route-target-type;
                 description "VPN Route Target. Format: target:{as_number | ipv4_address}:rt_identifier";
                 reference
                 '{
@@ -130,7 +154,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf-list export {
-                type types:route-target-type;
+                type rtb-types:route-target-type;
                 description "VPN Route Target. Format: target:{as_number | ipv4_address}:rt_identifier";
                 reference
                 '{
@@ -156,7 +180,7 @@ submodule rtbrick-network-instance {
                 }';
 
             leaf instance {
-                type types:string64;
+                type rtb-types:string64;
                 description "Name of the source instance from which routes are imported";
                 reference
                     '{
@@ -171,7 +195,7 @@ submodule rtbrick-network-instance {
             }
 
             leaf policy {
-                type types:string64;
+                type rtb-types:string64;
                 description "Name of the policy applicable on the imported routes";
                 reference
                     '{
@@ -361,7 +385,7 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf afi {
-                type types:afi;
+                type rtb-types:afi;
                 description "Address family indicator";
                 reference
                 '{
@@ -377,7 +401,7 @@ submodule rtbrick-network-instance {
                     error-message "l2vpn afi can only be configured with
                     evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
-                type types:safi;
+                type rtb-types:safi;
                 description "Subsequent address family indicator";
                 reference
                 '{
@@ -459,7 +483,7 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf name {
-                type types:string64;
+                type rtb-types:string64;
                 description
                     "An operator-assigned unique name for the network instance";
                 reference
@@ -484,7 +508,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf route-distinguisher {
-                type types:route-distinguisher-type;
+                type rtb-types:route-distinguisher-type;
                 description "VPN Route Distinguisher. Format: {as_number | ipv4_address}:rd_identifier";
                 reference
                 '{
@@ -494,7 +518,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf address-translation {
-                type types:boolean-true;
+                type rtb-types:boolean-true;
                 description "Enable address-translation on this instance";
                 reference
                 '{

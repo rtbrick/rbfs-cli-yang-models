@@ -11,7 +11,7 @@
 
     description
       "This module contains general data definitions for use in ISIS YANG
-    model.";
+    model";
 
     revision "2020-06-22" {
       description "Addition of ISIS types for rtbrick";
@@ -49,7 +49,7 @@
       }
       description
         "This type defines OSI NET address. A NET should should be in
-      the form xx.yyyy.yyyy.yyyy.00 with up to 9 sets of yyyy.";
+      the form xx.yyyy.yyyy.yyyy.00 with up to 9 sets of yyyy";
     }
 
     typedef area-address {
@@ -59,7 +59,7 @@
           '[0-9A-Fa-f]{2}\.([0-9A-Fa-f]{4}\.){0,3}';
       }
       description
-        "This type defines the ISIS area address.";
+        "This type defines the ISIS area address";
     }
 
     typedef system-id {
@@ -76,7 +76,7 @@
     typedef extended-circuit-id {
       type uint32;
       description
-        "This type defines interface circuit ID.";
+        "This type defines interface circuit ID";
     }
 
     typedef lsp-id {
@@ -96,7 +96,7 @@
         length "0 .. 20";
       }
       description
-        "This type defines Subnetwork Point of Attachment format.";
+        "This type defines Subnetwork Point of Attachment format";
     }
 
     typedef auth-type {

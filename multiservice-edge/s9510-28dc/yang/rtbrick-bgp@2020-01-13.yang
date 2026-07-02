@@ -1082,7 +1082,6 @@ submodule rtbrick-bgp {
     grouping bgp-max-prefix-limit {
         description "Max prefix limit related configuration";
         container prefix-limit {
-            when '../afi != "l2vpn"';
             description "Max prefix limit";
             reference
             '{

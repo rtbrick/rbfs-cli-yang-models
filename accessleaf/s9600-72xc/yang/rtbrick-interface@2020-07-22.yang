@@ -59,7 +59,7 @@ submodule rtbrick-interface {
                     "Not ready to pass packets and not in some test mode";
             }
         }
-        description "up/down data type";
+        description "Up/down data type";
     }
 
     typedef rpf-mode {
@@ -67,15 +67,15 @@ submodule rtbrick-interface {
             enum "loose" {
                 value 1;
                 description
-                    "rpf loose";
+                    "RPF loose";
             }
             enum "strict" {
                 value 2;
                 description
-                    "rpf strict";
+                    "RPF strict";
             }
         }
-        description "rpf modes supported";
+        description "RPF modes supported";
     }
 
     typedef interface-typedef {
@@ -159,7 +159,7 @@ submodule rtbrick-interface {
                     "Match type port based is set";
             }
         }
-        description "l2 interface type data type";
+        description "L2 interface type data type";
     }
 
     typedef type-breakout-mode {
@@ -173,7 +173,7 @@ submodule rtbrick-interface {
                 description "4x25G";
             }
         }
-        description "breakout data type";
+        description "Breakout data type";
     }
 
     typedef type-port-speed {
@@ -203,7 +203,7 @@ submodule rtbrick-interface {
                 description "100G";
             }
         }
-        description "speed data type";
+        description "Speed data type";
     }
 
 
@@ -211,56 +211,56 @@ submodule rtbrick-interface {
         type enumeration {
             enum "none" {
                 value 1;
-                description "none";
+                description "None";
             }
             enum "base-r" {
                 value 2;
-                description "baser";
+                description "Baser";
             }
             enum "rsfec" {
                 value 3;
-                description "rsfec";
+                description "Rsfec";
             }
             enum "rs544" {
                 value 4;
-                description "rs544";
+                description "RS544";
             }
             enum "rs272" {
                 value 5;
-                description "rs272";
+                description "RS272";
             }
             enum "rs206" {
                 value 6;
-                description "rs206";
+                description "RS206";
             }
             enum "rs108" {
                 value 7;
-                description "rs108";
+                description "RS108";
             }
             enum "rs545" {
                 value 8;
-                description "rs545";
+                description "RS545";
             }
             enum "rs304" {
                 value 9;
-		description "rs304";
+		description "RS304";
             }
         }
-        description "ifp fec type";
+        description "IFP fec type";
     }
 
     typedef type-holddown-mode {
         type enumeration {
             enum "disable" {
                 value 0;
-                description "disable";
+                description "Holddown disable";
             }
             enum "enable" {
                 value 1;
-                description "enable";
+                description "Holddown enable";
             }
         }
-        description "ifp holddown mode";
+        description "IFP holddown mode";
     }
 
     typedef type-holddown-timer {
@@ -323,7 +323,7 @@ submodule rtbrick-interface {
             enum "dnu-force" {
                 value 1;
                 description
-                    "do not use";
+                    "Do not use";
             }
         }
         description "SyncE ESMC quality level";
@@ -1116,11 +1116,11 @@ submodule rtbrick-interface {
                     type enumeration {
                         enum "local" {
                             value 1;
-                            description "local / internal";
+                            description "Local / internal";
                         }
                         enum "public" {
                             value 2;
-                            description "public / external";
+                            description "Public / external";
                         }
                     }
                     mandatory true;

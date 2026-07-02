@@ -17,6 +17,7 @@ submodule rtbrick-system {
         prefix ietfyang;
     }
 
+
     include rtbrick-platform-profile;
 
     organization
@@ -120,7 +121,7 @@ submodule rtbrick-system {
     }
     typedef smgmt-username {
         type string  {
-            length "1..32";
+            length "3..32";
             pattern '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
             pattern '[a-zA-Z][a-zA-Z0-9._-]{2,31}' {
                 error-message "Username [<=32 chars] should always begin with a letter";
@@ -168,7 +169,7 @@ submodule rtbrick-system {
             }
             enum  shutdown {
                 value "2";
-                description "shutdown the device";
+                description "Shutdown the device";
             }
             enum  power-cycle {
                 value "3";
@@ -211,7 +212,7 @@ submodule rtbrick-system {
         type enumeration  {
             enum  g8275.1 {
                 value "1";
-                description "clock Profile g8725.1";
+                description "Clock Profile g8725.1";
             }
         }
     }
@@ -220,13 +221,23 @@ submodule rtbrick-system {
         type enumeration  {
             enum  boundary {
                 value "2";
-                description "configure clock mode boundary";
+                description "Configure clock mode boundary";
             }
             enum  slave {
                 value "3";
-                description "configure clock mode slave";
+                description "Configure clock mode slave";
             }
         }
+    }
+
+    typedef enable-only-type {
+        type enumeration {
+            enum enable {
+                value "1";
+                description "Enable only";
+            }
+        }
+        description "Enable only type";
     }
 
     grouping ntp-top {
@@ -353,6 +364,38 @@ submodule rtbrick-system {
                       }
                   }';
                 }
+                leaf two-step {
+                  type enable-only-type;
+                  description "Enable ptp clock two-step, disabled by default";
+                  reference
+                  '{
+                      "attribute-getter" : {
+                          "attribute" : "two_step_enable"
+                      }
+                  }';
+                }
+                container one-pps-out {
+                    description "1pps out";
+                    reference
+                    '{
+                         "table-getter": {
+                         "table-name" : "global.ptp.clock.config",
+                         "type"    : "global_ptp_clock_config_tbl",
+                         "inherit-attribute" : [ "profile" ]
+                         }
+                    }';
+                    leaf tod {
+                        type enable-only-type;
+                        description
+                            "Enable ToD out";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "one_pps_tod_out"
+                            }
+                        }';
+                   }
+               }
             }
             container global {
                 description "PTP global configuration";
@@ -379,14 +422,45 @@ submodule rtbrick-system {
         }
         container synce {
             description "PTP SyncE configuration";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.ptp.esmc.info.config",
+                        "type"    : "global_ptp_esmc_info_config_tbl",
+                        "default-attribute" : [{"index" : "1"}]
+                    }
+                }';
+            container interface-ptp {
+                description "Input-source Configuration for SyncE";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.ptp.esmc.info.config",
+                            "type"    : "global_ptp_esmc_info_config_tbl",
+                            "inherit-attribute" : ["index"]
+                        }
+                    }';
+                leaf input-source {
+                    type rtb-types:enable-disable-type;
+                    description
+                        "PTP interface should be enabled/disabled";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "enable_ptp"
+                        }
+                    }';
+                }
+            }
+
             container esmc {
                 description "PTP SyncE ESMC configuration";
                 reference
                     '{
                         "table-getter": {
-                        "table-name" : "global.ptp.esmc.info.config",
-                        "type"    : "global_ptp_esmc_info_config_tbl",
-                        "default-attribute" : [{"index" : "1"}]
+                            "table-name" : "global.ptp.esmc.info.config",
+                            "type"    : "global_ptp_esmc_info_config_tbl",
+                            "inherit-attribute" : ["index"]
                         }
                     }';
                 leaf destination-mac-address {
@@ -1119,7 +1193,7 @@ submodule rtbrick-system {
                 description "Platform management configuration";
                 container ipmi {
                     presence ipmi;
-                    description " Intelligent platform management interface configuration";
+                    description "Intelligent platform management interface configuration";
                     list interface {
                         key "id";
                         description "IPMI interface configuration";
