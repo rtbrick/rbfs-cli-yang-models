@@ -52,8 +52,10 @@ function loadData() {
      echo "* to dir $todir"
      mkdir -p "$todir"
      echo "copy from $mountdir/usr/share/rtbrick/rtbcli/yang to $todir"
-
      sudo cp -r "$mountdir/usr/share/rtbrick/rtbcli/yang" "$todir"
+     echo "done"
+     echo "copy from $mountdir/usr/local/share/clixon/ to $todir/yang"
+     sudo cp -r "$mountdir/usr/local/share/clixon/*" "$todir/yang"
      echo "done"
 
      echo "* umount $mountdir"
