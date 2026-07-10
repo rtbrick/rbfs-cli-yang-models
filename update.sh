@@ -55,7 +55,8 @@ function loadData() {
      sudo cp -r "$mountdir/usr/share/rtbrick/rtbcli/yang" "$todir"
      echo "done"
      echo "copy from $mountdir/usr/local/share/clixon/ to $todir/yang"
-     sudo cp "$mountdir"/usr/local/share/clixon/* "$todir/yang"
+     #sudo cp "$mountdir"/usr/local/share/clixon/* "$todir/yang"
+     sudo find "$mountdir/usr/local/share/clixon/" -mindepth 1 -maxdepth 1 -exec cp -r {} "$todir/yang/" \;
      echo "done"
 
      echo "* umount $mountdir"
