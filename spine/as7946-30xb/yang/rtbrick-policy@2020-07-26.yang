@@ -646,7 +646,7 @@ submodule rtbrick-policy {
                     length "1..64";
                 }
                 description "Condition profile name";
-                must "count(/config:policy/condition[condition_name = current()]) > 0" {
+                must "count(/config:policy/condition[condition-name = current()]) > 0" {
                     error-message "A policy condition that is not configured or has been deleted is referenced in policy statements.";
                 }
                 reference
@@ -765,7 +765,7 @@ submodule rtbrick-policy {
     grouping policy-condition {
         description "Policy condition group";
         list condition {
-            key "condition_name";
+            key "condition-name";
             description "Policy condition configuration";
             reference
             '{
@@ -774,7 +774,7 @@ submodule rtbrick-policy {
                     "type" :  "policy_condition_config_table"
                 }
             }';
-            leaf condition_name {
+            leaf condition-name {
                 type string {
                     pattern '[a-zA-Z_\.][a-zA-Z0-9_\.]{0,64}';
                     length "1..64";
