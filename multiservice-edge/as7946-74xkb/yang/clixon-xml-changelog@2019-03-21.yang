@@ -79,8 +79,8 @@ module clixon-xml-changelog {
             leaf revision {
                 type yanglib:revision-identifier;
                 description
-                    "The YANG module or submodule revision date. 
-           This is the actual date of the changlelog items. 
+                    "The YANG module or submodule revision date.
+           This is the actual date of the changlelog items.
            Note however if the terminate flag is set, this is a virtual
            revision just in place to terminate the XML, such as removing or
            moving items,.";
@@ -113,7 +113,7 @@ module clixon-xml-changelog {
                     mandatory true;
                     description
                         "Identifies the target data node for update.
-                         for move, modify or delete the target-node points to 
+                         for move, modify or delete the target-node points to
                          the data node of the old version.
                          For create, it is the parent where it should be
                          inserted.";

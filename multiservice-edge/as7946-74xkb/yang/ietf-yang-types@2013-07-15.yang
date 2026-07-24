@@ -430,7 +430,7 @@
 
      typedef xpath1.0 {
        type string {
-         length "1..64"; 
+         length "1..64";
        }
        description
         "This type represents an XPATH 1.0 expression.

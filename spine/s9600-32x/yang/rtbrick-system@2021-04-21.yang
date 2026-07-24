@@ -13,6 +13,11 @@ submodule rtbrick-system {
         reference "RFC 6991";
     }
 
+    import ietf-yang-types {
+        prefix ietfyang;
+    }
+
+
     include rtbrick-platform-profile;
 
     organization
@@ -114,6 +119,15 @@ submodule rtbrick-system {
               '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
         }
     }
+    typedef smgmt-username {
+        type string  {
+            length "3..32";
+            pattern '([^r]|r[^t]|rt[^b]|rtb[^r]|rtbr[^i]|rtbri[^c]|rtbric[^k]|rtbrick[^_]).*';
+            pattern '[a-zA-Z][a-zA-Z0-9._-]{2,31}' {
+                error-message "Username [<=32 chars] should always begin with a letter";
+            }
+        }
+    }
     typedef ipmi-interface {
         type enumeration  {
             enum  lan {
@@ -155,7 +169,7 @@ submodule rtbrick-system {
             }
             enum  shutdown {
                 value "2";
-                description "shutdown the device";
+                description "Shutdown the device";
             }
             enum  power-cycle {
                 value "3";
@@ -198,18 +212,32 @@ submodule rtbrick-system {
         type enumeration  {
             enum  g8275.1 {
                 value "1";
-                description "clock Profile g8725.1";
+                description "Clock Profile g8725.1";
             }
         }
     }
 
     typedef ptp-clock-mode-type {
         type enumeration  {
+            enum  boundary {
+                value "2";
+                description "Configure clock mode boundary";
+            }
             enum  slave {
                 value "3";
-                description "configure clock mode slave";
+                description "Configure clock mode slave";
             }
         }
+    }
+
+    typedef enable-only-type {
+        type enumeration {
+            enum enable {
+                value "1";
+                description "Enable only";
+            }
+        }
+        description "Enable only type";
     }
 
     grouping ntp-top {
@@ -328,13 +356,123 @@ submodule rtbrick-system {
                leaf mode {
                   type ptp-clock-mode-type;
                   description "Configure PTP clock mode";
-                  default slave;
+                  default boundary;
                   reference
                   '{
                       "attribute-getter" : {
                           "attribute" : "mode"
                       }
                   }';
+                }
+                leaf two-step {
+                  type enable-only-type;
+                  description "Enable ptp clock two-step, disabled by default";
+                  reference
+                  '{
+                      "attribute-getter" : {
+                          "attribute" : "two_step_enable"
+                      }
+                  }';
+                }
+                container one-pps-out {
+                    description "1pps out";
+                    reference
+                    '{
+                         "table-getter": {
+                         "table-name" : "global.ptp.clock.config",
+                         "type"    : "global_ptp_clock_config_tbl",
+                         "inherit-attribute" : [ "profile" ]
+                         }
+                    }';
+                    leaf tod {
+                        type enable-only-type;
+                        description
+                            "Enable ToD out";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "one_pps_tod_out"
+                            }
+                        }';
+                   }
+               }
+            }
+            container global {
+                description "PTP global configuration";
+                reference
+                    '{
+                        "table-getter": {
+                        "table-name" : "global.ptp.info.config",
+                        "type"    : "global_ptp_info_config_tbl",
+                        "default-attribute" : [{"index" : "1"}]
+                        }
+                    }';
+                leaf destination-mac-address {
+                        type ietfyang:mac-address;
+                        description
+                            "Global destination MAC address";
+                        reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "destination_mac"
+                            }
+                        }';
+                }
+            }
+        }
+        container synce {
+            description "PTP SyncE configuration";
+            reference
+                '{
+                    "table-getter": {
+                        "table-name" : "global.ptp.esmc.info.config",
+                        "type"    : "global_ptp_esmc_info_config_tbl",
+                        "default-attribute" : [{"index" : "1"}]
+                    }
+                }';
+            container interface-ptp {
+                description "Input-source Configuration for SyncE";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.ptp.esmc.info.config",
+                            "type"    : "global_ptp_esmc_info_config_tbl",
+                            "inherit-attribute" : ["index"]
+                        }
+                    }';
+                leaf input-source {
+                    type rtb-types:enable-disable-type;
+                    description
+                        "PTP interface should be enabled/disabled";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "enable_ptp"
+                        }
+                    }';
+                }
+            }
+
+            container esmc {
+                description "PTP SyncE ESMC configuration";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name" : "global.ptp.esmc.info.config",
+                            "type"    : "global_ptp_esmc_info_config_tbl",
+                            "inherit-attribute" : ["index"]
+                        }
+                    }';
+                leaf destination-mac-address {
+                    type ietfyang:mac-address;
+                    description
+                        "SyncE ESMC destination MAC address";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "destination_mac"
+                        }
+                    }';
                 }
             }
         }
@@ -355,7 +493,7 @@ submodule rtbrick-system {
                 }
             }';
             leaf username {
-                type smgmt-string;
+                type smgmt-username;
                 mandatory true;
                 description "User name";
                 reference
@@ -543,8 +681,12 @@ submodule rtbrick-system {
     grouping secure-management-top {
         description "Secure management configurations";
         container authorization {
+            presence true;
             description "Authorization configuration";
             list tacacs {
+                must "secret-plain-text or secret-encrypted-text" {
+                    error-message "Please provide plain text or encrypted text";
+                }
                 key "ipv4-address type";
                 description "TACACS server configuration";
                 reference
@@ -592,7 +734,6 @@ submodule rtbrick-system {
                 }
                 leaf secret-encrypted-text {
                     type rtb-types:secret-string-type;
-                    mandatory true;
                     description "Secret password in encrypted text for the TACACS server";
                     reference
                     '{
@@ -617,6 +758,7 @@ submodule rtbrick-system {
             container lawful {
                 description "Lawful authorization configuration";
                 list role {
+                    description "Authorization role";
                     key "name";
                     reference
                     '{
@@ -641,6 +783,7 @@ submodule rtbrick-system {
                     }
                     list rbac-permission {
                         key "resource-type resource";
+                        description "Global authorization configuration";
                         reference
                         '{
                             "table-getter" : {
@@ -674,6 +817,7 @@ submodule rtbrick-system {
                 description "Global authorization configuration";
                 list role {
                     key "name";
+                    description "Authorization role";
                     reference
                     '{
                         "table-getter" : {
@@ -697,6 +841,7 @@ submodule rtbrick-system {
                     }
                     list rbac-permission {
                         key "resource-type resource";
+                        description "Global authorization configuration";
                         reference
                         '{
                             "table-getter" : {
@@ -787,13 +932,15 @@ submodule rtbrick-system {
                 reference
                 '{
                     "table-getter": {
+                        "library": "libbds.so",
                         "table-name": "local.rtbrick.license.config",
-                        "type"   : "license_config_table"
+                        "type"   : "license_config_table",
+                        "obj_tmpl_symbol" : "bds_license_obj_tmpl_cb"
                     }
                 }';
                 leaf license-key {
                     description "License key string";
-                    type rtb-types:string512;
+                    type rtb-types:string4096;
                     reference
                     '{
                         "attribute-getter" : {
@@ -813,14 +960,14 @@ submodule rtbrick-system {
                             "table-name" : "global.sshd.config",
                             "type" : "sshd_config_table",
                             "default-attribute" : [ { "configuration_name" : "rtbrick"}],
-                            "notification-type" : "table-change",                    
-                            "notification-interval": 500  
+                            "notification-type" : "table-change",
+                            "notification-interval": 500
                         }
                     }';
                     leaf password-authentication{
                         type rtb-types:boolean-type;
                         default "true";
-                        description "Enables or disables password-based authentication, set to 'false' to enforce key-based authentication for enhanced security.";
+                        description "Enables or disables password-based authentication, set to 'false' to enforce key-based authentication for enhanced security";
                         reference
                         '{
                             "attribute-getter" : {
@@ -831,7 +978,7 @@ submodule rtbrick-system {
                     leaf client-alive-interval{
                         type uint16;
                         default 30;
-                        description "Sets the interval (in seconds) for sending keepalive messages to the client to prevent idle disconnections.";
+                        description "Sets the interval (in seconds) for sending keepalive messages to the client to prevent idle disconnections";
                         reference
                         '{
                             "attribute-getter" : {
@@ -842,7 +989,7 @@ submodule rtbrick-system {
                     leaf client-alive-count-max{
                         type uint16;
                         default 5;
-                        description "Defines the maximum number of unanswered keepalive messages before terminating the connection.";
+                        description "Defines the maximum number of unanswered keepalive messages before terminating the connection";
                         reference
                         '{
                             "attribute-getter" : {
@@ -997,6 +1144,30 @@ submodule rtbrick-system {
                                 }
                             }';
                         }
+                        leaf allow {
+                            type string{
+                                length "1..128";
+                            }
+                            description "Regex filter to export matching log messages to the endpoint";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "allow_filter"
+                                }
+                            }';
+                        }
+                        leaf disallow {
+                            type string{
+                                length "1..128";
+                            }
+                            description "Regex filter to prevent matching log messages from being exported to the endpoint";
+                            reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "disallow_filter"
+                                }
+                            }';
+                        }
                         leaf queue-size {
                             type uint32 {
                                 range "0..500";
@@ -1021,7 +1192,8 @@ submodule rtbrick-system {
             container platform-management {
                 description "Platform management configuration";
                 container ipmi {
-                    description " Intelligent platform management interface configuration";
+                    presence ipmi;
+                    description "Intelligent platform management interface configuration";
                     list interface {
                         key "id";
                         description "IPMI interface configuration";
@@ -1104,6 +1276,9 @@ submodule rtbrick-system {
                     }
                     list user {
                         key "id";
+                        must "password-plain-text or password-encrypted-text" {
+                            error-message "Please provide plain text or encrypted text";
+                        }
                         description "IPMI user configuration";
                         reference
                         '{
@@ -1140,7 +1315,6 @@ submodule rtbrick-system {
                         }
                         leaf password-encrypted-text {
                             type rtb-types:secret-string-type;
-                            mandatory true;
                             description "IPMI user password in encrypted text";
                             reference
                             '{
@@ -1197,7 +1371,7 @@ submodule rtbrick-system {
                     }
                 }
                 container fail2ban {
-                    description "fail2ban configuration to be able to whitelist some ip-addresses";
+                    description "Fail2Ban configuration for IP address whitelisting";
                     reference
                     '{
                         "table-getter": {
@@ -1210,7 +1384,7 @@ submodule rtbrick-system {
                     }';
                     leaf-list ignore-ip {
                         type inet:ip-address-and-prefix;
-                        description "List of IPs to be whitelisted by fail2ban";
+                        description "IP addresses in CIDR notation which are to be whitelisted";
                         reference
                         '{
                             "attribute-getter" : {

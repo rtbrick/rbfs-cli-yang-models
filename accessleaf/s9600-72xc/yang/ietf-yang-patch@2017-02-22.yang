@@ -199,7 +199,7 @@ module ietf-yang-patch {
         }
 
         leaf target {
-          type target-resource-offset;
+          type ypatch:target-resource-offset;
           mandatory true;
           description
             "Identifies the target data node for the edit
@@ -216,7 +216,7 @@ module ietf-yang-patch {
               "This leaf only applies for 'insert' or 'move'
                operations, before or after an existing entry.";
           }
-          type target-resource-offset;
+          type ypatch:target-resource-offset;
           description
             "The absolute URL path for the data node that is being
              used as the insertion point or move point for the

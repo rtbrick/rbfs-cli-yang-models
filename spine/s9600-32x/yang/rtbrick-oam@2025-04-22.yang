@@ -4,6 +4,10 @@ submodule rtbrick-oam {
         prefix config;
     }
 
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
     organization "RtBrick";
 
     revision "2025-04-22" {
@@ -44,6 +48,7 @@ submodule rtbrick-oam {
             description "Connectivity Fault Management configuration hierarchy ";
             list session {
                 key "name";
+                unique "maintenance-association local-mep remote-mep interface";
                 description "Session name";
                 reference
                 '{
@@ -134,6 +139,9 @@ submodule rtbrick-oam {
                             "attribute" : "remote_endpoint_id"
                         }
                     }';
+                    must ". != ../local-mep" {
+                        error-message "Local MEP must be different from remote MEP.";
+                    }
                 }
                 leaf interface {
                     type string {
@@ -163,11 +171,210 @@ submodule rtbrick-oam {
                 must local-mep {
                     error-message "CFM local-mep name must be configured.";
                 }
+                must remote-mep {
+                    error-message "CFM remote-mep name must be configured.";
+                }
                 must interface {
                     error-message "CFM interface name must be configured.";
                 }
-                must "not(boolean(../session[interface = current()/interface and not(name = current()/name)]))" {
-                    error-message "Multiple sessions on same interface is not allowed.";
+            }
+        }
+        container bfd {
+            description "Bidirectional Forwarding Detection configuration hierarchy ";
+            list session {
+                key "name";
+                description "Session name";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.oam.bfd.session.config",
+                        "type" :  "oam_bfd_session_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "session_name"
+                        }
+                    }';
+                }
+                leaf peer-v4-address {
+                    type inet:ipv4-address-no-zone;
+                    description "Peer v4 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv4_address"
+                        }
+                    }';
+                }
+                leaf peer-v6-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Peer v6 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "peer_ipv6_address"
+                        }
+                    }';
+                }
+                leaf local-v4-address {
+                    type inet:ipv4-address-no-zone;
+                    description "Local v4 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "local_ipv4_address"
+                        }
+                    }';
+                }
+                leaf local-v6-address {
+                    type inet:ipv6-address-no-zone;
+                    description "Local v6 address to be used in the BFD session";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "local_ipv6_address"
+                        }
+                    }';
+                }
+                leaf transmit-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+                    description "Configure transmit interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_tx_interval"
+                        }
+                    }';
+                }
+                leaf receive-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+
+                    description "Configure receive interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_rx_interval"
+                        }
+                    }';
+                }
+                leaf detect-multiplier {
+                    type uint8 {
+                        range "2..255";
+                    }
+                    description "Configure detection multiplier, default: 3";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "detect_multiplier"
+                        }
+                    }';
+                }
+                leaf interface {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Logical interface name";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ifl_name",
+                            "expansion-getter" : {
+                                "package":"ifm",
+                                "method" : "ifm_interface_logical_name_expander_without_recyc_lo_ppp"
+                            }
+                        }
+                    }';
+                }
+                must "peer-v4-address or peer-v6-address" {
+                    error-message "BFD session peer address must be configured.";
+                }
+                must "(peer-v4-address and not(peer-v6-address)) or (peer-v6-address and not(peer-v4-address))" {
+                    error-message
+                    "IPv4 peer address and IPv6 peer address should not be configured under same session.";
+                }
+                must "not(peer-v4-address) or local-v4-address" {
+                    error-message
+                    "When IPv4 peer address is configured, IPv4 local address must also be configured.";
+                }
+                must "not(peer-v6-address) or local-v6-address" {
+                    error-message
+                    "When IPv6 peer address is configured, IPv6 local address must also be configured.";
+                }
+                must interface {
+                    error-message "BFD interface name must be configured.";
+                }
+                unique "peer-v4-address";
+                unique "peer-v6-address";
+            }
+            list profile {
+                key "name";
+                description "Profile name";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.oam.bfd.profile.config",
+                        "type" :  "oam_bfd_profile_config_table"
+                    }
+                }';
+                leaf name {
+                    type string {
+                        length "1..48";
+                    }
+                    description "Unique name for the OAM BFD profile";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "profile_name"
+                        }
+                    }';
+                }
+                leaf transmit-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+                    description "Configure transmit interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_tx_interval"
+                        }
+                    }';
+                }
+                leaf receive-interval {
+                    type uint32 {
+                        range "100..10000";
+                    }
+
+                    description "Configure receive interval in milliseconds, default: 1000";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "minimum_rx_interval"
+                        }
+                    }';
+                }
+                leaf detect-multiplier {
+                    type uint8 {
+                        range "2..255";
+                    }
+                    description "Configure detection multiplier, default: 3";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "detect_multiplier"
+                        }
+                    }';
                 }
             }
         }
