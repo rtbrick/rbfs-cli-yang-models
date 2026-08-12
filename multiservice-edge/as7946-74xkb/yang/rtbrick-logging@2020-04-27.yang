@@ -9,6 +9,8 @@ submodule rtbrick-logging {
         prefix "rtb-types";
     }
 
+    include rtbrick-system;
+
     organization
       "Rtbrick";
     contact
@@ -49,35 +51,35 @@ submodule rtbrick-logging {
         type enumeration {
             enum emergency {
                 value "0";
-                description "emergency";
+                description "Log level emergency";
             }
             enum alert {
                 value "1";
-                description "alert";
+                description "Log level alert";
             }
             enum critical {
                 value 2;
-                description "critical";
+                description "Log level critical";
             }
             enum error {
                 value 3;
-                description "error";
+                description "Log level error";
             }
             enum warning {
                 value "4";
-                description "warning";
+                description "Log level warning";
             }
             enum notice {
                 value "5";
-                description "notice";
+                description "Log level notice";
             }
             enum info {
                 value "6";
-                description "info";
+                description "Log level info";
             }
             enum debug {
                 value "7";
-                description "debug";
+                description "Log level debug";
             }
         }
         description "Rsyslog Log level";
@@ -437,6 +439,9 @@ submodule rtbrick-logging {
                 length "1..64";
             }
             description "Plugin alias defined in CTRLD";
+            must "/system/host/log-alias[name = current() or name = 'default']" {
+                error-message "Incorrect configured log alias-name.";
+            }
             mandatory true;
             reference
             '{

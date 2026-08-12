@@ -37,129 +37,137 @@ submodule rtbrick-qos {
         type enumeration {
             enum "ingress" {
                 value 1;
-                description "ingress direction";
+                description "Ingress direction";
             }
         }
-        description "direction data type";
+        description "Direction data type";
     }
 
     typedef type-protocol-name {
         type enumeration {
             enum "isis" {
                 value 4;
-                description "isis";
+                description "ISIS";
             }
             enum "ospf" {
                 value 5;
-                description "ospf";
+                description "OSPF";
             }
             enum "bgp" {
                 value 7;
-                description "bgp";
+                description "BGP";
             }
             enum "pim" {
                 value 9;
-                description "pim";
+                description "PIM";
             }
             enum "igmp" {
                 value 10;
-                description "igmp";
+                description "IGMP";
             }
             enum "ppp" {
                 value 11;
-                description "ppp";
+                description "PPP";
             }
             enum "l2tpv2" {
                 value 12;
-                description "l2tpv2";
+                description "L2TPV2";
             }
             enum "ldp" {
                 value 13;
-                description "ldp";
+                description "LDP";
             }
             enum "ipoe" {
                 value 17;
-                description "ipoe";
+                description "IPOE";
             }
             enum "radius" {
                 value 18;
-                description "radius";
+                description "Radius";
             }
             enum "l3-all" {
                 value 19;
-                description "l3-all";
+                description "L3-all";
             }
             enum "l2-all" {
                 value 20;
-                description "l2-all";
+                description "L2-all";
             }
             enum "dhcp" {
                 value 21;
-                description "dhcp";
+                description "DHCP";
             }
             enum "arp" {
                 value 23;
-                description "arp";
+                description "ARP";
             }
             enum "nd" {
                 value 24;
-                description "nd";
+                description "ND";
             }
             enum "cfm" {
                 value 25;
-                description "cfm";
+                description "CFM";
+            }
+            enum "mpls-oam" {
+                value 26;
+                description "MPLS-OAM";
+            }
+            enum "bfd" {
+                value 27;
+                description "BFD";
             }
         }
-        description "protocol name type";
+        description "Protocol name type";
     }
 
     typedef type-remark {
         type enumeration {
             enum "tos" {
                 value 1;
-                description "remark-type tos";
+                description "Remark-type tos";
             }
             enum "p-bit" {
                 value 3;
-                description "remark-type p-bit";
+                description "Remark-type p-bit";
             }
         }
-        description "outbound remark type";
+        description "Outbound remark type";
     }
 
     typedef type-qos-header-compensation-mode {
         type enumeration {
             enum "increment" {
                 value 0;
-                description "increment";
+                description "Increment";
             }
             enum "decrement" {
                 value 1;
-                description "decrement";
+                description "Decrement";
             }
         }
-        description "qos increment/decrement data type";
+        description "Qos increment/decrement data type";
     }
 
     typedef type-qos-priority-propagation-status {
         type enumeration {
             enum "enable" {
                 value 0;
-                description "enable";
+                description "Enable";
             }
             enum "disable" {
                 value 1;
-                description "disable";
+                description "Disable";
             }
         }
-        description "qos priority propagation data type";
+        description "Qos priority propagation data type";
     }
 
     typedef type-qos-queue-group-profile {
         type enumeration {
             enum "single-queue" {
                 value 0;
-                description "single-queue-profile";
+                description "Single-queue-profile";
             }
         }
         description "Supported queue group profile modes";
@@ -169,25 +177,25 @@ submodule rtbrick-qos {
         type enumeration {
             enum "all" {
                 value 0;
-                description "all";
+                description "All";
             }
             enum "green" {
                 value 1;
-                description "green";
+                description "Green";
             }
             enum "yellow" {
                 value 2;
-                description "yellow";
+                description "Yellow";
             }
         }
-        description "qos color data type";
+        description "Qos color data type";
     }
 
     typedef type-qos-policer-type {
         type enumeration {
             enum "two-rate-three-color" {
                 value 1;
-                description "two-rate-three-color";
+                description "Two-rate-three-color";
             }
         }
         description "qos policer type data type";
@@ -197,25 +205,25 @@ submodule rtbrick-qos {
         type enumeration {
             enum "single-level" {
                 value 1;
-                description "single level policer";
+                description "Single level policer";
             }
             enum "large-bucket" {
                 value 2;
-                description "large bucket policer";
+                description "Large bucket policer";
             }
             enum "single-level-large-bucket" {
                 value 3;
-                description "single level large bucket policer";
+                description "Single level large bucket policer";
             }
         }
-        description "qos policer type data type";
+        description "Qos policer type data type";
     }
 
     typedef type-qos-policer-flag {
         type enumeration {
             enum "color-blind" {
                 value 0;
-                description "color-blind";
+                description "Color-blind";
             }
         }
         description "qos policer flag data type";
@@ -225,23 +233,23 @@ submodule rtbrick-qos {
         type enumeration {
             enum "level-none" {
                 value 0;
-                description "level-none";
+                description "Level-none";
             }
             enum "level-1" {
                 value 1;
-                description "level-1";
+                description "Level-1";
             }
             enum "level-2" {
                 value 2;
-                description "level-2";
+                description "Level-2";
             }
             enum "level-3" {
                 value 3;
-                description "level-3";
+                description "Level-3";
             }
             enum "level-4" {
                 value 4;
-                description "level-4";
+                description "Level-4";
             }
         }
         description "qos policer level data type";
@@ -251,7 +259,7 @@ submodule rtbrick-qos {
         type enumeration {
             enum "queue_to_port" {
                 value 1;
-                description "queue to port";
+                description "Queue to port";
             }
         }
         description "qos scheduler map connection data type";
@@ -261,51 +269,51 @@ submodule rtbrick-qos {
         type enumeration {
             enum "scheduler_to_port" {
                 value 4;
-                description "scheduler to port";
+                description "Scheduler to port";
             }
             enum "scheduler_map_to_scheduler_map" {
                 value 5;
-                description "connects schedulers from different scheduler-maps";
+                description "Connects schedulers from different scheduler-maps";
             }
         }
-        description "qos scheduler map connection data type";
+        description "Qos scheduler map connection data type";
     }
 
     typedef type-scheduler-flow {
         type enumeration {
             enum "high-flow" {
                 value 1;
-                description "high-flow";
+                description "High-flow";
             }
             enum "low-flow" {
                 value 2;
-                description "low-flow";
+                description "Low-flow";
             }
         }
-        description "qos scheduler flow data type";
+        description "Qos scheduler flow data type";
     }
 
     typedef type-qos-scheduler-map-connection-point {
         type enumeration {
             enum "no_priority" {
                 value 0;
-                description "no_priority";
+                description "No_priority";
             }
             enum "strict_priority_0" {
                 value 1;
-                description "strict_priority_0";
+                description "Strict_priority_0";
             }
             enum "strict_priority_1" {
                 value 2;
-                description "strict_priority_1";
+                description "Strict_priority_1";
             }
             enum "strict_priority_2" {
                 value 3;
-                description "strict_priority_2";
+                description "Strict_priority_2";
             }
             enum "strict_priority_3" {
                 value 4;
-                description "strict_priority_3";
+                description "Strict_priority_3";
             }
         }
         description "qos scheduler map connection data type";
@@ -315,11 +323,11 @@ submodule rtbrick-qos {
         type enumeration {
             enum "fair_queueing" {
                 value 0;
-                description "fair_queueing";
+                description "Fair_queueing";
             }
             enum "weighted_fair_queueing" {
                 value 1;
-                description "weighted_fair_queueing";
+                description "Weighted_fair_queueing";
             }
             enum "2sp_wfq_independent" {
                 value 2;
@@ -331,11 +339,11 @@ submodule rtbrick-qos {
             }
             enum "wfq_independent_2sp" {
                 value 4;
-                description "wfq_independent_2sp";
+                description "Wfq_independent_2sp";
             }
             enum "wfq_discrete_2sp" {
                 value 5;
-                description "wfq_discrete_2sp";
+                description "Wfq_discrete_2sp";
             }
             enum "3sp_wfq_discrete" {
                 value 6;
@@ -343,7 +351,7 @@ submodule rtbrick-qos {
             }
             enum "strict_priority" {
                 value 7;
-                description "strict_priority";
+                description "Strict_priority";
             }
         }
         description "qos scheduler_type data type";
@@ -393,29 +401,9 @@ submodule rtbrick-qos {
                 value 7;
                 description "PIM";
             }
-            enum "vrrp" {
-                value 8;
-                description "VRRP";
-            }
-            enum "dhcpv6" {
-                value 9;
-                description "DHCPv6";
-            }
-            enum "vrrpv6" {
-                value 10;
-                description "VRRPv6";
-            }
             enum "igmp" {
                 value 11;
                 description "IGMP";
-            }
-            enum "ssh" {
-                value 12;
-                description "SSH";
-            }
-            enum "snmp" {
-                value 13;
-                description "SNMP";
             }
             enum "user-defined" {
                 value 14;
@@ -441,16 +429,16 @@ submodule rtbrick-qos {
                 value 19;
                 description "LDP NBR";
             }
-            enum "iperf" {
-                value 20;
-                description "IPERF";
-            }
             enum "lag" {
                 value 23;
                 description "LAG";
             }
+            enum "oam" {
+                value 36;
+                description "OAM";
+            }
             enum "all" {
-                value 24;
+                value 30;
                 description "ALL";
             }
         }
@@ -462,12 +450,12 @@ submodule rtbrick-qos {
             enum "l3-ifl" {
                 value 1;
                 description
-                    "service type l3-if is set";
+                    "Service type l3-if is set";
             }
             enum "l2vpn-vpws" {
                 value 2;
                 description
-                    "service type l2vpn-vpws is set";
+                    "Service type l2vpn-vpws is set";
             }
         }
         description "Service l2 interface type data type";
@@ -593,23 +581,23 @@ submodule rtbrick-qos {
                     type enumeration {
                         enum "ipv4-tos" {
                             value 1;
-                            description "ipv4-tos";
+                            description "IPV4-tos";
                         }
                         enum "ipv6-tc" {
                             value 2;
-                            description "ipv6-tc";
+                            description "IPV6-tc";
                         }
                         enum "ieee-802.1" {
                             value 3;
-                            description "ieee-802.1";
+                            description "IEEE-802.1";
                         }
                         enum "ieee-802.1-inner" {
                             value 4;
-                            description "ieee-802.1-inner";
+                            description "IEEE-802.1-inner";
                         }
                         enum "exp" {
                             value 5;
-                            description "exp";
+                            description "EXP";
                         }
                     }
                     description
@@ -657,7 +645,7 @@ submodule rtbrick-qos {
                     }
                     leaf remark-codepoint {
                         type uint8 {
-                             range "0 .. 254";
+                             range "0 .. 255";
                         }
                         description
                             "Configure remark codepoint value";
@@ -1012,35 +1000,35 @@ submodule rtbrick-qos {
                     type enumeration {
                         enum "ipv4-tos" {
                             value 1;
-                            description "ipv4-tos";
+                            description "IPV4-tos";
                         }
                         enum "ipv6-tc" {
                             value 2;
-                            description "ipv6-tc";
+                            description "IPV6-tc";
                         }
                         enum "ieee-802.1" {
                             value 3;
-                            description "ieee-802.1";
+                            description "IEEE-802.1";
                         }
                         enum "exp" {
                             value 5;
-                            description "exp";
+                            description "EXP";
                         }
                         enum "mpls-ipv4" {
                             value 7;
-                            description "mpls-ipv4";
+                            description "MPLS-ipv4";
                         }
                         enum "mpls-ipv6" {
                             value 8;
-                            description "mpls-ipv6";
+                            description "MPLS-ipv6";
                         }
                         enum "class-to-ip" {
                             value 9;
-                            description "class-to-ip";
+                            description "Class-to-ip";
                         }
                         enum "ip-tos" {
                             value 10;
-                            description "ip-tos";
+                            description "IP-tos";
                         }
                     }
                     description
@@ -2184,8 +2172,11 @@ submodule rtbrick-qos {
                 }';
             }
             leaf queue-numbers {
-                type uint8;
-                description "Configure queue group size";
+                type uint8 {
+                    range "1 | 4 | 8";
+                }
+               mandatory true;
+                description "Configure queue group size, supported values: 1, 4, 8";
                 reference
                 '{
                     "attribute-getter" : {
@@ -2240,9 +2231,6 @@ submodule rtbrick-qos {
                     type rtb-qos-types:type-qos-string;
                     description
                         "Configure queue group name";
-                    must 'count(../queue-name) <=  (../../../queue-group[queue-group-name=current()]/queue-numbers)' {
-                        error-message "Queue count must not be greater than the queue-numbers specified for the group name";
-                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -2270,6 +2258,7 @@ submodule rtbrick-qos {
                         type rtb-qos-types:type-qos-string;
                         description
                             "Configure queue profile name";
+
                         reference
                         '{
                             "attribute-getter" : {
@@ -2407,10 +2396,6 @@ submodule rtbrick-qos {
                         }
                     }';
                 }
-                must '((not(connection-point) or not(../../scheduler[current()]/type) or connection-point != "strict_priority_2" or ../../scheduler[current()]/type != "3sp_wfq_discrete") or
-                    (connection-point = "strict_priority_2" and ../../scheduler[current()]/type="3sp_wfq_discrete" and weight))' {
-                    error-message "Weight configuration is mandatory when scheduler type is 3sp_wfq_discrete and connection-point is strict_priority_2";
-                }
                 leaf port-connection {
                     type type-qos-scheduler-map-scheduler-connection-type;
                     description
@@ -2426,38 +2411,6 @@ submodule rtbrick-qos {
         } // list  scheduler-map
     } //grouping qos-scheduler-map-top
 
-    grouping qos-host-path-qos-top {
-        description
-            "Top-level grouping for host path qos";
-        container ingress-qos {
-	        presence ingress-qos;
-            description
-                "Configure host path quality of service";
-            reference
-            '{
-                "table-getter": {
-                    "table-name" : "global.host-inbound.config",
-                    "type"    : "host_inbound_table",
-                    "default-attribute" : [ { "profile_name" : "_DEFAULT_HOST_INBOUND_" } ]
-                }
-            }';
-            leaf state {
-                type enumeration {
-                    enum "enable" {
-                        value 1;
-                        description "enable";
-                    }
-                }
-                description "";
-                reference
-                '{
-                    "attribute-getter" : {
-                        "attribute" : "host_path_qos_enable"
-                    }
-                }';
-            }
-        }
-    }
 
     grouping qos-control-plane-security {
         description
@@ -2478,11 +2431,11 @@ submodule rtbrick-qos {
                 type enumeration {
                     enum "disable" {
                         value 0;
-                        description "disable";
+                        description "Disable";
                     }
                     enum "enable" {
                         value 1;
-                        description "enable";
+                        description "Enable";
                     }
                 }
                 description "";
@@ -2699,7 +2652,7 @@ submodule rtbrick-qos {
                 type enumeration {
                    enum "true" {
                        value 1;
-                       description "true";
+                       description "True";
                    }
                 }
                 description
@@ -2829,7 +2782,7 @@ submodule rtbrick-qos {
                 type enumeration {
                    enum "true" {
                        value 1;
-                       description "true";
+                       description "True";
                    }
                 }
                 description
@@ -2934,7 +2887,10 @@ submodule rtbrick-qos {
                                 }
                                 leaf remark-codepoint {
                                     type uint8 {
-                                        range "0 .. 254";
+                                        range "0 .. 255";
+                                    }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
                                     }
                                     description
                                         "Configure action remark codepoint value";
@@ -2942,6 +2898,25 @@ submodule rtbrick-qos {
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv4-dscp) or (../../match/ipv4-tos))' {
+                                        error-message "match ipv4-dscp and ipv4-tos are not supported with action remark-dscp-codepoint";
+                                    }
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3040,14 +3015,37 @@ submodule rtbrick-qos {
                                 }
                                 leaf remark-codepoint {
                                     type uint8 {
-                                        range "0 .. 254";
+                                        range "0 .. 255";
+                                    }
+                                    must 'not(../remark-dscp-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
                                     }
                                     description
-                                        "Configure action remark_codepoint value";
+                                        "Configure action remark codepoint value";
                                     reference
                                         '{
                                             "attribute-getter" : {
                                                 "attribute" : "action_remark_codepoint"
+                                            }
+                                        }';
+                                }
+                                leaf remark-dscp-codepoint {
+                                    type uint8 {
+                                        range "0 .. 63";
+                                    }
+                                    must 'not(../remark-codepoint)' {
+                                        error-message "remark-codepoint and remark-dscp-codepoint are mutually exclusive.";
+                                    }
+                                    must 'not((../../match/ipv6-tc))' {
+                                        error-message "match ipv6-tc is not supported with action remark-dscp-codepoint";
+                                    }
+
+                                    description
+                                        "Configure action remark DSCP codepoint value";
+                                    reference
+                                        '{
+                                            "attribute-getter" : {
+                                                "attribute" : "action_remark_dscp_codepoint"
                                             }
                                         }';
                                 }
@@ -3220,7 +3218,6 @@ submodule rtbrick-qos {
             description
                 "Configure control plane QoS";
             uses qos-outbound-marking-top;
-            uses qos-host-path-qos-top;
         }
     }
 

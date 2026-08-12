@@ -1,0 +1,19 @@
+submodule rtbrick-lawful-interception {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+        prefix config;
+    }
+
+    organization "RtBrick";
+    contact  "yang-support@rtbrick.com";
+    description  "This is the dummy yang file for lawful interception module";
+    revision 2024-06-01 {
+        description "First revision";
+        reference "None";
+    }
+
+    grouping lawful-intercept {
+        description "Dummy top level config node";
+    }
+}

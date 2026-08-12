@@ -9,7 +9,8 @@ submodule rtbrick-access-service-profile {
     import rtbrick-types {
         prefix "rtb-types";
     }
-
+    include rtbrick-forwarding-options;
+    include rtbrick-multicast-options;
     organization
       "RtBrick";
     contact
@@ -45,8 +46,8 @@ submodule rtbrick-access-service-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.service.profile.config",
-                    "type"    : "service_profile_config_table"
+                    "table-name": "global.access.service.profile.config",
+                    "type": "service_profile_config_table"
                 }
             }';
             leaf profile-name {
@@ -56,8 +57,8 @@ submodule rtbrick-access-service-profile {
                 description "Name of the service profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "service_profile_name"
+                    "attribute-getter": {
+                        "attribute": "service_profile_name"
                     }
                 }';
             }
@@ -67,7 +68,7 @@ submodule rtbrick-access-service-profile {
                 '{
                     "table-getter": {
                         "table-name": "global.access.service.profile.config",
-                        "type" :  "service_profile_config_table",
+                        "type": "service_profile_config_table",
                         "inherit-attribute" : [ "service_profile_name" ]
                     }
                 }';
@@ -78,11 +79,11 @@ submodule rtbrick-access-service-profile {
                     description "NAT profile";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "nat_profile_name",
-                            "expansion-getter" : {
-                                "package":"subsMgmt",
-                                "method" :"access_nat_profile_name_expander"
+                        "attribute-getter": {
+                            "attribute": "nat_profile_name",
+                            "expansion-getter": {
+                                "package": "subsMgmt",
+                                "method": "access_nat_profile_name_expander"
                             }
                         }
                     }';
@@ -93,8 +94,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -103,10 +104,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "QoS profile";
+                    must '/forwarding-options/class-of-service/profile[profile-name = current()]' {
+                        error-message "QoS profile referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "qos_profile_name",
+                        "attribute-getter": {
+                            "attribute": "qos_profile_name",
                             "expansion-getter": {
                                 "package": "subsMgmt",
                                 "method": "access_qos_profile_name_expander"
@@ -119,10 +123,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "QoS parent scheduler";
+                    must '/forwarding-options/class-of-service/scheduler[scheduler-name = current()]' {
+                        error-message "QoS parent scheduler referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "qos_parent_scheduler_name"
+                        "attribute-getter": {
+                            "attribute": "qos_parent_scheduler_name"
                         }
                     }';
                 }
@@ -131,10 +138,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "QoS Ingress MFC";
+                    must '/forwarding-options/class-of-service/multifield-classifier/acl/l3v4/rule[rule-name = current()] or /forwarding-options/class-of-service/multifield-classifier/acl/l3v6/rule[rule-name = current()]' {
+                        error-message "QoS multifield classifier referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "mf_classifier_name"
+                        "attribute-getter": {
+                            "attribute": "mf_classifier_name"
                         }
                     }';
                 }
@@ -144,8 +154,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -154,8 +164,8 @@ submodule rtbrick-access-service-profile {
                     description "Enable IGMP service";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_enabled"
+                        "attribute-getter": {
+                            "attribute": "igmp_enabled"
                         }
                     }';
                 }
@@ -164,10 +174,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "IGMP profile";
+                    must '/multicast-options/igmp/interface-profile[profile-name = current()]' {
+                        error-message "IGMP profile referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_profile"
+                        "attribute-getter": {
+                            "attribute": "igmp_profile"
                         }
                     }';
                 }
@@ -176,8 +189,8 @@ submodule rtbrick-access-service-profile {
                     description "IGMP version";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_version"
+                        "attribute-getter": {
+                            "attribute": "igmp_version"
                         }
                     }';
                 }
@@ -186,8 +199,8 @@ submodule rtbrick-access-service-profile {
                     description "Maximum IGMP membership per subscriber";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "igmp_max_members"
+                        "attribute-getter": {
+                            "attribute": "igmp_max_members"
                         }
                     }';
                 }
@@ -197,8 +210,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -209,8 +222,8 @@ submodule rtbrick-access-service-profile {
                     description "HTTP redirect url";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "http_redirect_url"
+                        "attribute-getter": {
+                            "attribute": "http_redirect_url"
                         }
                     }';
                 }
@@ -220,8 +233,8 @@ submodule rtbrick-access-service-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.service.profile.config",
-                        "type"    : "service_profile_config_table",
+                        "table-name": "global.access.service.profile.config",
+                        "type": "service_profile_config_table",
                         "inherit-attribute": ["service_profile_name"]
                     }
                 }';
@@ -230,10 +243,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "Ingress IPv4 subscriber ACL name";
+                    must '/forwarding-options/subscriber-acl/l3v4/rule[rule-name = current()]' {
+                        error-message "Ingress IPv4 subscriber ACL referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv4_acl_in"
+                        "attribute-getter": {
+                            "attribute": "ipv4_acl_in"
                         }
                     }';
                 }
@@ -242,10 +258,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "Egress IPv4 subscriber ACL name";
+                    must '/forwarding-options/subscriber-acl/l3v4/rule[rule-name = current()]' {
+                        error-message "Egress IPv4 subscriber ACL referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv4_acl_out"
+                        "attribute-getter": {
+                            "attribute": "ipv4_acl_out"
                         }
                     }';
                 }
@@ -254,10 +273,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "Ingress IPv6 subscriber ACL name";
+                    must '/forwarding-options/subscriber-acl/l3v6/rule[rule-name = current()]' {
+                        error-message "Ingress IPv6 subscriber ACL referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv6_acl_in"
+                        "attribute-getter": {
+                            "attribute": "ipv6_acl_in"
                         }
                     }';
                 }
@@ -266,10 +288,13 @@ submodule rtbrick-access-service-profile {
                         length "1..64";
                     }
                     description "Egress IPv6 subscriber ACL name";
+                    must '/forwarding-options/subscriber-acl/l3v6/rule[rule-name = current()]' {
+                        error-message "Egress IPv6 subscriber ACL referenced in service-profile does not exist";
+                    }
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "ipv6_acl_out"
+                        "attribute-getter": {
+                            "attribute": "ipv6_acl_out"
                         }
                     }';
                 }

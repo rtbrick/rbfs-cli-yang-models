@@ -9,7 +9,31 @@ submodule rtbrick-network-instance {
         prefix "inet";
     }
     import rtbrick-types {
-       prefix types;
+       prefix rtb-types;
+    }
+
+    import rtbrick-isis-types {
+        prefix rtb-isis-types;
+    }
+
+    import rtbrick-bgp-types {
+        prefix rtb-bgp-types;
+    }
+
+    import rtbrick-ldp-types {
+        prefix rtb-ldp-types;
+    }
+
+    import rtbrick-ospf-types {
+        prefix rtb-ospf-types;
+    }
+
+    import rtbrick-pim-types {
+        prefix rtb-pim-types;
+    }
+
+    import rtbrick-igmp-types {
+        prefix rtb-igmp-types;
     }
 
     include rtbrick-isis;
@@ -23,6 +47,7 @@ submodule rtbrick-network-instance {
     include rtbrick-ldp;
     include rtbrick-lwip;
     include rtbrick-snmp;
+    include rtbrick-policy;
 
     organization
       "Rtbrick";
@@ -50,7 +75,11 @@ submodule rtbrick-network-instance {
     grouping af-policy {
         description "Instance address family Policy related configuration";
         container policy {
-	    when '../afi != "l2vpn"';
+            presence policy;
+            must "(../afi != 'l2vpn') or (../safi = 'evpn-vpws' or ../safi = 'vpls-vpws')" {
+            error-message "policy can only be configured with evpn-vpws/vpls-vpws safi";
+            }
+
             description "Instance address family Policy related configuration";
             reference
             '{
@@ -61,7 +90,7 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf-list import {
-                type types:policy-name-type;
+                type rtb-types:policy-name-type;
                 must "count(../import) <= 10"{
                     error-message "Maximum of 10 polices are supported in a policy chain";
                 }
@@ -70,12 +99,19 @@ submodule rtbrick-network-instance {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "import_route_map"
+                        "attribute" : "import_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
             leaf-list export {
-                type types:policy-name-type;
+                type rtb-types:policy-name-type;
                 must "count(../export) <= 10"{
                     error-message "Maximum of 10 polices are supported in a policy chain";
                 }
@@ -84,9 +120,16 @@ submodule rtbrick-network-instance {
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "export_route_map"
+                        "attribute" : "export_route_map",
+                        "expansion-getter" : {
+                            "package": "policy",
+                            "method" : "policy_statement_expander"
+                        }
                     }
                 }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
         }
     }
@@ -105,7 +148,7 @@ submodule rtbrick-network-instance {
             }';
             leaf-list import {
 
-                type types:route-target-type;
+                type rtb-types:route-target-type;
                 description "VPN Route Target. Format: target:{as_number | ipv4_address}:rt_identifier";
                 reference
                 '{
@@ -115,7 +158,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf-list export {
-                type types:route-target-type;
+                type rtb-types:route-target-type;
                 description "VPN Route Target. Format: target:{as_number | ipv4_address}:rt_identifier";
                 reference
                 '{
@@ -141,7 +184,7 @@ submodule rtbrick-network-instance {
                 }';
 
             leaf instance {
-                type types:string64;
+                type rtb-types:string64;
                 description "Name of the source instance from which routes are imported";
                 reference
                     '{
@@ -156,14 +199,22 @@ submodule rtbrick-network-instance {
             }
 
             leaf policy {
-                type types:string64;
+                type rtb-types:string64;
                 description "Name of the policy applicable on the imported routes";
                 reference
                     '{
                         "attribute-getter" : {
-                            "attribute" : "policy_name"
+                            "attribute" : "policy_name",
+                            "expansion-getter" : {
+                                "package": "policy",
+                                "method" : "policy_statement_expander"
+                            }
+
                         }
                     }';
+                must 'count(/config:policy/statement[name=current()]) > 0' {
+                    error-message "A policy statement that is not configured or has been deleted is referenced";
+                }
             }
 
             must '((../afi = "ipv4") or (../afi = "ipv6"))' {
@@ -338,7 +389,7 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf afi {
-                type types:afi;
+                type rtb-types:afi;
                 description "Address family indicator";
                 reference
                 '{
@@ -354,7 +405,7 @@ submodule rtbrick-network-instance {
                     error-message "l2vpn afi can only be configured with
                     evpn/evpn-vpws/vpls-vpws safi and vice-versa";
                 }
-                type types:safi;
+                type rtb-types:safi;
                 description "Subsequent address family indicator";
                 reference
                 '{
@@ -436,13 +487,17 @@ submodule rtbrick-network-instance {
                 }
             }';
             leaf name {
-                type types:string64;
+                type rtb-types:string64;
                 description
                     "An operator-assigned unique name for the network instance";
                 reference
                 '{
                     "attribute-getter" : {
-                        "attribute" : "instance_name"
+                        "attribute" : "instance_name",
+                        "expansion-getter" : {
+                            "package":"ifm",
+                            "method" : "ifm_instance_name_expander"
+                        }
                     }
                  }';
             }
@@ -457,7 +512,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf route-distinguisher {
-                type types:route-distinguisher-type;
+                type rtb-types:route-distinguisher-type;
                 description "VPN Route Distinguisher. Format: {as_number | ipv4_address}:rd_identifier";
                 reference
                 '{
@@ -467,7 +522,7 @@ submodule rtbrick-network-instance {
                 }';
             }
             leaf address-translation {
-                type types:boolean-true;
+                type rtb-types:boolean-true;
                 description "Enable address-translation on this instance";
                 reference
                 '{

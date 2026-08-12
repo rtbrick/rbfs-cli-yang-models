@@ -180,9 +180,7 @@ submodule rtbrick-subscriber-acl {
                 }
             }';
             leaf destination-ipv6-prefix {
-                type string {
-                    length "1..64";
-                }
+                type inet:ipv6-prefix;
                 description
                     "Configure acl l3 ipv6 destination prefix match.";
                 reference
