@@ -5,7 +5,9 @@ submodule rtbrick-access-aaa-profile {
     belongs-to rtbrick-config {
         prefix config;
     }
-
+    import clixon-autocli{
+        prefix autocli;
+    }
     organization
       "RtBrick";
     contact
@@ -119,8 +121,8 @@ submodule rtbrick-access-aaa-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.aaa.profile.config",
-                    "type"    : "aaa_profile_config_table"
+                    "table-name": "global.access.aaa.profile.config",
+                    "type": "aaa_profile_config_table"
                 }
             }';                                                      
             leaf profile-name {
@@ -130,8 +132,8 @@ submodule rtbrick-access-aaa-profile {
                 description "Name of the AAA profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "aaa_profile_name"
+                    "attribute-getter": {
+                        "attribute": "aaa_profile_name"
                     }
                 }';
             }
@@ -140,8 +142,8 @@ submodule rtbrick-access-aaa-profile {
                 description "Session timeout in seconds (0 == infinity) [Range: <0-4294967295>]";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "session_timeout"
+                    "attribute-getter": {
+                        "attribute": "session_timeout"
                     }
                 }';
             }
@@ -150,8 +152,8 @@ submodule rtbrick-access-aaa-profile {
                 description "Idle timeout in seconds (0 == infinity) [Range: <0-4294967295>]";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "idle_timeout"
+                    "attribute-getter": {
+                        "attribute": "idle_timeout"
                     }
                 }';
             }
@@ -162,9 +164,9 @@ submodule rtbrick-access-aaa-profile {
                 description "AAA RADIUS profile name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "aaa_radius_profile",
-                        "expansion-getter" : {
+                    "attribute-getter": {
+                        "attribute": "aaa_radius_profile",
+                        "expansion-getter": {
                             "package":"subsMgmt",
                             "method" :"access_aaa_radius_profile_name_expander"
                         }
@@ -176,8 +178,8 @@ submodule rtbrick-access-aaa-profile {
                 reference
                 '{
                     "table-getter": {
-                        "table-name" : "global.access.aaa.profile.config",
-                        "type"    : "aaa_profile_config_table",
+                        "table-name": "global.access.aaa.profile.config",
+                        "type": "aaa_profile_config_table",
                         "inherit-attribute": ["aaa_profile_name"]
                     }
                 }';
@@ -186,20 +188,21 @@ submodule rtbrick-access-aaa-profile {
                     description "Authentication order";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_order"
+                        "attribute-getter": {
+                            "attribute": "authentication_order"
                         }
                     }';
                 }
                 leaf delimiter {
+                    autocli:hide;
                     type string {
                         length "0..1";
                     }
                     description "Delimiter string";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "authentication_domain_delimiter"
+                        "attribute-getter": {
+                            "attribute": "authentication_domain_delimiter"
                         }
                     }';
                 }
@@ -209,8 +212,8 @@ submodule rtbrick-access-aaa-profile {
                 reference
                 '{                                                  
                     "table-getter": {
-                        "table-name" : "global.access.aaa.profile.config",
-                        "type"    : "aaa_profile_config_table",
+                        "table-name": "global.access.aaa.profile.config",
+                        "type": "aaa_profile_config_table",
                         "inherit-attribute": ["aaa_profile_name"]
                     }
                 }';
@@ -219,8 +222,8 @@ submodule rtbrick-access-aaa-profile {
                     description "Accounting order";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_order"
+                        "attribute-getter": {
+                            "attribute": "accounting_order"
                         }
                     }';
                 }
@@ -229,18 +232,19 @@ submodule rtbrick-access-aaa-profile {
                     description "Accounting interim interval in seconds (0 == disabled) [Range: <0-4294967295>]";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_interim_interval"
+                        "attribute-getter": {
+                            "attribute": "accounting_interim_interval"
                         }
                     }';
                 }
                 leaf session-id-format {
+                    autocli:hide;
                     type session-id-format;
                     description "Accounting-Session-Id format";
                     reference
                     '{
-                        "attribute-getter" : {
-                            "attribute" : "accounting_session_id_format"
+                        "attribute-getter": {
+                            "attribute": "accounting_session_id_format"
                         }
                     }';
                 }
@@ -249,8 +253,8 @@ submodule rtbrick-access-aaa-profile {
                     reference
                     '{                                                  
                         "table-getter": {
-                            "table-name" : "global.access.aaa.profile.config",
-                            "type"    : "aaa_profile_config_table",
+                            "table-name": "global.access.aaa.profile.config",
+                            "type": "aaa_profile_config_table",
                             "inherit-attribute": ["aaa_profile_name"]
                         }
                     }';
@@ -259,8 +263,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Source of session ingress counter";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_ingress_source"
+                            "attribute-getter": {
+                                "attribute": "accounting_ingress_source"
                             }
                         }';
                     }
@@ -269,8 +273,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust ingress IFL counters by N bytes per packet [Range: <-32-32>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_ingress_byte_adjustment_value"
+                            "attribute-getter": {
+                                "attribute": "accounting_ingress_byte_adjustment_value"
                             }
                         }';
                     }
@@ -279,8 +283,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust ingress IFL counters by factor (executed after adjustment value) [Range: <0.00-2.00>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_ingress_byte_adjustment_factor"
+                            "attribute-getter": {
+                                "attribute": "accounting_ingress_byte_adjustment_factor"
                             }
                         }';
                     }
@@ -289,8 +293,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust ingress policer counters by N bytes per packet [Range: <-32-32>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_ingress_policer_byte_adjustment_value"
+                            "attribute-getter": {
+                                "attribute": "accounting_ingress_policer_byte_adjustment_value"
                             }
                         }';
                     }
@@ -299,8 +303,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust ingress policer counters by factor (executed after adjustment value) [Range: <0.00-2.00>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_ingress_policer_byte_adjustment_factor"
+                            "attribute-getter": {
+                                "attribute": "accounting_ingress_policer_byte_adjustment_factor"
                             }
                         }';
                     }
@@ -320,8 +324,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Source of session egress counter";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_egress_source"
+                            "attribute-getter": {
+                                "attribute": "accounting_egress_source"
                             }
                         }';
                     }
@@ -330,8 +334,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust egress IFL counters by N bytes per packet [Range: <-32-32>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_egress_byte_adjustment_value"
+                            "attribute-getter": {
+                                "attribute": "accounting_egress_byte_adjustment_value"
                             }
                         }';
                     }
@@ -340,8 +344,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust egress IFL counters by factor (executed after adjustment value) [Range: <0.00-2.00>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_egress_byte_adjustment_factor"
+                            "attribute-getter": {
+                                "attribute": "accounting_egress_byte_adjustment_factor"
                             }
                         }';
                     }
@@ -350,8 +354,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust egress class counters by N bytes per packet [Range: <-32-32>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_egress_class_byte_adjustment_value"
+                            "attribute-getter": {
+                                "attribute": "accounting_egress_class_byte_adjustment_value"
                             }
                         }';
                     }
@@ -360,8 +364,8 @@ submodule rtbrick-access-aaa-profile {
                         description "Adjust egress class counters by factor (executed after adjustment value) [Range: <0.00-2.00>]";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "accounting_egress_class_byte_adjustment_factor"
+                            "attribute-getter": {
+                                "attribute": "accounting_egress_class_byte_adjustment_factor"
                             }
                         }';
                     }

@@ -55,7 +55,18 @@ submodule rtbrick-access {
                   }
               }';
           }
-
+          leaf terminate-history-timeout {
+              type uint16 { 
+                range "0..720";
+              }
+              description "Terminate history timeout in hours";
+              reference
+              '{
+                  "attribute-getter" : {
+                      "attribute" : "terminate_history_timeout"
+                  }
+              }';
+          }
           uses access-aaa-profile;
           uses access-aaa-radius-profile;
           uses access-aaa-radius-server;

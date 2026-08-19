@@ -227,6 +227,12 @@ submodule rtbrick-link-aggregation {
                         must 'count(../../../../link-aggregation/interface/member-interface[member-interface-name=current()]) = 1' {
                                 error-message "Member interface name has to be unique across all lags";
                         }
+                        must 'count(../../../../forwarding-options/mirror/source[interface = current()])=0' {
+                            error-message "Mirror configurations are restricted on lag member interfaces";
+                        }
+                        must 'count(../../../../interface[name=current()]/breakout/map) = 0' {
+                            error-message "Lag member interface cannot have breakout mode configured";
+                        }
                         reference
                         '{
                             "attribute-getter" : {
