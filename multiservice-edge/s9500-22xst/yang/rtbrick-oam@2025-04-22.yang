@@ -96,7 +96,7 @@ submodule rtbrick-oam {
                 } 
                 leaf maintenance-association {
                     type string {
-                        length "1..48";
+                        length "1..45";
                     }
                     description "Maintenance association name";
                     reference

@@ -132,7 +132,7 @@ submodule rtbrick-access-aaa-profile {
 
     grouping access-aaa-profile {
         description "Global access AAA profile configuration";
-        
+
         list aaa-profile {
             key "profile-name";
             description "Global AAA profile configuration";
@@ -142,7 +142,7 @@ submodule rtbrick-access-aaa-profile {
                     "table-name": "global.access.aaa.profile.config",
                     "type": "aaa_profile_config_table"
                 }
-            }';                                                      
+            }';
             leaf profile-name {
                 type string {
                     length "1..64";
@@ -231,7 +231,7 @@ submodule rtbrick-access-aaa-profile {
             container accounting {
                 description "Accounting options";
                 reference
-                '{                                                  
+                '{
                     "table-getter": {
                         "table-name": "global.access.aaa.profile.config",
                         "type": "aaa_profile_config_table",
@@ -282,7 +282,7 @@ submodule rtbrick-access-aaa-profile {
                 container ingress {
                     description "Ingress volume accounting options";
                     reference
-                    '{                                                  
+                    '{
                         "table-getter": {
                             "table-name": "global.access.aaa.profile.config",
                             "type": "aaa_profile_config_table",
@@ -343,7 +343,7 @@ submodule rtbrick-access-aaa-profile {
                 container egress {
                     description "Egress volume accounting options";
                     reference
-                    '{                                                  
+                    '{
                         "table-getter": {
                             "table-name": "global.access.aaa.profile.config",
                             "type": "aaa_profile_config_table",

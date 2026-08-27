@@ -24,7 +24,7 @@ submodule rtbrick-access-pool {
 
     grouping access-pool {
         description "Global access address pool configuration";
-        
+
         list pool {
             key "pool-name";
             description "Global address pool configuration";
@@ -34,7 +34,7 @@ submodule rtbrick-access-pool {
                     "table-name": "global.pool.address-assignment.config",
                     "type": "pool_address_config_table"
                 }
-            }';                                                      
+            }';
             leaf pool-name {
                 type string {
                     length "1..64";

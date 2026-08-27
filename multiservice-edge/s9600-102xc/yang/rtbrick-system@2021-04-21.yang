@@ -512,8 +512,8 @@ submodule rtbrick-system {
                 must '../username != "supervisor" and ../username != "operator" and ../username != "reader" '{
                     error-message "Role can not be configured for pre-defined user supervisor, operator, and reader";
                 }
-                must '. != "root" and . != "wheel" and . != "admin" and . != "sudo" '{
-                   error-message "Role can't be root, wheel, admin, and sudo";
+                must '. != "root" and . != "wheel" and . != "admin" and . != "sudo" and . != "supervisor_sudo_no_pass" '{
+                   error-message "Role can't be root, wheel, admin, sudo and supervisor_sudo_no_pass";
                 }
                 reference
                 '{

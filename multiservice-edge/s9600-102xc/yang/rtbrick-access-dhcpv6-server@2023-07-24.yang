@@ -49,6 +49,7 @@ submodule rtbrick-access-dhcpv6-server {
             leaf address {
                 type inet:ipv6-address;
                 description "DHCPv6 server address";
+                mandatory true;
                 reference
                 '{
                     "attribute-getter": {

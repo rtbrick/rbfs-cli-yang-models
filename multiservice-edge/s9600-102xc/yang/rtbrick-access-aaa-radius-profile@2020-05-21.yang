@@ -1,6 +1,6 @@
 submodule rtbrick-access-aaa-radius-profile {
 
-    yang-version 1.1;                                                                
+    yang-version 1.1;
 
     belongs-to rtbrick-config {
         prefix config;

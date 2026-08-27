@@ -20,9 +20,9 @@ submodule rtbrick-access {
     include rtbrick-access-dhcp-server;
     include rtbrick-access-dhcpv6-server;
 
-    organization 
+    organization
       "RtBrick";
-    contact 
+    contact
       "yang-support@rtbrick.com";
     description
       "This sub-module defines the YANG structure for the access module.";
@@ -44,7 +44,7 @@ submodule rtbrick-access {
               }
           }';
           leaf chassis-id {
-              type uint8 { 
+              type uint8 {
                 range "0..15";
               }
               description "Chassis ID for this node";
@@ -56,7 +56,7 @@ submodule rtbrick-access {
               }';
           }
           leaf terminate-history-timeout {
-              type uint16 { 
+              type uint16 {
                 range "0..720";
               }
               description "Terminate history timeout in hours";

@@ -1,6 +1,6 @@
 submodule rtbrick-access-interface-profile {
 
-    yang-version 1.1;                                                                
+    yang-version 1.1;
 
     belongs-to rtbrick-config {
         prefix config;
@@ -43,7 +43,7 @@ submodule rtbrick-access-interface-profile {
                     "attribute": "access_type"
                 }
             }';
-        }   
+        }
         leaf access-profile-name {
             type string {
                 length "1..64";
@@ -62,7 +62,7 @@ submodule rtbrick-access-interface-profile {
                     }
                 }
             }';
-        } 
+        }
         leaf service-profile-name {
             type string {
                 length "1..64";
@@ -81,7 +81,7 @@ submodule rtbrick-access-interface-profile {
                     }
                 }
             }';
-        } 
+        }
         leaf aaa-profile-name {
             type string {
                 length "1..64";
@@ -100,7 +100,7 @@ submodule rtbrick-access-interface-profile {
                     }
                 }
             }';
-        } 
+        }
         leaf vlan-profile-enable {
             type rtb-types:boolean-type;
             description "Enable VLAN profiles";
@@ -110,9 +110,9 @@ submodule rtbrick-access-interface-profile {
                     "attribute": "vlan_profile_enabled"
                 }
             }';
-        } 
+        }
         leaf max-subscribers-per-vlan {
-            type uint16 { 
+            type uint16 {
                 range "1..65535";
             }
             description "Restrict maximum subscribers per VLAN";
@@ -122,9 +122,9 @@ submodule rtbrick-access-interface-profile {
                     "attribute": "max_subscriber_per_vlan"
                 }
             }';
-        } 
+        }
         leaf max-subscribers-per-mac {
-            type uint16 { 
+            type uint16 {
                 range "1..65535";
             }
             description "Restrict maximum subscribers per MAC address";
@@ -171,7 +171,7 @@ submodule rtbrick-access-interface-profile {
             }
         }
         leaf pppoe-pado-delay {
-            type uint8 { 
+            type uint8 {
                 range "1..255";
             }
             description "PPPoE PADO delay in seconds";
@@ -181,9 +181,9 @@ submodule rtbrick-access-interface-profile {
                     "attribute": "pppoe_pado_delay"
                 }
             }';
-        } 
+        }
         leaf dhcp-min-elapsed-time {
-            type uint16 { 
+            type uint16 {
                 range "1..600";
             }
             description "DHCPv4/v6 minimum elapsed time in seconds";
@@ -251,7 +251,7 @@ submodule rtbrick-access-interface-profile {
                     }';
                 }
                 leaf outer-vlan-min {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Outer VLAN min";
@@ -263,7 +263,7 @@ submodule rtbrick-access-interface-profile {
                     }';
                 }
                 leaf outer-vlan-max {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Outer VLAN max";
@@ -310,9 +310,9 @@ submodule rtbrick-access-interface-profile {
                             }
                         }
                     }';
-                }                
+                }
                 leaf outer-vlan-min {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Outer VLAN min";
@@ -324,7 +324,7 @@ submodule rtbrick-access-interface-profile {
                     }';
                 }
                 leaf outer-vlan-max {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Outer VLAN max";
@@ -347,7 +347,7 @@ submodule rtbrick-access-interface-profile {
                     }';
                 }
                 leaf inner-vlan-min {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Inner VLAN min";
@@ -359,7 +359,7 @@ submodule rtbrick-access-interface-profile {
                     }';
                 }
                 leaf inner-vlan-max {
-                    type uint16 { 
+                    type uint16 {
                         range "1..4094";
                     }
                     description "Inner VLAN max";
@@ -372,6 +372,6 @@ submodule rtbrick-access-interface-profile {
                 }
                 uses access-interface-options;
             }
-        }  
+        }
     }
 }

@@ -23,7 +23,7 @@ submodule rtbrick-access-dhcp-relay {
 
     grouping access-dhcp-relay {
         description "Global access DHCP relay configuration";
-        
+
         list dhcp-relay {
             key "interface";
             description "Global DHCP relay configuration";
@@ -33,7 +33,7 @@ submodule rtbrick-access-dhcp-relay {
                     "table-name": "global.access.dhcp.relay.config",
                     "type": "dhcp_relay_config_table"
                 }
-            }';                                                      
+            }';
             leaf interface {
                 type rtb-types:logical-interface-type;
                 description "Logical interface expecting DHCP client packets";
@@ -102,7 +102,7 @@ submodule rtbrick-access-dhcp-relay {
                 }';
             }
             leaf dhcp-min-elapsed-time {
-                type uint16 { 
+                type uint16 {
                     range "1..600";
                 }
                 description "DHCP minimum elapsed time in seconds";
@@ -113,6 +113,6 @@ submodule rtbrick-access-dhcp-relay {
                     }
                 }';
             }
-        }   
+        }
     }
 }

@@ -1,6 +1,6 @@
 submodule rtbrick-access-access-profile {
 
-    yang-version 1.1;                                                                
+    yang-version 1.1;
 
     belongs-to rtbrick-config {
         prefix config;
@@ -103,6 +103,9 @@ submodule rtbrick-access-access-profile {
                     length "1..64";
                 }
                 description "Instance name";
+                must "current() = 'default' or ../../../instance[name=current()]" {
+                    error-message "access-profile references instance which does not exist";
+                }
                 must "current() = 'default' or not(../address-family/ipv4/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv4']/safi = 'unicast'" {
                     error-message "access-profile with IPv4 enabled references instance without address-family IPv4 unicast";
                 }
@@ -119,7 +122,7 @@ submodule rtbrick-access-access-profile {
                         }
                     }
                 }';
-            } 
+            }
             container protocol {
                 description "Protocol configuration";
                 container pppoe {
@@ -163,7 +166,7 @@ submodule rtbrick-access-access-profile {
                             }';
                         }
                         leaf min-uptime {
-                            type uint16 { 
+                            type uint16 {
                                 range "1..65535";
                             }
                             description "Session protection minimum uptime in seconds";
@@ -175,7 +178,7 @@ submodule rtbrick-access-access-profile {
                             }';
                         }
                         leaf min-lockout {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Session protection minimum lockout time in seconds";
@@ -187,8 +190,11 @@ submodule rtbrick-access-access-profile {
                             }';
                         }
                         leaf max-lockout {
-                            type uint16 { 
+                            type uint16 {
                                 range "1..65535";
+                            }
+                            must "not(../min-lockout) or (. >= ../min-lockout)" {
+                                error-message "PPPoE max-lockout must be >= min-lockout";
                             }
                             description "Session protection maximum lockout time in seconds";
                             reference
@@ -200,7 +206,7 @@ submodule rtbrick-access-access-profile {
                         }
                     }
                     leaf max-outstanding {
-                        type uint16 { 
+                        type uint16 {
                             range "1..65535";
                         }
                         description "Maximum outstanding PPPoE sessions";
@@ -245,7 +251,7 @@ submodule rtbrick-access-access-profile {
                             }';
                         }
                         leaf mru {
-                            type uint16 { 
+                            type uint16 {
                                 range "1280..1500";
                             }
                             description "Maximum local MRU";
@@ -255,9 +261,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_mru"
                                 }
                             }';
-                        } 
+                        }
                         leaf mtu {
-                            type uint16 { 
+                            type uint16 {
                                 range "1280..1500";
                             }
                             description "Maximum local MTU";
@@ -267,7 +273,7 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_mtu"
                                 }
                             }';
-                        } 
+                        }
                         leaf lcp-loop-detection {
                             type rtb-types:boolean-type;
                             description "Loop detection";
@@ -277,9 +283,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_loop_detection"
                                 }
                             }';
-                        } 
+                        }
                         leaf echo-interval {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Echo interval in seconds";
@@ -289,9 +295,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_echo_interval"
                                 }
                             }';
-                        } 
+                        }
                         leaf echo-max-retransmit {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Echo maximum retries";
@@ -301,7 +307,7 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_echo_max_retransmit"
                                 }
                             }';
-                        } 
+                        }
                         leaf echo-enable {
                             type rtb-types:boolean-type;
                             description "Enable echo requests";
@@ -311,9 +317,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_echo_enabled"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-interval {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Retransmit interval in seconds";
@@ -323,9 +329,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_retransmit_interval"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Maximum retries";
@@ -335,9 +341,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "lcp_retransmit_max"
                                 }
                             }';
-                        } 
+                        }
                         leaf config-nak-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Max configure-reject/nak";
@@ -384,9 +390,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ipcp_passive"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-interval {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Retransmit interval in seconds";
@@ -396,9 +402,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ipcp_retransmit_interval"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Maximum retries";
@@ -408,9 +414,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ipcp_retransmit_max"
                                 }
                             }';
-                        } 
+                        }
                         leaf config-nak-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Max configure-reject/nak";
@@ -471,9 +477,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ip6cp_passive"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-interval {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Retransmit interval in seconds";
@@ -483,9 +489,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ip6cp_retransmit_interval"
                                 }
                             }';
-                        } 
+                        }
                         leaf retransmit-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Maximum retries";
@@ -495,9 +501,9 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ip6cp_retransmit_max"
                                 }
                             }';
-                        } 
+                        }
                         leaf config-nak-max {
-                            type uint8 { 
+                            type uint8 {
                                 range "1..255";
                             }
                             description "Max configure-reject/nak";
@@ -507,7 +513,7 @@ submodule rtbrick-access-access-profile {
                                     "attribute": "ip6cp_config_nak_max"
                                 }
                             }';
-                        } 
+                        }
                     }
                 }
                 container ra {
@@ -532,9 +538,9 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_ra_enabled"
                             }
                         }';
-                    } 
+                    }
                     leaf interval {
-                        type uint8 { 
+                        type uint8 {
                             range "0..255";
                         }
                         description "Interval in seconds";
@@ -544,9 +550,9 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_ra_interval"
                             }
                         }';
-                    } 
+                    }
                     leaf lifetime {
-                        type uint32 { 
+                        type uint32 {
                             range "0..4294967295";
                         }
                         description "Lifetime in seconds";
@@ -556,9 +562,9 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_ra_lifetime"
                             }
                         }';
-                    } 
+                    }
                     leaf preferred-lifetime {
-                        type uint32 { 
+                        type uint32 {
                             range "0..4294967295";
                         }
                         description "Preferred lifetime in seconds";
@@ -570,7 +576,7 @@ submodule rtbrick-access-access-profile {
                         }';
                     }
                     leaf router-lifetime {
-                        type uint16 { 
+                        type uint16 {
                             range "0..9000";
                         }
                         description "Router lifetime in seconds";
@@ -604,7 +610,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv4_dhcp_enabled"
                             }
                         }';
-                    } 
+                    }
                     leaf mode {
                         type dhcp-mode;
                         description "DHCP mode";
@@ -630,9 +636,9 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv4_dhcp_asymmetric"
                             }
                         }';
-                    } 
+                    }
                     leaf lease-time {
-                        type uint32 { 
+                        type uint32 {
                             range "1..4294967295";
                         }
                         description "DHCP lease time in seconds";
@@ -644,7 +650,7 @@ submodule rtbrick-access-access-profile {
                         }';
                     }
                     leaf renewal-time {
-                        type uint32 { 
+                        type uint32 {
                             range "1..4294967295";
                         }
                         must "not(../lease-time) or (. < ../lease-time)" {
@@ -659,12 +665,12 @@ submodule rtbrick-access-access-profile {
                         }';
                     }
                     leaf rebind-time {
-                        type uint32 { 
+                        type uint32 {
                             range "1..4294967295";
                         }
                         must "not(../lease-time) or (. < ../lease-time)" {
                             error-message "DHCP rebind-time must be < lease-time";
-                        }                        
+                        }
                         must "not(../renewal-time) or (. > ../renewal-time)" {
                             error-message "DHCP rebind-time must be > renewal-time";
                         }
@@ -764,7 +770,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_dhcpv6_asymmetric"
                             }
                         }';
-                    } 
+                    }
                     leaf lifetime {
                         type uint32 {
                             range "30..4294967295";
@@ -779,7 +785,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_dhcpv6_lifetime"
                             }
                         }';
-                    } 
+                    }
                     leaf preferred-lifetime {
                         type uint32 {
                             range "30..4294967295";
@@ -941,7 +947,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipoe_password"
                             }
                         }';
-                    } 
+                    }
                 }
             }
             container address-family {
@@ -965,7 +971,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv4_enabled"
                             }
                         }';
-                    } 
+                    }
                     leaf pool-name {
                         type string {
                             length "1..64";
@@ -987,7 +993,7 @@ submodule rtbrick-access-access-profile {
                                 }
                             }
                         }';
-                    } 
+                    }
                     leaf static-ipv4 {
                         type inet:ipv4-address;
                         description "Static address";
@@ -997,7 +1003,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "static_ipv4_address"
                             }
                         }';
-                    } 
+                    }
                     leaf primary-dns {
                         type inet:ipv4-address;
                         description "Primary DNS server";
@@ -1007,7 +1013,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv4_dns_primary_address"
                             }
                         }';
-                    } 
+                    }
                     leaf secondary-dns {
                         type inet:ipv4-address;
                         description "Secondary DNS server";
@@ -1070,7 +1076,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_enabled"
                             }
                         }';
-                    } 
+                    }
                     leaf pool-name {
                         type string {
                             length "1..64";
@@ -1092,7 +1098,7 @@ submodule rtbrick-access-access-profile {
                                 }
                             }
                         }';
-                    } 
+                    }
                     leaf prefix-delegation-pool-name {
                         type string {
                             length "1..64";
@@ -1114,7 +1120,7 @@ submodule rtbrick-access-access-profile {
                                 }
                             }
                         }';
-                    } 
+                    }
                     leaf primary-dns {
                         type inet:ipv6-address;
                         description "Primary DNS server";
@@ -1124,7 +1130,7 @@ submodule rtbrick-access-access-profile {
                                 "attribute": "ipv6_dns_primary_address"
                             }
                         }';
-                    } 
+                    }
                     leaf secondary-dns {
                         type inet:ipv6-address;
                         description "Secondary DNS server";

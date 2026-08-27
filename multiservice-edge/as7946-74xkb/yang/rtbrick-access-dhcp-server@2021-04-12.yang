@@ -24,7 +24,7 @@ submodule rtbrick-access-dhcp-server {
 
     grouping access-dhcp-server {
         description "Global access DHCP server configuration";
-        
+
         list dhcp-server {
             key "server-name";
             description "Global DHCP server configuration";
@@ -34,7 +34,7 @@ submodule rtbrick-access-dhcp-server {
                     "table-name": "global.access.dhcp.server.config",
                     "type": "dhcp_server_config_table"
                 }
-            }';                                                      
+            }';
             leaf server-name {
                 type string {
                     length "1..64";
@@ -57,7 +57,7 @@ submodule rtbrick-access-dhcp-server {
                         "attribute": "dhcp_server_ipv4_address"
                     }
                 }';
-            } 
+            }
             leaf source-address {
                 type inet:ipv4-address;
                 description "Source address used for DHCP packets";
@@ -87,6 +87,6 @@ submodule rtbrick-access-dhcp-server {
                     }
                 }';
             }
-        }   
+        }
     }
 }

@@ -26,18 +26,18 @@ submodule rtbrick-access-user-profile {
             enum PPPoE {
                 value "0";
                 description "PPPoE";
-	        }
+            }
             enum L2TP {
                 value "1";
                 description "L2TP";
-	        }
+            }
         }
         description "Tunnel type";
     }
 
     grouping access-user-profile {
         description "Global access user profile configuration";
-        
+
         list user-profile {
             key "user-name";
             description "Global user profile configuration";
@@ -47,7 +47,7 @@ submodule rtbrick-access-user-profile {
                     "table-name": "global.access.user.profile.config",
                     "type": "user_profile_config_table"
                 }
-            }';                                                      
+            }';
             leaf user-name {
                 type string {
                     length "1 .. 250";
@@ -70,7 +70,7 @@ submodule rtbrick-access-user-profile {
                     "attribute-getter": {
                         "attribute": "password",
                         "plain-text-password" : true,
-			            "secret-text-leaf-name": "password-encrypted-text"
+                        "secret-text-leaf-name": "password-encrypted-text"
                     }
                 }';
             }
@@ -93,12 +93,15 @@ submodule rtbrick-access-user-profile {
                         "attribute": "tunnel_type"
                     }
                 }';
-            } 
+            }
             leaf l2tp-pool-name {
                 type string {
                     length "1..64";
                 }
-                description "L2TP pool name";
+                description "L2TP tunnel pool name";
+                must '/access/l2tp-pool[pool-name = current()]' {
+                    error-message "The L2TP pool referenced by user-profile does not exist";
+                }
                 reference
                 '{
                     "attribute-getter": {

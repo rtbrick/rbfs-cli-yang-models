@@ -1,6 +1,6 @@
 submodule rtbrick-access-aaa-radius-server {
 
-    yang-version 1.1;                                                                
+    yang-version 1.1;
 
     belongs-to rtbrick-config {
         prefix config;
@@ -61,7 +61,7 @@ submodule rtbrick-access-aaa-radius-server {
                         "attribute": "radius_ipv4_address"
                     }
                 }';
-            } 
+            }
             leaf source-address {
                 type inet:ipv4-address;
                 description "Source IPv4 address used for RADIUS packets";
@@ -72,7 +72,7 @@ submodule rtbrick-access-aaa-radius-server {
                         "attribute": "local_source_ipv4_address"
                     }
                 }';
-            } 
+            }
             leaf secret-plain-text {
                 type string {
                     length "1..64";
@@ -83,7 +83,7 @@ submodule rtbrick-access-aaa-radius-server {
                     "attribute-getter": {
                         "attribute": "secret",
                         "plain-text-password": true,
-			            "secret-text-leaf-name": "secret-encrypted-text"
+                        "secret-text-leaf-name": "secret-encrypted-text"
                     }
                 }';
             }
@@ -127,7 +127,7 @@ submodule rtbrick-access-aaa-radius-server {
                 }';
             }
             leaf rate {
-                type uint16 { 
+                type uint16 {
                     range "1..65535";
                 }
                 description "Maximum RADIUS requests per second";
@@ -157,9 +157,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "authentication_enabled"
                         }
                     }';
-                } 
+                }
                 leaf port {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "RADIUS server authentication port";
@@ -169,9 +169,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "authentication_port"
                         }
                     }';
-                } 
+                }
                 leaf retry {
-                    type uint8 { 
+                    type uint8 {
                         range "1..255";
                     }
                     description "Maximum retries for authentication requests";
@@ -181,9 +181,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "authentication_retry"
                         }
                     }';
-                } 
+                }
                 leaf timeout {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "Authentication request timeout in seconds";
@@ -195,7 +195,7 @@ submodule rtbrick-access-aaa-radius-server {
                     }';
                 }
                 leaf outstanding {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "Maximum number of outstanding authentication requests";
@@ -226,9 +226,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "accounting_enabled"
                         }
                     }';
-                } 
+                }
                 leaf port {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "RADIUS server accounting port";
@@ -238,9 +238,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "accounting_port"
                         }
                     }';
-                } 
+                }
                 leaf retry {
-                    type uint8 { 
+                    type uint8 {
                         range "1..255";
                     }
                     description "Maximum retries for accounting request packets";
@@ -250,9 +250,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "accounting_retry"
                         }
                     }';
-                } 
+                }
                 leaf timeout {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "Accounting request timeout in seconds";
@@ -264,7 +264,7 @@ submodule rtbrick-access-aaa-radius-server {
                     }';
                 }
                 leaf outstanding {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "Maximum number of outstanding accounting requests";
@@ -295,9 +295,9 @@ submodule rtbrick-access-aaa-radius-server {
                             "attribute": "coa_enabled"
                         }
                     }';
-                } 
+                }
                 leaf port {
-                    type uint16 { 
+                    type uint16 {
                         range "1..65535";
                     }
                     description "Local RADIUS CoA port";

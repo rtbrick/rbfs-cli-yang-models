@@ -27,7 +27,7 @@ submodule rtbrick-access-l2tp-pool {
 
     grouping access-l2tp-pool {
         description "Global access L2TPv2 pool configuration";
-        
+
         list l2tp-pool {
             key "pool-name client-name server-name";
             description "Global L2TPv2 pool configuration";
@@ -37,7 +37,7 @@ submodule rtbrick-access-l2tp-pool {
                     "table-name": "global.access.l2tp.pool.config",
                     "type": "l2tp_pool_config_table"
                 }
-            }';                                                      
+            }';
             leaf pool-name {
                 type string {
                     length "1..64";
@@ -83,7 +83,7 @@ submodule rtbrick-access-l2tp-pool {
                         "attribute": "client_ipv4"
                     }
                 }';
-            } 
+            }
             leaf server-ipv4 {
                 type inet:ipv4-address;
                 description "L2PTP server (LNS) IPv4";
@@ -93,7 +93,7 @@ submodule rtbrick-access-l2tp-pool {
                         "attribute": "server_ipv4"
                     }
                 }';
-            } 
+            }
             leaf secret-plain-text {
                 type string {
                     length "1..64";
@@ -104,7 +104,7 @@ submodule rtbrick-access-l2tp-pool {
                     "attribute-getter": {
                         "attribute": "shared_secret",
                         "plain-text-password" : true,
-			            "secret-text-leaf-name": "secret-encrypted-text"
+                        "secret-text-leaf-name": "secret-encrypted-text"
                     }
                 }';
             }
@@ -119,7 +119,7 @@ submodule rtbrick-access-l2tp-pool {
                 }';
             }
             leaf preference {
-                type uint16 { 
+                type uint16 {
                     range "0..65535";
                 }
                 description "Preference";
@@ -129,9 +129,9 @@ submodule rtbrick-access-l2tp-pool {
                         "attribute": "preference"
                     }
                 }';
-            } 
+            }
             leaf session-limit {
-                type uint16 { 
+                type uint16 {
                     range "1..65535";
                 }
                 description "Session limit";
@@ -142,6 +142,6 @@ submodule rtbrick-access-l2tp-pool {
                     }
                 }';
             }
-        }   
+        }
     }
 }

@@ -218,6 +218,9 @@ submodule rtbrick-access-l2tp-profile {
                     length "1..64";
                 }
                 description "Instance name";
+                must "current() = 'default' or ../../../instance[name=current()]" {
+                    error-message "The instance referenced by l2tp-profile does not exist";
+                }
                 reference
                 '{
                     "attribute-getter": {
@@ -234,6 +237,9 @@ submodule rtbrick-access-l2tp-profile {
                     length "1..64";
                 }
                 description "L2TP tunnel pool name";
+                must '/access/l2tp-pool[pool-name = current()]' {
+                    error-message "The pool-name referenced by l2tp-profile does not exist";
+                }
                 reference
                 '{
                     "attribute-getter": {

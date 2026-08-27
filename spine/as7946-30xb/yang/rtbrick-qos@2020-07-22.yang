@@ -83,7 +83,7 @@ submodule rtbrick-qos {
             }
             enum "radius" {
                 value 18;
-                description "Radius";
+                description "RADIUS";
             }
             enum "l3-all" {
                 value 19;
@@ -432,6 +432,10 @@ submodule rtbrick-qos {
             enum "lag" {
                 value 23;
                 description "LAG";
+            }
+            enum "rd" {
+                value 24;
+                description "Redundancy";
             }
             enum "oam" {
                 value 36;
