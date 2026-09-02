@@ -1,0 +1,20 @@
+ module rtbrick-pim-types {
+    yang-version 1.1;
+    prefix rtb-pim-types;
+    namespace
+    "urn:config:rtbrick:pim:types";
+
+    organization "rtbrick";
+
+    contact
+      "yang-support@rtbrick.com";
+
+    description
+      "This module contains Dummy data definitions for use in pim YANG
+    model";
+
+    revision "2020-01-01" {
+      description "Dummy pim types for rtbrick";
+      reference "None";
+    }
+ }

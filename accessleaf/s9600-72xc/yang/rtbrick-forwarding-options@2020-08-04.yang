@@ -5,6 +5,10 @@ submodule rtbrick-forwarding-options {
         prefix config;
     }
 
+    import rtbrick-qos-types {
+        prefix rtb-qos-types;
+    }
+
     include rtbrick-acl;
     include rtbrick-mirroring;
     include rtbrick-qos;
@@ -46,6 +50,7 @@ submodule rtbrick-forwarding-options {
             uses fragmentation-top;
             uses address-translation-top;
             uses traffic-sampling-top;
+            uses global-fwd-top;
         }
     }
     uses forwarding-options-top;

@@ -19,13 +19,83 @@ submodule rtbrick-isis {
         reference "None";
     }
 
+    grouping isis-segment-routing {
+        description "ISIS Segment Routing group";
+        container segment-routing {
+            description
+              "Dummy ISIS Segment Routing configuration";
+            reference
+              "None";
+            container srgb {
+                description
+                  "Dummy Segment Routing Global Block";
+                reference
+                  "None";
+                leaf base
+                {
+                    type uint32;
+                    description "Dummy SRGB Base label";
+                    reference
+                      "None";
+                }
+                leaf range
+                {
+                    type uint32;
+                    description "Dummy SRGB Base label";
+                    reference
+                      "None";
+                }
+            }
+        }
+    }
+
+    grouping isis-interface {
+        description "ISIS interface group";
+        container interface {
+            description
+              "Dummy ISIS interface configuration";
+            reference
+              "None";
+            uses interface-level-segment-routing;
+        }
+    }
+
+    grouping interface-level-segment-routing {
+        description "Dummy interface level segment routing";
+        container segment-routing {
+            description
+              "Dummy ISIS segment routing configuration for this interface";
+            container ipv4 {
+                description
+                  "Dummy ISIS IPv4 segment routing interface configuration";
+                reference
+                  "None";
+                leaf index {
+                    type uint32;
+                }
+            }
+            container ipv6 {
+                description
+                  "Dummy ISIS IPv6 segment routing interface configuration";
+                reference
+                  "None";
+                leaf index {
+                    type uint32;
+                }
+            }
+        }
+    }
 
     grouping isis-global-top  {
         description "Dummy global isis top level config";
     }
 
     grouping isis-top {
-        description "Dummy isis top level config";
-
+        container isis {
+            status obsolete;
+            description "Dummy isis top level config";
+            uses isis-segment-routing;
+            uses isis-interface;
+        }
     }
 }
