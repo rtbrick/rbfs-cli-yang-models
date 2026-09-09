@@ -853,10 +853,10 @@ submodule rtbrick-bgp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -934,10 +934,10 @@ submodule rtbrick-bgp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -1015,10 +1015,12 @@ submodule rtbrick-bgp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
+                    
                     reference
                     '{
                         "attribute-getter" : {
@@ -1631,6 +1633,17 @@ submodule rtbrick-bgp {
                     }
                 }';
             }
+            leaf enforce-first-as {
+                type rtb-bgp-types:enable-disable;
+                description
+                    "Enforce the first AS for EBGP routes";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "enforce_first_as"
+                    }
+                }';
+            }
             uses bgp-pg-address-family;
         }
     }
@@ -1873,6 +1886,10 @@ submodule rtbrick-bgp {
 
         container bgp {
             description "Protocol bgp configuration";
+            presence bgp;
+            must "../../name = 'default' or ../../route-distinguisher" {
+                error-message "RD must be configured for all non-default instances if BGP is configured.";
+            }
             reference
             '{
                 "table-getter": {

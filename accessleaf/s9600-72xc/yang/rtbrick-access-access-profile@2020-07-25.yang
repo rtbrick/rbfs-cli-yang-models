@@ -887,6 +887,18 @@ submodule rtbrick-access-access-profile {
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
+                    leaf max-outstanding {
+                        type uint16 {
+                            range "1..65535";
+                        }
+                        description "Maximum outstanding IPoE subscribers";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_outstanding_limit"
+                            }
+                        }';
+                    }
                     leaf ip-mtu-profile {
                         type string {
                             length "1..64";

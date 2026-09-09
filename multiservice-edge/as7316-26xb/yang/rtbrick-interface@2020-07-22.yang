@@ -263,6 +263,20 @@ submodule rtbrick-interface {
         description "IFP holddown mode";
     }
 
+    typedef type-forward-error-correction-bypass-mode {
+        type enumeration {
+            enum "disable" {
+                value 0;
+                description "Disable forward error correction bypass";
+            }
+            enum "enable" {
+                value 1;
+                description "Enable forward error correction bypass";
+            }
+        }
+        description "Forward error correction bypass mode";
+    }
+
     typedef type-holddown-timer {
         type enumeration {
             enum "0" {
@@ -1446,7 +1460,7 @@ submodule rtbrick-interface {
             leaf description {
                  type rtb-types:string1024;
                  description
-                     "Configure Physical interface description";
+                     "Configure physical interface description";
                  reference
                  '{
                      "attribute-getter" : {
@@ -1504,7 +1518,7 @@ submodule rtbrick-interface {
                      length "1..64";
                  }
                  description
-                     "Configure host_if";
+                     "Configure host-if";
 
                 must 'not(contains(../name, "lo-"))' {
                     error-message "host-if cannot be configured on loopback interface";
@@ -1712,7 +1726,7 @@ submodule rtbrick-interface {
             leaf traffic-sampling-profile {
                 type rtb-types:string64;
                 description
-                    "Configure profile string";
+                    "Configure traffic sampling profile";
                 reference
                 '{
                         "attribute-getter" : {
@@ -1853,9 +1867,9 @@ submodule rtbrick-interface {
                 }
             }
             leaf forward-error-correction-bypass {
-                type type-holddown-mode;
+                type type-forward-error-correction-bypass-mode;
                 description
-                    "Configure to forward error correction bypass";
+                    "Configure forward error correction bypass";
 
                 must 'not(contains(../name, "lo-"))' {
                     error-message "forward-error-correction-bypass cannot be configured on loopback interface";

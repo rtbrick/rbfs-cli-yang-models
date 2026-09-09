@@ -37,6 +37,7 @@ submodule rtbrick-access-interface-profile {
         leaf access-type {
             type access-type;
             description "Access service type";
+            mandatory true;
             reference
             '{
                 "attribute-getter": {
@@ -213,6 +214,9 @@ submodule rtbrick-access-interface-profile {
                 leaf interface-name {
                     type rtb-types:interface-type;
                     description "Name of the physical interface";
+                    must "not(starts-with(., 'lo-'))" {
+                        error-message "Loopback interfaces are not allowed as access interfaces.";
+                    }
                     reference
                     '{
                         "attribute-getter": {
@@ -239,6 +243,9 @@ submodule rtbrick-access-interface-profile {
                 leaf interface-name {
                     type rtb-types:interface-type;
                     description "Name of the physical interface";
+                    must "not(starts-with(., 'lo-'))" {
+                        error-message "Loopback interfaces are not allowed as access interfaces.";
+                    }
                     reference
                     '{
                         "attribute-getter": {
@@ -265,6 +272,9 @@ submodule rtbrick-access-interface-profile {
                 leaf outer-vlan-max {
                     type uint16 {
                         range "1..4094";
+                    }
+                    must ". >= ../outer-vlan-min" {
+                        error-message "outer-vlan-max must be >= outer-vlan-min";
                     }
                     description "Outer VLAN max";
                     reference
@@ -300,6 +310,9 @@ submodule rtbrick-access-interface-profile {
                 leaf interface-name {
                     type rtb-types:interface-type;
                     description "Name of the physical interface";
+                    must "not(starts-with(., 'lo-'))" {
+                        error-message "Loopback interfaces are not allowed as access interfaces.";
+                    }
                     reference
                     '{
                         "attribute-getter": {
@@ -326,6 +339,9 @@ submodule rtbrick-access-interface-profile {
                 leaf outer-vlan-max {
                     type uint16 {
                         range "1..4094";
+                    }
+                    must ". >= ../outer-vlan-min" {
+                        error-message "outer-vlan-max must be >= outer-vlan-min";
                     }
                     description "Outer VLAN max";
                     reference
@@ -361,6 +377,9 @@ submodule rtbrick-access-interface-profile {
                 leaf inner-vlan-max {
                     type uint16 {
                         range "1..4094";
+                    }
+                    must ". >= ../inner-vlan-min" {
+                        error-message "inner-vlan-max must be >= inner-vlan-min";
                     }
                     description "Inner VLAN max";
                     reference

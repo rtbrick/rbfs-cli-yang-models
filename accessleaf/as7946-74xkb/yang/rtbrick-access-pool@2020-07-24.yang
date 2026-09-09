@@ -5,12 +5,13 @@ submodule rtbrick-access-pool {
     belongs-to rtbrick-config {
         prefix config;
     }
-
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
     import ietf-inet-types {
         prefix "inet";
         reference "RFC 6991";
     }
-
     organization
       "RtBrick";
     contact
@@ -59,6 +60,23 @@ submodule rtbrick-access-pool {
                 '{
                     "attribute-getter": {
                         "attribute": "next_pool_name"
+                    }
+                }';
+            }
+            leaf gateway-ifl {
+                type rtb-types:logical-interface-type;
+                must 'not(../ipv6-prefix)' {
+                    error-message "IPoE gateway IFL is not supported for IPv6 pools";
+                }
+                description "IPoE gateway IFL (unnumbered source IFL)";
+                reference
+                '{
+                    "attribute-getter": {
+                        "attribute": "gateway_ifl",
+                        "expansion-getter": {
+                            "package": "subsMgmt",
+                            "method": "access_ifl_name_expander"
+                        }
                     }
                 }';
             }

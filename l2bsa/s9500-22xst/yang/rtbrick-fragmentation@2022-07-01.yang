@@ -13,6 +13,10 @@ submodule rtbrick-fragmentation {
         prefix autocli;
     }
 
+    import ietf-yang-types {
+        prefix ietfyang;
+    }
+
     organization
       "Rtbrick";
 
@@ -190,6 +194,30 @@ submodule rtbrick-fragmentation {
                             "package":"ifm",
                             "method" :"qos_policer_name_expander_mtu"
                         }
+                    }
+                }';
+            }
+        }
+        container system {
+            description
+                "System mac configuration";
+            reference
+            '{
+                "table-getter": {
+                    "table-name": "global.fwd.option.config",
+                    "type"    : "global_fwd_option_cfg_table",
+                    "default-attribute" : [ { "index" : "3" } ]
+                }
+            }';
+
+            leaf mac {
+                type ietfyang:mac-address;
+                description
+                    "Configure system base mac";
+                reference
+                '{
+                    "attribute-getter" : {
+                        "attribute" : "mac_address"
                     }
                 }';
             }

@@ -55,6 +55,16 @@ submodule rtbrick-access {
                   }
               }';
           }
+          leaf chassis-subscriber-limit {
+              type uint32;
+              description "Chassis subscriber limit for this node";
+              reference
+              '{
+                  "attribute-getter": {
+                      "attribute": "chassis_subscriber_limit"
+                  }
+              }';
+          }
           leaf terminate-history-timeout {
               type uint16 {
                 range "0..720";
