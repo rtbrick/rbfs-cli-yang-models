@@ -97,9 +97,9 @@ submodule rtbrick-address-translation {
                 value 8192;
                 description "8192 Rules";
             }
-            enum "16342" {
-                value 16342;
-                description "16342 Rules";
+            enum "16384" {
+                value 16384;
+                description "16384 Rules";
             }
         }
         description "NAT supported Ports per block";

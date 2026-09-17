@@ -1,0 +1,20 @@
+ module rtbrick-ospf-types {
+    yang-version 1.1;
+    prefix rtb-ospf-types;
+    namespace
+    "urn:config:rtbrick:ospf:types";
+
+    organization "rtbrick";
+
+    contact
+      "yang-support@rtbrick.com";
+
+    description
+      "This module contains Dummy data definitions for use in OSPF YANG
+    model.";
+
+    revision "2022-03-15" {
+      description "Dummy OSPF types for rtbrick";
+      reference "None";
+    }
+ }

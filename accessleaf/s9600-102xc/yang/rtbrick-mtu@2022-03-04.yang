@@ -29,26 +29,26 @@ submodule rtbrick-mtu {
         type enumeration {
             enum "physical" {
                 value 1;
-                description "physical";
+                description "Physical";
             }
             enum "pppoe" {
                 value 2;
-                description "pppoe";
+                description "PPPOE";
             }
             enum "ipv4" {
                 value 3;
-                description "ipv4";
+                description "IPV4";
             }
             enum "ipv6" {
                 value 4;
-                description "ipv6";
+                description "IPV6";
             }
             enum "ip" {
                 value 5;
-                description "ip";
+                description "IP";
             }
         }
-        description "mtu profile attachment type";
+        description "MTU profile attachment type";
     }
 
     typedef type-mtu-action {
@@ -62,7 +62,7 @@ submodule rtbrick-mtu {
                 description "Action redirect-to-cpu";
             }
         }
-        description "mtu profile action";
+        description "MTU profile action";
     }
 
     grouping mtu-profile-top {

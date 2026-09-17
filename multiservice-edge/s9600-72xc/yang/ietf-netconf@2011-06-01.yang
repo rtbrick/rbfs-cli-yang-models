@@ -527,6 +527,10 @@
               "URL-based config content.";
           }
         }
+        leaf skip-validation {
+          type int32;
+          description "Parameter to override skip-validation flag in case of configuration changes";
+        }
       }
     }
 

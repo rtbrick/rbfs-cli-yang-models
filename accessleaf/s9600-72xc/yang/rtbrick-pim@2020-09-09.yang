@@ -10,6 +10,10 @@ submodule rtbrick-pim {
         prefix "rtb-pim-types";
     }
 
+    import clixon-autocli {
+        prefix autocli;
+    }
+
     organization
       "Rtbrick";
 
@@ -272,6 +276,7 @@ submodule rtbrick-pim {
                 type uint32 {
                     range "10 .. 600";
                 }
+                default "60";
 
                 description "PIM join & prune interval";
                 reference '{
@@ -280,6 +285,19 @@ submodule rtbrick-pim {
                     }
                 }';
             }//leaf join-prune-interval
+
+            leaf max-join-prune-payload {
+                type uint32 {
+                    range "34 .. 9000";
+                }
+                autocli:hide;
+                description "PIM join & prune max payload size";
+                reference '{
+                    "attribute-getter" : {
+                        "attribute" : "max_join_prune_payload"
+                    }
+                }';
+            }//leaf max-join-prune-payload
 
             container sparse-mode {
                 description "Protocol PIM sparse mode";

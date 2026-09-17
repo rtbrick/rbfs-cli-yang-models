@@ -41,6 +41,7 @@ submodule rtbrick-lwip {
     grouping tcp-config {
         description "Grouping TCP configuration";
         container tcp {
+            presence tcp;
             description "TCP configuration";
             list authentication {
                 key "authentication-id";
@@ -53,6 +54,9 @@ submodule rtbrick-lwip {
                         "type" :  "tcp.auth_config_tbl"
                     }
                 }';
+                must "key1-plain-text or key1-encrypted-text" {
+                    error-message "Please provide plain text or encrypted text";
+                }
                 leaf authentication-id {
                     type string {
                         length "1..64";
@@ -101,7 +105,6 @@ submodule rtbrick-lwip {
                         }';
                 }
                 leaf key1-encrypted-text {
-                    mandatory true;
                     type rtb-types:secret-string-type;
                     description "Key1 in encrypted text for TCP AO for sending and receiving packets";
                     reference

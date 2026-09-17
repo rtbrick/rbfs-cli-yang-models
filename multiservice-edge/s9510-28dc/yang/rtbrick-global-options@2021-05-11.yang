@@ -4,6 +4,11 @@ submodule rtbrick-global-options {
     belongs-to rtbrick-config {
         prefix config;
     }
+
+
+    import rtbrick-isis-types {
+        prefix rtb-isis-types;
+    }
    
     /* The below 2 submodules are included only to pass
      * pyang validation. There is no need for submodules

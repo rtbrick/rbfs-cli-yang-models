@@ -11,7 +11,7 @@
 
     description
       "This module contains general data definitions for use in OSPF YANG
-    model.";
+    model";
 
     revision "2022-03-16" {
       description "Addition of OSPF types for rtbrick";
@@ -71,7 +71,7 @@
         type enumeration {
             enum "enable" {
                 value "1";
-                description "enable";
+                description "Enable";
             }
         }
         description "Data type for enable";

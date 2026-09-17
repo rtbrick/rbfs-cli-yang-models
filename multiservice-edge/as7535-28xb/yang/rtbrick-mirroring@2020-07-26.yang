@@ -55,7 +55,8 @@ submodule rtbrick-mirroring {
           pattern
               'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])'
               + '|ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])#([0-3])'
-              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])';
+              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])'
+              + '|lag-([0-9]|[1-9][0-9])';
 
       }
       description
@@ -66,8 +67,8 @@ submodule rtbrick-mirroring {
       type string {
           length "1..64";
           pattern
-              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])'
-              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-9][0-6])';
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|recycle-([0-9])/([0-9])/([0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)';
       }
       description
         "Mirror Logical Interface type, type supported are ifp and recycle";
@@ -100,6 +101,9 @@ submodule rtbrick-mirroring {
             }
             leaf acl {
                 type rtb-types:boolean-true;
+                must 'not (../interface) and not(../logical-interface)' {
+                    error-message "Mirror config failed as source IFP or source IFL cannot be configured with source acl";
+                }
                 description
                     "Configure source as acl.";
                 reference

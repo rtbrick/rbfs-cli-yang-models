@@ -22,7 +22,7 @@ submodule rtbrick-access-access-profile {
     contact
       "yang-support@rtbrick.com";
     description
-      "This sub-module defines the YANG structure for the access profile.";
+      "This sub-module defines the YANG structure for the access profile";
     revision 2020-07-25 {
         description "First revision";
         reference "None";
@@ -82,8 +82,8 @@ submodule rtbrick-access-access-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.profile.config",
-                    "type"    : "access_profile_config_table"
+                    "table-name": "global.access.profile.config",
+                    "type": "access_profile_config_table"
                 }
             }';
             leaf profile-name {
@@ -93,8 +93,8 @@ submodule rtbrick-access-access-profile {
                 description "Name of the access profile";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "access_profile_name"
+                    "attribute-getter": {
+                        "attribute": "access_profile_name"
                     }
                 }';
             }
@@ -103,13 +103,19 @@ submodule rtbrick-access-access-profile {
                     length "1..64";
                 }
                 description "Instance name";
+                must "current() = 'default' or not(../address-family/ipv4/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv4']/safi = 'unicast'" {
+                    error-message "access-profile with IPv4 enabled references instance without address-family IPv4 unicast";
+                }
+                must "current() = 'default' or not(../address-family/ipv6/enable = 'true') or ../../../instance[name=current()]/address-family[afi='ipv6']/safi = 'unicast'" {
+                    error-message "access-profile with IPv6 enabled references instance without address-family IPv6 unicast";
+                }
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "instance_name",
-                        "expansion-getter" : {
-                            "package":"subsMgmt",
-                            "method" :"access_instance_name_expander"
+                    "attribute-getter": {
+                        "attribute": "instance_name",
+                        "expansion-getter": {
+                            "package": "subsMgmt",
+                            "method": "access_instance_name_expander"
                         }
                     }
                 }';
@@ -121,8 +127,8 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -131,8 +137,8 @@ submodule rtbrick-access-access-profile {
                         description "Enable PPPoE";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "pppoe_enabled"
+                            "attribute-getter": {
+                                "attribute": "pppoe_enabled"
                             }
                         }';
                     }
@@ -141,8 +147,8 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "table-name" : "global.access.profile.config",
-                                "type"    : "access_profile_config_table",
+                                "table-name": "global.access.profile.config",
+                                "type": "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
                         }';
@@ -151,8 +157,8 @@ submodule rtbrick-access-access-profile {
                             description "Enable PPPoE session protection";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "pppoe_session_protection_enabled"
+                                "attribute-getter": {
+                                    "attribute": "pppoe_session_protection_enabled"
                                 }
                             }';
                         }
@@ -163,8 +169,8 @@ submodule rtbrick-access-access-profile {
                             description "Session protection minimum uptime in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "pppoe_session_protection_min_uptime"
+                                "attribute-getter": {
+                                    "attribute": "pppoe_session_protection_min_uptime"
                                 }
                             }';
                         }
@@ -175,8 +181,8 @@ submodule rtbrick-access-access-profile {
                             description "Session protection minimum lockout time in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "pppoe_session_protection_min_lockout"
+                                "attribute-getter": {
+                                    "attribute": "pppoe_session_protection_min_lockout"
                                 }
                             }';
                         }
@@ -187,8 +193,8 @@ submodule rtbrick-access-access-profile {
                             description "Session protection maximum lockout time in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "pppoe_session_protection_max_lockout"
+                                "attribute-getter": {
+                                    "attribute": "pppoe_session_protection_max_lockout"
                                 }
                             }';
                         }
@@ -200,8 +206,8 @@ submodule rtbrick-access-access-profile {
                         description "Maximum outstanding PPPoE sessions";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "pppoe_outstanding_limit"
+                            "attribute-getter": {
+                                "attribute": "pppoe_outstanding_limit"
                             }
                         }';
                     }
@@ -213,8 +219,8 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "table-name" : "global.access.profile.config",
-                                "type"    : "access_profile_config_table",
+                                "table-name": "global.access.profile.config",
+                                "type": "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
                         }';
@@ -223,8 +229,8 @@ submodule rtbrick-access-access-profile {
                             description "Authentication protocol";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_auth_protocol"
+                                "attribute-getter": {
+                                    "attribute": "lcp_auth_protocol"
                                 }
                             }';
                         }
@@ -233,8 +239,8 @@ submodule rtbrick-access-access-profile {
                             description "MRU negotiation";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_mru_negotiation"
+                                "attribute-getter": {
+                                    "attribute": "lcp_mru_negotiation"
                                 }
                             }';
                         }
@@ -245,8 +251,8 @@ submodule rtbrick-access-access-profile {
                             description "Maximum local MRU";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_mru"
+                                "attribute-getter": {
+                                    "attribute": "lcp_mru"
                                 }
                             }';
                         } 
@@ -257,8 +263,8 @@ submodule rtbrick-access-access-profile {
                             description "Maximum local MTU";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_mtu"
+                                "attribute-getter": {
+                                    "attribute": "lcp_mtu"
                                 }
                             }';
                         } 
@@ -267,8 +273,8 @@ submodule rtbrick-access-access-profile {
                             description "Loop detection";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_loop_detection"
+                                "attribute-getter": {
+                                    "attribute": "lcp_loop_detection"
                                 }
                             }';
                         } 
@@ -279,8 +285,8 @@ submodule rtbrick-access-access-profile {
                             description "Echo interval in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_echo_interval"
+                                "attribute-getter": {
+                                    "attribute": "lcp_echo_interval"
                                 }
                             }';
                         } 
@@ -291,8 +297,8 @@ submodule rtbrick-access-access-profile {
                             description "Echo maximum retries";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_echo_max_retransmit"
+                                "attribute-getter": {
+                                    "attribute": "lcp_echo_max_retransmit"
                                 }
                             }';
                         } 
@@ -301,8 +307,8 @@ submodule rtbrick-access-access-profile {
                             description "Enable echo requests";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_echo_enabled"
+                                "attribute-getter": {
+                                    "attribute": "lcp_echo_enabled"
                                 }
                             }';
                         } 
@@ -313,8 +319,8 @@ submodule rtbrick-access-access-profile {
                             description "Retransmit interval in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_retransmit_interval"
+                                "attribute-getter": {
+                                    "attribute": "lcp_retransmit_interval"
                                 }
                             }';
                         } 
@@ -325,8 +331,8 @@ submodule rtbrick-access-access-profile {
                             description "Maximum retries";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_retransmit_max"
+                                "attribute-getter": {
+                                    "attribute": "lcp_retransmit_max"
                                 }
                             }';
                         } 
@@ -337,8 +343,8 @@ submodule rtbrick-access-access-profile {
                             description "Max configure-reject/nak";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "lcp_config_nak_max"
+                                "attribute-getter": {
+                                    "attribute": "lcp_config_nak_max"
                                 }
                             }';
                         }
@@ -348,21 +354,24 @@ submodule rtbrick-access-access-profile {
                         reference
                         '{
                             "table-getter": {
-                                "table-name" : "global.access.profile.config",
-                                "type"    : "access_profile_config_table",
+                                "table-name": "global.access.profile.config",
+                                "type": "access_profile_config_table",
                                 "inherit-attribute": ["access_profile_name"]
                             }
                         }';
                         leaf enable {
                             type rtb-types:boolean-type;
                             description "Enable PPP IPCP";
+                            must "not(. = 'true') or ../../../../protocol/pppoe/enable = 'true'" {
+                                error-message "PPPoE must be enabled if IPCP is enabled";
+                            }
                             must "not(. = 'true') or ../../../../address-family/ipv4/enable = 'true'" {
                                 error-message "IPv4 must be enabled if IPCP is enabled";
                             }
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ipcp_enabled"
+                                "attribute-getter": {
+                                    "attribute": "ipcp_enabled"
                                 }
                             }';
                         }
@@ -371,8 +380,8 @@ submodule rtbrick-access-access-profile {
                             description "Passive mode";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ipcp_passive"
+                                "attribute-getter": {
+                                    "attribute": "ipcp_passive"
                                 }
                             }';
                         } 
@@ -383,8 +392,8 @@ submodule rtbrick-access-access-profile {
                             description "Retransmit interval in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ipcp_retransmit_interval"
+                                "attribute-getter": {
+                                    "attribute": "ipcp_retransmit_interval"
                                 }
                             }';
                         } 
@@ -395,8 +404,8 @@ submodule rtbrick-access-access-profile {
                             description "Maximum retries";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ipcp_retransmit_max"
+                                "attribute-getter": {
+                                    "attribute": "ipcp_retransmit_max"
                                 }
                             }';
                         } 
@@ -407,20 +416,17 @@ submodule rtbrick-access-access-profile {
                             description "Max configure-reject/nak";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ipcp_config_nak_max"
+                                "attribute-getter": {
+                                    "attribute": "ipcp_config_nak_max"
                                 }
                             }';
-                        }
-                        must "not(enable = 'true') or source-ifl" {
-                            error-message "source-ifl must be set when IPCP is enabled.";
                         }
                         leaf source-ifl {
                             type rtb-types:logical-interface-type;
                             description "Source IFL";
                             reference
                             '{
-                                "attribute-getter" : {
+                                "attribute-getter": {
                                     "attribute": "ipcp_source_ifl",
                                     "expansion-getter": {
                                         "package": "subsMgmt",
@@ -442,14 +448,17 @@ submodule rtbrick-access-access-profile {
                         }';
                         leaf enable {
                             type rtb-types:boolean-type;
+                            must "not(. = 'true') or ../../../../protocol/pppoe/enable = 'true'" {
+                                error-message "PPPoE must be enabled if IP6CP is enabled";
+                            }
                             must "not(. = 'true') or ../../../../address-family/ipv6/enable = 'true'" {
                                 error-message "IPv6 must be enabled if IP6CP is enabled";
                             }
                             description "Enable PPP IP6CP";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ip6cp_enabled"
+                                "attribute-getter": {
+                                    "attribute": "ip6cp_enabled"
                                 }
                             }';
                         }
@@ -458,8 +467,8 @@ submodule rtbrick-access-access-profile {
                             description "Passive mode";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ip6cp_passive"
+                                "attribute-getter": {
+                                    "attribute": "ip6cp_passive"
                                 }
                             }';
                         } 
@@ -470,8 +479,8 @@ submodule rtbrick-access-access-profile {
                             description "Retransmit interval in seconds";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ip6cp_retransmit_interval"
+                                "attribute-getter": {
+                                    "attribute": "ip6cp_retransmit_interval"
                                 }
                             }';
                         } 
@@ -482,8 +491,8 @@ submodule rtbrick-access-access-profile {
                             description "Maximum retries";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ip6cp_retransmit_max"
+                                "attribute-getter": {
+                                    "attribute": "ip6cp_retransmit_max"
                                 }
                             }';
                         } 
@@ -494,8 +503,8 @@ submodule rtbrick-access-access-profile {
                             description "Max configure-reject/nak";
                             reference
                             '{
-                                "attribute-getter" : {
-                                    "attribute" : "ip6cp_config_nak_max"
+                                "attribute-getter": {
+                                    "attribute": "ip6cp_config_nak_max"
                                 }
                             }';
                         } 
@@ -513,23 +522,26 @@ submodule rtbrick-access-access-profile {
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if RA is enabled";
+                        }
                         description "Enable IPv6 router-advertisement";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_ra_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv6_ra_enabled"
                             }
                         }';
                     } 
                     leaf interval {
                         type uint8 { 
-                            range "1..255";
+                            range "0..255";
                         }
                         description "Interval in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_ra_interval"
+                            "attribute-getter": {
+                                "attribute": "ipv6_ra_interval"
                             }
                         }';
                     } 
@@ -540,8 +552,8 @@ submodule rtbrick-access-access-profile {
                         description "Lifetime in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_ra_lifetime"
+                            "attribute-getter": {
+                                "attribute": "ipv6_ra_lifetime"
                             }
                         }';
                     } 
@@ -552,8 +564,20 @@ submodule rtbrick-access-access-profile {
                         description "Preferred lifetime in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_ra_preferred_lifetime"
+                            "attribute-getter": {
+                                "attribute": "ipv6_ra_preferred_lifetime"
+                            }
+                        }';
+                    }
+                    leaf router-lifetime {
+                        type uint16 { 
+                            range "0..9000";
+                        }
+                        description "Router lifetime in seconds";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_ra_router_lifetime"
                             }
                         }';
                     }
@@ -563,31 +587,50 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv4/enable = 'true'" {
+                            error-message "IPv4 must be enabled if DHCP is enabled";
+                        }
                         description "Enable DHCP";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dhcp_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_enabled"
                             }
                         }';
                     } 
                     leaf mode {
                         type dhcp-mode;
                         description "DHCP mode";
+                        must "(current() != 'relay') or (count(../dhcp-server) > 0)" {
+                            error-message "DHCP relay requires at least one server in access-profile";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dhcp_mode"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_mode"
                             }
                         }';
                     }
+                    leaf asymmetric {
+                        type rtb-types:boolean-type;
+                        must "(../mode = 'relay')" {
+                            error-message "DHCP asymmetric leases are supported in relay mode only";
+                        }
+                        description "Enable DHCP asymmetric lease time";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_asymmetric"
+                            }
+                        }';
+                    } 
                     leaf lease-time {
                         type uint32 { 
                             range "1..4294967295";
@@ -595,23 +638,59 @@ submodule rtbrick-access-access-profile {
                         description "DHCP lease time in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dhcp_lease_time"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_lease_time"
+                            }
+                        }';
+                    }
+                    leaf renewal-time {
+                        type uint32 { 
+                            range "1..4294967295";
+                        }
+                        must "not(../lease-time) or (. < ../lease-time)" {
+                            error-message "DHCP renewal-time must be < lease-time";
+                        }
+                        description "DHCP renewal time in seconds (T1)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_renewal_time"
+                            }
+                        }';
+                    }
+                    leaf rebind-time {
+                        type uint32 { 
+                            range "1..4294967295";
+                        }
+                        must "not(../lease-time) or (. < ../lease-time)" {
+                            error-message "DHCP rebind-time must be < lease-time";
+                        }                        
+                        must "not(../renewal-time) or (. > ../renewal-time)" {
+                            error-message "DHCP rebind-time must be > renewal-time";
+                        }
+                        description "DHCP rebind time in seconds (T2)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv4_dhcp_rebind_time"
                             }
                         }';
                     }
                     leaf-list dhcp-server {
                         type string {
-                            length "1 .. 64";
+                            length "1..64";
                         }
                         description "DHCP server";
+                        must '/access/dhcp-server[server-name = current()]' {
+                            error-message "DHCP server referenced in access-profile does not exist";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "dhcp_server_list",
-                                "expansion-getter" : {
-                                    "package":"subsMgmt",
-                                    "method" :"access_dhcp_server_name_expander"
+                            "attribute-getter": {
+                                "attribute": "dhcp_server_list",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_dhcp_server_name_expander"
                                 }
                             }
                         }';
@@ -622,40 +701,82 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
                     leaf enable {
                         type rtb-types:boolean-type;
+                        must "not(. = 'true') or ../../../address-family/ipv6/enable = 'true'" {
+                            error-message "IPv6 must be enabled if DHCPv6 is enabled";
+                        }
                         description "Enable DHCPv6";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dhcpv6_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_enabled"
                             }
                         }';
                     }
                     leaf mode {
                         type dhcp-mode;
                         description "DHCPv6 mode";
+                        must "(current() != 'relay') or (count(../dhcpv6-server) > 0)" {
+                            error-message "DHCPv6 relay requires at least one server in access-profile";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dhcpv6_mode"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_mode"
                             }
                         }';
                     }
+                    leaf rapid-commit {
+                        type rtb-types:boolean-type;
+                        description "DHCPv6 rapid-commit (enabled by default)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_rapid_commit"
+                            }
+                        }';
+                    }
+                    leaf wait-for-dhcpv4 {
+                        type rtb-types:boolean-type;
+                        description "Ignore DHCPv6 requests from clients without active DHCPv4 binding";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_wait_for_dhcpv4"
+                            }
+                        }';
+                    }
+                    leaf asymmetric {
+                        type rtb-types:boolean-type;
+                        must "(../mode = 'relay')" {
+                            error-message "DHCPv6 asymmetric leases are supported in relay mode only";
+                        }
+                        description "Enable DHCPv6 asymmetric lease time";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_asymmetric"
+                            }
+                        }';
+                    } 
                     leaf lifetime {
                         type uint32 {
                             range "30..4294967295";
                         }
+                        must "not(../preferred-lifetime) or not((. < ../preferred-lifetime))" {
+                            error-message "DHCPv6 lifetime must not < preferred-lifetime";
+                        }
                         description "Lifetime in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dhcpv6_lifetime"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_lifetime"
                             }
                         }';
                     } 
@@ -666,23 +787,59 @@ submodule rtbrick-access-access-profile {
                         description "Preferred lifetime in seconds";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dhcpv6_preferred_lifetime"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_preferred_lifetime"
+                            }
+                        }';
+                    }
+                    leaf renewal-time {
+                        type uint32 {
+                            range "0..4294967295";
+                        }
+                        must "not(../lifetime) or (. < ../lifetime)" {
+                            error-message "DHCPv6 renewal-time must be < lifetime";
+                        }
+                        description "DHCPv6 renewal time in seconds (T1)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_t1"
+                            }
+                        }';
+                    }
+                    leaf rebind-time  {
+                        type uint32 {
+                            range "0..4294967295";
+                        }
+                        must "not(../lifetime) or (. < ../lifetime)" {
+                            error-message "DHCPv6 rebind-time must be < lifetime";
+                        }
+                        must "not(../renewal-time) or (. >= ../renewal-time)" {
+                            error-message "DHCPv6 rebind-time must be >= renewal-time";
+                        }
+                        description "DHCPv6 rebind time in seconds (T2)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipv6_dhcpv6_t2"
                             }
                         }';
                     }
                     leaf-list dhcpv6-server {
                         type string {
-                            length "1 .. 64";
+                            length "1..64";
                         }
                         description "DHCPv6 server";
+                        must '/access/dhcpv6-server[server-name = current()]' {
+                            error-message "DHCPv6 server referenced in access-profile does not exist";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "dhcpv6_server_list",
-                                "expansion-getter" : {
-                                    "package":"subsMgmt",
-                                    "method" :"access_dhcpv6_server_name_expander"
+                            "attribute-getter": {
+                                "attribute": "dhcpv6_server_list",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_dhcpv6_server_name_expander"
                                 }
                             }
                         }';
@@ -693,8 +850,8 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type" : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -703,10 +860,13 @@ submodule rtbrick-access-access-profile {
                             length "1..64";
                         }
                         description "L2TP tunnel profile";
+                        must '/access/l2tp-profile[profile-name = current()]' {
+                            error-message "L2TP tunnel profile referenced in access-profile does not exist";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "l2tp_tunnel_profile_name"
+                            "attribute-getter": {
+                                "attribute": "l2tp_tunnel_profile_name"
                             }
                         }';
                     }
@@ -716,14 +876,18 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type" : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
                     leaf ip-mtu-profile {
-                        type leafref {
-                            path "../../../../../forwarding-options/mtu-profile/mtu-profile-name";
+                        type string {
+                            length "1..64";
+                        }
+
+                        must 'count(../../../../../forwarding-options/mtu-profile[mtu-profile-name = current()]) > 0' {
+                            error-message "IPoE MTU profile referenced in access-profile does not exist";
                         }
 
                         must '(../../../../../forwarding-options/mtu-profile[mtu-profile-name=current()]/type = "ip")' {
@@ -733,12 +897,48 @@ submodule rtbrick-access-access-profile {
                         description "Configure subscriber IP MTU profile";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipoe_mtu_profile_name",
-                                "expansion-getter" : {
-                                    "package":"subsMgmt",
-                                    "method" :"access_ip_mtu_profile_expander"
+                            "attribute-getter": {
+                                "attribute": "ipoe_mtu_profile_name",
+                                "expansion-getter": {
+                                    "package": "subsMgmt",
+                                    "method": "access_ip_mtu_profile_expander"
                                 }
+                            }
+                        }';
+                    }
+                    leaf username-suffix {
+                        type string {
+                            length "0..64";
+                        }
+                        description "IPoE username suffix (default @ipoe)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_username_suffix"
+                            }
+                        }';
+                    }
+                    leaf password-plain-text {
+                        type string {
+                            length "1..64";
+                        }
+                        description "IPoE password in plain text (default ipoe)";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_password",
+                                "plain-text-password": true,
+                                "secret-text-leaf-name": "password-encrypted-text"
+                            }
+                        }';
+                    }
+                    leaf password-encrypted-text {
+                        type rtb-types:secret-string-type;
+                        description "IPoE password in encrypted text";
+                        reference
+                        '{
+                            "attribute-getter": {
+                                "attribute": "ipoe_password"
                             }
                         }';
                     } 
@@ -751,8 +951,8 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -761,8 +961,8 @@ submodule rtbrick-access-access-profile {
                         description "Enable IPv4";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv4_enabled"
                             }
                         }';
                     } 
@@ -771,10 +971,16 @@ submodule rtbrick-access-access-profile {
                             length "1..64";
                         }
                         description "Local IPv4 pool name";
+                        must '/access/pool[pool-name = current()]' {
+                            error-message "IPv4 pool referenced in access-profile does not exist";
+                        }
+                        must '/access/pool[pool-name = current()]/ipv4-address' {
+                            error-message "IPv4 pool referenced in access-profile is missing IPv4 address configuration";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_address_pool_name",
+                            "attribute-getter": {
+                                "attribute": "ipv4_address_pool_name",
                                 "expansion-getter": {
                                     "package": "subsMgmt",
                                     "method": "access_ipv4_pool_name_expander"
@@ -787,8 +993,8 @@ submodule rtbrick-access-access-profile {
                         description "Static address";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "static_ipv4_address"
+                            "attribute-getter": {
+                                "attribute": "static_ipv4_address"
                             }
                         }';
                     } 
@@ -797,8 +1003,8 @@ submodule rtbrick-access-access-profile {
                         description "Primary DNS server";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dns_primary_address"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dns_primary_address"
                             }
                         }';
                     } 
@@ -807,18 +1013,19 @@ submodule rtbrick-access-access-profile {
                         description "Secondary DNS server";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dns_secondary_address"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dns_secondary_address"
                             }
                         }';
                     }
                     leaf dad-enable {
                         type rtb-types:boolean-type;
+                        autocli:hide;
                         description "Enable/disable IPv4 duplicate address detection (enabled by default)";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv4_dad_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv4_dad_enabled"
                             }
                         }';
                     }
@@ -828,8 +1035,8 @@ submodule rtbrick-access-access-profile {
                         description "Enable Proxy ARP";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "proxy_arp_enabled"
+                            "attribute-getter": {
+                                "attribute": "proxy_arp_enabled"
                             }
                         }';
                     }
@@ -838,8 +1045,8 @@ submodule rtbrick-access-access-profile {
                         description "Enable Proxy ARP mode";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "proxy_arp_mode"
+                            "attribute-getter": {
+                                "attribute": "proxy_arp_mode"
                             }
                         }';
                     }
@@ -849,8 +1056,8 @@ submodule rtbrick-access-access-profile {
                     reference
                     '{
                         "table-getter": {
-                            "table-name" : "global.access.profile.config",
-                            "type"    : "access_profile_config_table",
+                            "table-name": "global.access.profile.config",
+                            "type": "access_profile_config_table",
                             "inherit-attribute": ["access_profile_name"]
                         }
                     }';
@@ -859,8 +1066,8 @@ submodule rtbrick-access-access-profile {
                         description "Enable IPv6";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv6_enabled"
                             }
                         }';
                     } 
@@ -869,10 +1076,16 @@ submodule rtbrick-access-access-profile {
                             length "1..64";
                         }
                         description "Local IPv6 pool name";
+                        must '/access/pool[pool-name = current()]' {
+                            error-message "IPv6 pool referenced in access-profile does not exist";
+                        }
+                        must '/access/pool[pool-name = current()]/ipv6-prefix' {
+                            error-message "IPv6 pool referenced in access-profile is missing IPv6 prefix configuration";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_prefix_pool_name",
+                            "attribute-getter": {
+                                "attribute": "ipv6_prefix_pool_name",
                                 "expansion-getter": {
                                     "package": "subsMgmt",
                                     "method": "access_ipv6_pool_name_expander"
@@ -885,10 +1098,16 @@ submodule rtbrick-access-access-profile {
                             length "1..64";
                         }
                         description "Local IPv6 pool name";
+                        must '/access/pool[pool-name = current()]' {
+                            error-message "IPv6 prefix-delegation pool referenced in access-profile does not exist";
+                        }
+                        must '/access/pool[pool-name = current()]/ipv6-prefix' {
+                            error-message "IPv6 prefix-delegation pool referenced in access-profile is missing IPv6 prefix configuration";
+                        }
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_prefix_delegation_pool_name",
+                            "attribute-getter": {
+                                "attribute": "ipv6_prefix_delegation_pool_name",
                                 "expansion-getter": {
                                     "package": "subsMgmt",
                                     "method": "access_ipv6_pool_name_expander"
@@ -901,8 +1120,8 @@ submodule rtbrick-access-access-profile {
                         description "Primary DNS server";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dns_primary_address"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dns_primary_address"
                             }
                         }';
                     } 
@@ -911,18 +1130,19 @@ submodule rtbrick-access-access-profile {
                         description "Secondary DNS server";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dns_secondary_address"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dns_secondary_address"
                             }
                         }';
                     }
                     leaf dad-enable {
                         type rtb-types:boolean-type;
+                        autocli:hide;
                         description "Enable/disable IPv6 duplicate address detection (enabled by default)";
                         reference
                         '{
-                            "attribute-getter" : {
-                                "attribute" : "ipv6_dad_enabled"
+                            "attribute-getter": {
+                                "attribute": "ipv6_dad_enabled"
                             }
                         }';
                     }

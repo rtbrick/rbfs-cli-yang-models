@@ -12,7 +12,7 @@ submodule rtbrick-statistics {
       "yang-support@rtbrick.com";
 
     description
-      "This module describes the YANG model for the statistics configuration.";
+      "This module describes the YANG model for the statistics configuration";
 
     revision 2020-11-24 {
         description
@@ -25,30 +25,30 @@ submodule rtbrick-statistics {
         type enumeration {
             enum "vpp-node-counters" {
                 value 0;
-                description "node counters";
+                description "Node counters";
             }
             enum "ifp-counters" {
                 value 1;
-                description "ifp counters";
+                description "IFP counters";
             }
             enum "ifl-counters" {
                 value 2;
-                description "ifl counters";
+                description "IFL counters";
             }
             enum "qos-queue-counters" {
                 value 4;
-                description "queue counters";
+                description "Queue counters";
             }
             enum "acl-counters" {
                 value 6;
-                description "acl counters";
+                description "ACL counters";
             }
             enum "lag-counters" {
                 value 9;
-                description "lag counters";
+                description "LAG counters";
             }
         }
-        description "statistics data type";
+        description "Statistics data type";
     }
 
     grouping statistics-top {
@@ -77,22 +77,6 @@ submodule rtbrick-statistics {
                     '{
                         "attribute-getter" : {
                             "attribute" : "stats_type"
-                        }
-                    }';
-                }
-                leaf diff-counter {
-                    type enumeration {
-                        enum "enable" {
-                            value 1;
-                            description "enable";
-                        }
-                    }
-                    description
-                        "Configure statistics diff and rate counters";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "diff_counter_status"
                         }
                     }';
                 }
