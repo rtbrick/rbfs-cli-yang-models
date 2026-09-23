@@ -813,10 +813,10 @@ submodule rtbrick-ldp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -886,10 +886,10 @@ submodule rtbrick-ldp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {

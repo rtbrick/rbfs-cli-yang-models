@@ -14,6 +14,7 @@ submodule rtbrick-isis {
 
     // include rtbrick-inband;
     include rtbrick-policy;
+    include rtbrick-global-options;
     include rtbrick-oam;
 
     organization
@@ -892,6 +893,9 @@ submodule rtbrick-isis {
                 }
                 description
                     "ISIS flood filter name";
+                must "../../../../../global/protocol/isis/flood-filter[filter-name = current()]" {
+                    error-message "Flood-filter configured or not found";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -1220,89 +1224,6 @@ submodule rtbrick-isis {
             description "ISIS authentication configuration";
             uses isis-level1-authentication;
             uses isis-level2-authentication;
-        }
-    }
-
-
-    grouping isis-global-top  {
-        description "ISIS configuration";
-        container isis {
-            description "Global flood-filter configuration";
-            list flood-filter{
-                key "filter-name ordinal";
-                description "Global flood-filter configuration";
-                reference
-                '{
-                    "table-getter": {
-                        "table-name": "global.isis.flood-filter.config",
-                        "type" :  "isis.flood.filter.table"
-                    }
-                }';
-                leaf filter-name {
-                    type string {
-                        length "1..64";
-                    }
-                    description "Name of the filter";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "flood_filter_name"
-                        }
-                    }';
-                }
-                leaf ordinal {
-                    type uint8;
-                    description "Ordinal number";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "ordinal"
-                        }
-                    }';
-                }
-                leaf ordinal-name {
-                    type string {
-                        length "1..64";
-                    }
-                    description "Name of the ordinal";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "ordinal_name"
-                        }
-                    }';
-                }
-                leaf system-id {
-                    type rtb-isis-types:system-id;
-                    description "IS-IS instance system-id";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "match_sysid"
-                        }
-                    }';
-                }
-                leaf system-id-mask {
-                    type rtb-isis-types:system-id;
-                    description "System ID mask on which the filter should match";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "match_sysid_mask"
-                        }
-                    }';
-                }
-                leaf action {
-                    type rtb-isis-types:flood-filter-action;
-                    description "The flooding filter action";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "action"
-                        }
-                    }';
-                }
-            }
         }
     }
 

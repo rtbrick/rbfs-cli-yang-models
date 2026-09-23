@@ -17,4 +17,22 @@ module rtbrick-isis-types {
         description "Dummy isis types yang file";
         reference "None";
     }
+
+    typedef system-id {
+      type string {
+        length "1..64";
+      }
+    }
+
+    typedef flood-filter-action {
+        type enumeration {
+            enum block {
+                description "Block the LSPs";
+            }
+            enum flood {
+                value "2";
+                description "Flood the LSPs";
+            }
+        }
+    }
 }

@@ -86,10 +86,6 @@ submodule rtbrick-isis {
         }
     }
 
-    grouping isis-global-top  {
-        description "Dummy global isis top level config";
-    }
-
     grouping isis-top {
         container isis {
             status obsolete;

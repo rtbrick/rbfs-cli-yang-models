@@ -4,10 +4,17 @@ submodule rtbrick-global-options {
     belongs-to rtbrick-config {
         prefix config;
     }
-
+    
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
 
     import rtbrick-isis-types {
         prefix rtb-isis-types;
+    }
+
+    import clixon-autocli{
+        prefix autocli;
     }
    
     /* The below 2 submodules are included only to pass
@@ -15,10 +22,9 @@ submodule rtbrick-global-options {
      * to include other submodules in yang 1.1.
      * https://github.com/mbj4668/pyang/issues/323
      */
-    include rtbrick-isis;
+    
     include rtbrick-bgp;
     include rtbrick-bfd;
-    include rtbrick-interface;
     include rtbrick-neighbor;
 
     organization
@@ -34,6 +40,168 @@ submodule rtbrick-global-options {
             "Initial global-options configuration";
 
         reference "None";
+    }
+    typedef type-global-holddown-mode {
+        type enumeration {
+            enum "disable" {
+                value 0;
+                description "Holddown disable";
+            }
+            enum "enable" {
+                value 1;
+                description "Holddown enable";
+            }
+        }
+        description "IFP holddown mode";
+    }
+    grouping isis-global-top  {
+        description "ISIS configuration";
+        container isis {
+            description "Global flood-filter configuration";
+            list flood-filter{
+                key "filter-name ordinal";
+                description "Global flood-filter configuration";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.isis.flood-filter.config",
+                        "type" :  "isis.flood.filter.table"
+                    }
+                }';
+                leaf filter-name {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Name of the filter";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "flood_filter_name"
+                        }
+                    }';
+                }
+                leaf ordinal {
+                    type uint8;
+                    description "Ordinal number";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ordinal"
+                        }
+                    }';
+                }
+                leaf ordinal-name {
+                    type string {
+                        length "1..64";
+                    }
+                    description "Name of the ordinal";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "ordinal_name"
+                        }
+                    }';
+                }
+                leaf system-id {
+                    type rtb-isis-types:system-id;
+                    description "IS-IS instance system-id";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_sysid"
+                        }
+                    }';
+                }
+                leaf system-id-mask {
+                    type rtb-isis-types:system-id;
+                    description "System ID mask on which the filter should match";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "match_sysid_mask"
+                        }
+                    }';
+                }
+                leaf action {
+                    type rtb-isis-types:flood-filter-action;
+                    description "The flooding filter action";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "action"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+
+    grouping global-interface-top {
+        description
+            "Configuration related to global interface";
+        container interface {
+	        presence interface;
+            description
+                "Configuration related to global interface";
+            container all {
+	            presence all;
+                description
+                    "Configure interface disable all feature";
+                reference
+                '{
+                    "table-getter": {
+                        "table-name": "global.ifmd.config",
+                        "type" :  "global_ifmd_config_table",
+                        "default-attribute" : [ { "global_interface_all" : "global-interface-all" } ]
+                    }
+                }';
+                leaf admin-status {
+                    type enumeration {
+                        enum "down" {
+                            value 0;
+                            description
+                                "Brings down interface";
+                        }
+                        enum "up" {
+                            value 1;
+                            description
+                                "Brings up interface";
+                        }
+                    }
+                    description
+                        "Configure state of the interface";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "status"
+                        }
+                    }';
+                }
+                leaf holddown {
+                    type type-global-holddown-mode;
+                    description
+                        "Configure to disable holddown machinery on all the interfaces";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "holddown"
+                        }
+                    }';
+                }
+                leaf auto-reset-disable {
+                    autocli:hide;
+                    type rtb-types:boolean-true;
+                    description
+                        "Enable automatic interface up retries";
+                    reference
+                    '{
+                        "attribute-getter": {
+                            "attribute": "global_auto_reset_disable"
+                        }
+                    }';
+                }
+            }
+        }
     }
 
     grouping global-top {

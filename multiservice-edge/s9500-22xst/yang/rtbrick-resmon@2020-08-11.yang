@@ -100,5 +100,34 @@ submodule rtbrick-resmon {
             }
         }
     }
+    grouping transceiver-top {
+            container transceiver {
+                description "Transceiver configuration";
+                container interface {
+                    description "Global transceiver interface configuration";
+                    reference
+                        '{
+                            "table-getter": {
+                                "table-name": "global.resmon.transceiver.config",
+                                "type": "resmon_transceiver_config_table",
+                                "default-attribute": [{"id": "transceiver monitoring"} ]
+                            }
+                        }';
+
+                    leaf poll-interval {
+                        type uint32 {
+                            range "2..86400";
+                        }
+                        description "Polling interval in seconds. Valid range: 2 to 86400 seconds (1 day)";
+                        reference
+                            '{
+                                "attribute-getter": {
+                                    "attribute": "poll_interval"
+                                }
+                            }';
+                    }
+                }
+            }
+        }
     uses rtb-resmon-top;
 }

@@ -16,6 +16,7 @@ submodule rtbrick-ospf {
 
     include rtbrick-policy;
     include rtbrick-oam;
+    include rtbrick-authentication;
 
     organization "RtBrick";
 
@@ -638,6 +639,9 @@ submodule rtbrick-ospf {
                 }
                 description
                     "Authentication profile attachment";
+                must "../../../../../../../../../authentication-profile[name = current()] and ../../../../../../../../../authentication-profile[name = current()]/key/type != 'clear-text' and ../../../../../../../../../authentication-profile[name = current()]/key/type != 'md5'" {
+                    error-message "Authentication profile not supported";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -785,6 +789,9 @@ submodule rtbrick-ospf {
                 }
                 description
                     "Authentication profile attachment";
+                must "../../../../../../../../authentication-profile[name = current()]" {
+                    error-message "Authentication-Profile configured or not found";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -890,6 +897,9 @@ submodule rtbrick-ospf {
                 }
                 description
                     "Authentication profile attachment";
+                must "../../../../../../../authentication-profile[name = current()]" {
+                    error-message "Authentication-Profile configured or not found";
+                }
                 reference
                 '{
                     "attribute-getter" : {
@@ -976,6 +986,9 @@ submodule rtbrick-ospf {
                 }
                 description
                     "Authentication profile attachment";
+                must "../../../../../../../../authentication-profile[name = current()] and ../../../../../../../../authentication-profile[name = current()]/key/type != 'clear-text' and ../../../../../../../../authentication-profile[name = current()]/key/type != 'md5'" {
+                    error-message "Authentication profile not supported";
+                }
                 reference
                 '{
                     "attribute-getter" : {

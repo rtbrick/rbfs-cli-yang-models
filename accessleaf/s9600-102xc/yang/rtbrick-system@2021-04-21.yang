@@ -19,6 +19,7 @@ submodule rtbrick-system {
 
 
     include rtbrick-platform-profile;
+    include rtbrick-resmon;
 
     organization
       "Rtbrick";
@@ -1189,6 +1190,7 @@ submodule rtbrick-system {
             uses ptp-top;
             uses lum-top;
             uses platform-profile-top;
+            uses transceiver-top;
             container platform-management {
                 description "Platform management configuration";
                 container ipmi {

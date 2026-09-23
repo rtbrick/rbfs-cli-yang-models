@@ -1885,62 +1885,6 @@ submodule rtbrick-interface {
         }  // list interface
     }  // grouping interface-top
 
-    grouping global-interface-top {
-        description
-            "Configuration related to global interface";
-        container interface {
-	        presence interface;
-            description
-                "Configuration related to global interface";
-            container all {
-	            presence all;
-                description
-                    "Configure interface disable all feature";
-                reference
-                '{
-                    "table-getter": {
-                        "table-name": "global.ifmd.config",
-                        "type" :  "global_ifmd_config_table",
-                        "default-attribute" : [ { "global_interface_all" : "global-interface-all" } ]
-                    }
-                }';
-                leaf admin-status {
-                    type enumeration {
-                        enum "down" {
-                            value 0;
-                            description
-                                "Brings down interface";
-                        }
-                        enum "up" {
-                            value 1;
-                            description
-                                "Brings up interface";
-                        }
-                    }
-                    description
-                        "Configure state of the interface";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "status"
-                        }
-                    }';
-                }
-                leaf holddown {
-                    type type-holddown-mode;
-                    description
-                        "Configure to disable holddown machinery on all the interfaces";
-                    reference
-                    '{
-                        "attribute-getter" : {
-                            "attribute" : "holddown"
-                        }
-                    }';
-                }
-            }
-        }
-    }
-
     grouping subinterface-set-top {
         description
         "Subinterface data for logical interfaces associated with a
