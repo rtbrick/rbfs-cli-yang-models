@@ -49,35 +49,35 @@ submodule rtbrick-logging {
         type enumeration {
             enum emergency {
                 value "0";
-                description "emergency";
+                description "Log level emergency";
             }
             enum alert {
                 value "1";
-                description "alert";
+                description "Log level alert";
             }
             enum critical {
                 value 2;
-                description "critical";
+                description "Log level critical";
             }
             enum error {
                 value 3;
-                description "error";
+                description "Log level error";
             }
             enum warning {
                 value "4";
-                description "warning";
+                description "Log level warning";
             }
             enum notice {
                 value "5";
-                description "notice";
+                description "Log level notice";
             }
             enum info {
                 value "6";
-                description "info";
+                description "Log level info";
             }
             enum debug {
                 value "7";
-                description "debug";
+                description "Log level debug";
             }
         }
         description "Rsyslog Log level";

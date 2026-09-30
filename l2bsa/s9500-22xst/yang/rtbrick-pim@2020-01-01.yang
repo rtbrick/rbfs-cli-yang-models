@@ -20,6 +20,6 @@ submodule rtbrick-pim {
     }
 
     grouping pim-top {
-        description "This grouping define dummy top-level PIM model data.";
+        description "This grouping define dummy top-level PIM model data";
     }//grouping pim-top
 }

@@ -68,20 +68,28 @@ module rtbrick-config {
     include rtbrick-oam;
 
     import ietf-yang-types { prefix yang; }
-    
+    import rtbrick-types { prefix rtb-types; }
+    import rtbrick-qos-types { prefix rtb-qos-types; }
+    import ietf-inet-types { prefix inet; }
+    import rtbrick-isis-types { prefix rtb-isis-types; }
+    import rtbrick-bgp-types { prefix rtb-bgp-types; }
+    import rtbrick-ldp-types { prefix rtb-ldp-types; }
+    import rtbrick-ospf-types { prefix rtb-ospf-types; }
+    import rtbrick-pim-types { prefix rtb-pim-types; }
+
     organization
       "Rtbrick";
     contact
       "yang-support@rtbrick.com";
     description
       "This is the Rtbrick main YANG module file.
-      All the other YANG files will be registered as submodules to this file.";
+      All the other YANG files will be registered as submodules to this file";
 
     revision 2020-05-16 {
         description
           "This is the first revision of the Rtbrick YANG file.
           It defines the root module of the Rtbrick configuration,
-          applications need to add their submodule here with an include statement.";
+          applications need to add their submodule here with an include statement";
         reference "None";
     }
 
@@ -89,7 +97,7 @@ module rtbrick-config {
 	    description
 		"The <rollback> operation loads a configuration that
 		is backwards n steps specified by a rollback-id or
-		commit-id.";
+		commit-id";
 
 	    input {
 		choice get_commit_path {
@@ -168,6 +176,41 @@ module rtbrick-config {
                 description
                     "String containing the executed command";
             }
+            leaf cli_logname {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the authenticated user";
+            }
+            leaf source_ip {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the source ip of the user";
+            }
+            leaf session_type {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the session type";
+            }
+            leaf action_type {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the action type";
+            }
+            leaf ssh_session {
+                type string {
+                    length "0..16384";
+                }
+                description
+                    "String contains the ssh session id";
+            }
         }
     }
 
@@ -224,6 +267,48 @@ module rtbrick-config {
                 type yang:date-and-time;
                 description
                     "Timestamp of the last successful commit";
+            }
+        }
+    }
+
+    rpc get_cli_history {
+        description "RPC to fetch the current user history to load it in CLI";
+        input {
+            leaf user-name {
+                mandatory true;
+                type string {
+                    length "0..255";
+                }
+                description "User whose history needs to be fetched";
+            }
+            leaf history-count {
+                type int16;
+                description "Count of the latest history commands to be fetched";
+            }
+        }
+        output {
+            leaf file-name {
+                type string {
+                    length "0..255";
+                }
+                description "File name where the current history is loaded";
+            }
+            leaf-list history {
+                type string {
+                    length "0..1024";
+                }
+                description "List of history commands to load";
+            }
+        }
+    }
+
+    rpc get_candidate_diff_status {
+        description "RPC to check if candidate db contains diff";
+
+        output {
+            leaf diff-exists {
+                type int32;
+                description "Denotes if there is a diff between candidate and running db";
             }
         }
     }

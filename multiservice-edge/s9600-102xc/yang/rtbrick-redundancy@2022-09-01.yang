@@ -180,7 +180,7 @@ submodule rtbrick-redundancy{
                 type uint32 {
                     range "1..30";
                 }
-                description "Keepalive message transmission interval in seconds. Default is 3";
+                description "Keepalive message transmission interval in seconds. Default is 5";
 
                 reference
                     '{

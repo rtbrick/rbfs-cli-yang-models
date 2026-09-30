@@ -44,8 +44,8 @@ submodule rtbrick-access-user-profile {
             reference
             '{
                 "table-getter": {
-                    "table-name" : "global.access.user.profile.config",
-                    "type"    : "user_profile_config_table"
+                    "table-name": "global.access.user.profile.config",
+                    "type": "user_profile_config_table"
                 }
             }';                                                      
             leaf user-name {
@@ -55,8 +55,8 @@ submodule rtbrick-access-user-profile {
                 description "Username";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "user_name"
+                    "attribute-getter": {
+                        "attribute": "user_name"
                     }
                 }';
             }
@@ -67,10 +67,10 @@ submodule rtbrick-access-user-profile {
                 description "Secret/password in plain text";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "password",
+                    "attribute-getter": {
+                        "attribute": "password",
                         "plain-text-password" : true,
-			            "secret-text-leaf-name" : "password-encrypted-text"
+			            "secret-text-leaf-name": "password-encrypted-text"
                     }
                 }';
             }
@@ -79,8 +79,8 @@ submodule rtbrick-access-user-profile {
                 description "Secret/password in encrypted text";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "password"
+                    "attribute-getter": {
+                        "attribute": "password"
                     }
                }';
             }
@@ -89,8 +89,8 @@ submodule rtbrick-access-user-profile {
                 description "Tunnel type";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "tunnel_type"
+                    "attribute-getter": {
+                        "attribute": "tunnel_type"
                     }
                 }';
             } 
@@ -101,8 +101,8 @@ submodule rtbrick-access-user-profile {
                 description "L2TP pool name";
                 reference
                 '{
-                    "attribute-getter" : {
-                        "attribute" : "l2tp_pool_name"
+                    "attribute-getter": {
+                        "attribute": "l2tp_pool_name"
                     }
                 }';
             }

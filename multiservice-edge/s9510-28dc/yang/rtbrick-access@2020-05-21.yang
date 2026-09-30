@@ -40,7 +40,7 @@ submodule rtbrick-access {
               "table-getter": {
                   "table-name": "global.access.config",
                   "type": "access_global_config_table",
-                  "default-attribute" : [ { "mode" : "global" } ]
+                  "default-attribute" : [ { "mode": "global" } ]
               }
           }';
           leaf chassis-id {
@@ -50,12 +50,23 @@ submodule rtbrick-access {
               description "Chassis ID for this node";
               reference
               '{
-                  "attribute-getter" : {
-                      "attribute" : "chassis_id"
+                  "attribute-getter": {
+                      "attribute": "chassis_id"
                   }
               }';
           }
-
+          leaf terminate-history-timeout {
+              type uint16 { 
+                range "0..720";
+              }
+              description "Terminate history timeout in hours";
+              reference
+              '{
+                  "attribute-getter": {
+                      "attribute": "terminate_history_timeout"
+                  }
+              }';
+          }
           uses access-aaa-profile;
           uses access-aaa-radius-profile;
           uses access-aaa-radius-server;
