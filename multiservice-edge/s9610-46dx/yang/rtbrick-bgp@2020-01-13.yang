@@ -57,7 +57,7 @@ submodule rtbrick-bgp {
                 length "1..64";
             }
             must "count(../policy) <= 10"{
-                error-message "Maximum of 10 polices are supported in a policy chain";
+                error-message "Maximum of 10 policies are supported in a policy chain";
             }
             ordered-by user;
             description "Chain of policies";
@@ -1140,7 +1140,7 @@ submodule rtbrick-bgp {
             leaf-list import {
                 type rtb-types:policy-name-type;
                 must "count(../import) <= 10"{
-                    error-message "Maximum of 10 polices are supported in a policy chain";
+                    error-message "Maximum of 10 policies are supported in a policy chain";
                 }
                 ordered-by user;
                 description "Import policy name (max 64 characters)";
@@ -1161,7 +1161,7 @@ submodule rtbrick-bgp {
             leaf-list export {
                 type rtb-types:policy-name-type;
                 must "count(../export) <= 10"{
-                    error-message "Maximum of 10 polices are supported in a policy chain";
+                    error-message "Maximum of 10 policies are supported in a policy chain";
                 }
                 ordered-by user;
                 description "Export policy name (max 64 characters)";
