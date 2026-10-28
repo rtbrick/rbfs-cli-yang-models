@@ -101,14 +101,6 @@ submodule rtbrick-link-aggregation {
 
         container link-aggregation {
             description "Link aggregation configuration";
-            reference
-            '{
-                "table-getter": {
-                    "table-name" : "global.lag.config",
-                    "type"    : "lag_global_config_table",
-                    "default-attribute" : [ { "mode" : "global" } ]
-                }
-            }';
 
             list interface {
                 key "interface-name";
@@ -131,7 +123,7 @@ submodule rtbrick-link-aggregation {
                     }';
                 }
                leaf description {
-                    type rtb-types:string128;
+                    type rtb-types:string1024;
                     description "Link aggregation interface description";
                     reference
                     '{
@@ -159,6 +151,17 @@ submodule rtbrick-link-aggregation {
                     '{
                         "attribute-getter" : {
                             "attribute" : "minimum_link_count"
+                        }
+                    }';
+                }
+
+                leaf member-follow-lag-admin-state {
+                    type rtb-types:boolean-false;
+                    description "Whether to make member admin down when LAG admin down is configured";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                        "attribute" : "member_follow_lag_admin_state"
                         }
                     }';
                 }
@@ -227,6 +230,12 @@ submodule rtbrick-link-aggregation {
                         must 'count(../../../../link-aggregation/interface/member-interface[member-interface-name=current()]) = 1' {
                                 error-message "Member interface name has to be unique across all lags";
                         }
+                        must 'count(../../../../forwarding-options/mirror/source[interface = current()])=0' {
+                            error-message "Mirror configurations are restricted on lag member interfaces";
+                        }
+                        must 'count(../../../../interface[name=current()]/breakout/map) = 0' {
+                            error-message "Lag member interface cannot have breakout mode configured";
+                        }
                         reference
                         '{
                             "attribute-getter" : {
@@ -238,8 +247,7 @@ submodule rtbrick-link-aggregation {
                             }
                         }';
                     }
-                    leaf lacp-mode
-                    {
+                    leaf lacp-mode {
                         type lacp-mode;
                         description "Indicates member-interface is active or passive. [Default value: active]";
                         reference
@@ -249,8 +257,8 @@ submodule rtbrick-link-aggregation {
                             }
                         }';
                     }
-                    leaf lacp-timeout
-                    {
+
+                    leaf lacp-timeout {
                         type lacp-timeout;
                         description "The timeout type (short or long) used by the member-interface. [Default value: short]";
                         reference
@@ -265,7 +273,7 @@ submodule rtbrick-link-aggregation {
                         type uint16 {
                             range "1..65535";
                         }
-                        description "The value for the port priority range. The lower the value, the higher the port priority. [Default value: 255]";
+                        description "The value for the port priority range. The lower the value, the higher the port priority. [Default value: 32768]";
                         reference
                         '{
                             "attribute-getter" : {
@@ -273,10 +281,8 @@ submodule rtbrick-link-aggregation {
                             }
                         }';
                     }
-
                 }
             }
-
         }
     }
     uses link-aggregation-top;

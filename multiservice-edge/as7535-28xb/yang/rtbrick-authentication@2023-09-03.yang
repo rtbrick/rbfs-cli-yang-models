@@ -91,6 +91,7 @@ submodule rtbrick-authentication {
                         "attribute" : "type"
                     }
                  }';
+                mandatory true;
             }
             leaf plain-text {
                 type string {
@@ -156,6 +157,9 @@ submodule rtbrick-authentication {
                         "attribute" : "preferred"
                     }
                  }';
+            }
+            must "key" {
+                error-message "Key must be configured for the authentication profile";
             }
             uses authentication-key;
         }

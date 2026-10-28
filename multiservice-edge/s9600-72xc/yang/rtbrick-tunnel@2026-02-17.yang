@@ -1,0 +1,223 @@
+submodule rtbrick-tunnel {
+    yang-version 1.1;
+
+    belongs-to rtbrick-config {
+       prefix config;
+    }
+
+    import ietf-inet-types {
+        prefix inet;
+    }
+
+    import rtbrick-types {
+        prefix "rtb-types";
+    }
+
+    include rtbrick-static;
+
+    organization
+      "Rtbrick";
+    contact
+      "yang-support@rtbrick.com";
+    description
+      "This is the type file containing the common tunnel configurations across rtbrick.
+      Shall be included in other yang files and used in appropriate places";
+
+    revision 2026-02-17 {
+        description
+          "This is the first revision of rtbrick yang file";
+        reference "None";
+    }
+
+    typedef destination-port {
+        type enumeration {
+            enum 8472 {
+                value "8472";
+                description "UDP Destination port 8472";
+            }
+            enum 4789 {
+                value "4789";
+                description "UDP Destination port 4789";
+            }
+        }
+        description "Fragmentation state";
+    }
+
+    grouping tunnel-top {
+        description
+            "Configuring top level tunnel";
+        container tunnel {
+            presence tunnel;
+            description
+                "Top level for all types of tunnel";
+            container global {
+                description
+                    "Global tunnel configuration";
+                container vxlan {
+                    description
+                        "Global VXLAN configuration";
+                    reference
+                        '{
+                            "table-getter": {
+                                "table-name": "global.tunnel.vxlan.global.config",
+                                "type"   : "vxlan_tunnel_global_config_table",
+                                "default-attribute" : [{"index" : "1"}, {"tunnel_type" : "3"}]
+                            }
+                        }';
+                        leaf destination-port {
+                            description
+                                "VXLAN destination port number";
+                            type destination-port;
+                            reference
+                                '{
+                                    "attribute-getter" : {
+                                        "attribute" : "vxlan_destination_port"
+                                    }
+                                }';
+                        }
+                }
+            }
+
+            list vxlan {
+                key "name";
+                unique "vnid";
+                unique "ipv4/destination-ip";
+                description
+                    "Configure VXLAN options for this tunnel";
+                reference
+                    '{
+                        "table-getter": {
+                            "table-name": "global.tunnel.vxlan.config",
+                            "type"   : "vxlan_tunnel_config_table"
+                        }
+                    }';
+
+                must "./vnid and ./lookup-instance and ./lookup-safi and ./lookup-afi" {
+                    error-message "Please configure mandatory configurations";
+                }
+
+                leaf name {
+                    description
+                        "Unique name for the tunnel";
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "name"
+                            }
+                        }';
+                    type rtb-types:vxlan-tunnel-name;
+                }
+
+                leaf vnid {
+                    description
+                        "24 bit unique VXLAN identifier";
+                    type uint32 {
+                        range "1 .. 16777214";
+                    }
+                    reference
+                        '{
+                            "attribute-getter" : {
+                                "attribute" : "vnid"
+                            }
+                        }';
+                }
+
+                container ipv4 {
+                    description
+                        "VXLAN ipv4 configuration";
+                    reference
+                        '{
+                            "table-getter": {
+                                "table-name": "global.tunnel.vxlan.config",
+                                "type"   : "vxlan_tunnel_config_table",
+                                "inherit-attribute": [ "name" ]
+                            }
+                        }';
+
+                    must "../lookup-instance and ../lookup-afi and ../lookup-safi" {
+                        error-message  "Lookup afi, safi and instance is mandatory for source/destination";
+                    }
+
+                    leaf source-ip {
+                        must "(../destination-ip)" {
+                            error-message  "Please configure both source and destination IP";
+                        }
+                        type inet:ipv4-address;
+                        description
+                            "Source IPv4 address";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "source_ipv4"
+                                }
+                            }';
+                    }
+
+                    leaf destination-ip {
+                        must "(../source-ip)" {
+                            error-message  "Please configure both source and destination IP";
+                        }
+                        type inet:ipv4-address;
+                        description
+                            "Destination IPv4 address";
+                        reference
+                            '{
+                                "attribute-getter" : {
+                                    "attribute" : "destination_ipv4"
+                                }
+                            }';
+                    }
+                }
+
+                leaf lookup-instance {
+                    type string {
+                        length "1..64";
+                    }
+
+                    description
+                        "Lookup routing tables instance where the nexthop will be looked up";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "lookup_instance",
+                            "expansion-getter" : {
+                                "package":"static",
+                                "method" : "static_instance_name_expander"
+                            }
+                        }
+                    }';
+                }
+
+                leaf lookup-afi {
+                    type afi;
+                    description
+                        "Lookup routing tables address family where the nexthop will be looked up";
+                    must "not(. = 'mpls')";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "lookup_afi"
+                        }
+                    }';
+                }
+
+                leaf lookup-safi {
+                    type safi;
+                    description
+                        "Lookup routing tables sub address family where the nexthop will be looked up";
+                    must "not( . = 'labeled-unicast')" {
+                        error-message "Labeled unicast is not supported for VXLAN";
+                    }
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "lookup_safi"
+                        }
+                    }';
+                }
+            }
+        }
+    }
+
+    uses tunnel-top;
+}

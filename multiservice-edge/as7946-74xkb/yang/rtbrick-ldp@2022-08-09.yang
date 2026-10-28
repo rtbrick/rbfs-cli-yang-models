@@ -14,6 +14,8 @@ submodule rtbrick-ldp {
         prefix "rtb-ldp-types";
     }
 
+    include rtbrick-policy;
+
     organization "RtBrick";
 
     contact
@@ -63,7 +65,9 @@ submodule rtbrick-ldp {
                 }';
             }
             leaf hop-count {
-                type uint8;
+                type uint8 {
+                    range "1..255";
+                }
                 description "Hop count, <1-255>, default 32";
                 reference
                 '{
@@ -73,7 +77,9 @@ submodule rtbrick-ldp {
                 }';
             }
             leaf vector-length {
-                type uint8;
+                type uint8 {
+                    range "1..255";
+                }
                 description "Max vector length limit, <1-255>, default 32";
                 reference
                 '{
@@ -147,6 +153,9 @@ submodule rtbrick-ldp {
                      }
                 }
             }';
+            must 'count(/config:policy/statement[name=current()]) > 0' {
+                error-message "A policy statement that is not configured or has been deleted is referenced";
+            }
         }
     }
 
@@ -730,7 +739,9 @@ submodule rtbrick-ldp {
                 }
             }';
             leaf hold-timer {
-                type uint16;
+                type uint16 {
+                    range "0..60";
+                }
                 description "Hold interval before declaring a session to be synchronized, <0-60s>";
                 reference
                 '{
@@ -783,7 +794,7 @@ submodule rtbrick-ldp {
             description "LDP session related configuration";
             list ipv4 {
                 key "address";
-                description "ipv4 address";
+                description "IPv4 address";
                 reference
                 '{
                     "table-getter": {
@@ -804,10 +815,10 @@ submodule rtbrick-ldp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -823,9 +834,16 @@ submodule rtbrick-ldp {
                     reference
                     '{
                         "attribute-getter": {
-                            "attribute" : "export_policy"
+                            "attribute" : "export_policy",
+                            "expansion-getter" : {
+                                "package":"ldp",
+                                "method" : "ldp_policy_name_expander"
+                            }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) = 1' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
                 }
                 leaf import-policy {
                     type string {
@@ -835,14 +853,21 @@ submodule rtbrick-ldp {
                     reference
                     '{
                         "attribute-getter": {
-                            "attribute" : "import_policy"
+                            "attribute" : "import_policy",
+                            "expansion-getter" : {
+                                "package":"ldp",
+                                "method" : "ldp_policy_name_expander"
+                            }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) = 1' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
                 }
             }
             list ipv6 {
                 key "address";
-                description "ipv6 address";
+                description "IPv6 address";
                 reference
                 '{
                     "table-getter": {
@@ -863,10 +888,10 @@ submodule rtbrick-ldp {
                     }';
                 }
                 leaf authentication-id {
-                    type string {
-                        length "1..64";
-                    }
                     description "Authentication Tuple Identifier";
+                    type leafref {
+                        path "../../../../../tcp/authentication/authentication-id";
+                    }
                     reference
                     '{
                         "attribute-getter" : {
@@ -882,9 +907,17 @@ submodule rtbrick-ldp {
                     reference
                     '{
                         "attribute-getter": {
-                            "attribute" : "export_policy"
+                            "attribute" : "export_policy",
+                            "expansion-getter" : {
+                                "package":"ldp",
+                                "method" : "ldp_policy_name_expander"
+                            }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) = 1' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
+
                 }
                 leaf import-policy {
                     type string {
@@ -894,9 +927,16 @@ submodule rtbrick-ldp {
                     reference
                     '{
                         "attribute-getter": {
-                            "attribute" : "import_policy"
+                            "attribute" : "import_policy",
+                            "expansion-getter" : {
+                                "package":"ldp",
+                                "method" : "ldp_policy_name_expander"
+                            }
                         }
                     }';
+                    must 'count(/config:policy/statement[name=current()]) = 1' {
+                        error-message "A policy statement that is not configured or has been deleted is referenced";
+                    }
                 }
             }
         }

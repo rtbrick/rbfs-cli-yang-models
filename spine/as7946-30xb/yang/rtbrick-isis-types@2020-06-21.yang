@@ -1,0 +1,20 @@
+module rtbrick-isis-types {
+    yang-version 1.1;
+    prefix rtb-isis-types;
+    namespace
+    "urn:config:rtbrick:isis:types";
+
+    organization "rtbrick";
+
+    contact
+      "yang-support@rtbrick.com";
+
+    description
+      "This module contains dummy data definitions for use in ISIS YANG
+    model";
+
+    revision 2020-06-21 {
+        description "Dummy isis types yang file";
+        reference "None";
+    }
+}

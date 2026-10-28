@@ -20,9 +20,9 @@ submodule rtbrick-access {
     include rtbrick-access-dhcp-server;
     include rtbrick-access-dhcpv6-server;
 
-    organization 
+    organization
       "RtBrick";
-    contact 
+    contact
       "yang-support@rtbrick.com";
     description
       "This sub-module defines the YANG structure for the access module.";
@@ -40,22 +40,43 @@ submodule rtbrick-access {
               "table-getter": {
                   "table-name": "global.access.config",
                   "type": "access_global_config_table",
-                  "default-attribute" : [ { "mode" : "global" } ]
+                  "default-attribute" : [ { "mode": "global" } ]
               }
           }';
           leaf chassis-id {
-              type uint8 { 
+              type uint8 {
                 range "0..15";
               }
               description "Chassis ID for this node";
               reference
               '{
-                  "attribute-getter" : {
-                      "attribute" : "chassis_id"
+                  "attribute-getter": {
+                      "attribute": "chassis_id"
                   }
               }';
           }
-
+          leaf chassis-subscriber-limit {
+              type uint32;
+              description "Chassis subscriber limit for this node";
+              reference
+              '{
+                  "attribute-getter": {
+                      "attribute": "chassis_subscriber_limit"
+                  }
+              }';
+          }
+          leaf terminate-history-timeout {
+              type uint16 {
+                range "0..720";
+              }
+              description "Terminate history timeout in hours";
+              reference
+              '{
+                  "attribute-getter": {
+                      "attribute": "terminate_history_timeout"
+                  }
+              }';
+          }
           uses access-aaa-profile;
           uses access-aaa-radius-profile;
           uses access-aaa-radius-server;

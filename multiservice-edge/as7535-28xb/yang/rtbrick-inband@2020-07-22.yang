@@ -9,6 +9,8 @@ submodule rtbrick-inband {
         prefix "rtb-types";
     }
 
+    include rtbrick-forwarding-options;
+
     organization "Rtbrick";
 
     contact
@@ -161,6 +163,9 @@ submodule rtbrick-inband {
                 }
                 leaf source-prefix-list {
                     type rtb-types:string64;
+                    must '../../../forwarding-options/prefix-list[prefix-list-name = current()]' {
+                        error-message "Inband-management source prefix list must reference a configured prefix list"; 
+                    }
                     description
                         "Configuring inband management source ipv4 prefix list name";
                     reference
@@ -169,8 +174,18 @@ submodule rtbrick-inband {
                             "attribute" : "source_ipv4_prefix_list",
                             "expansion-getter" : {
                                 "package":"protoinfra",
-                                "method" :"proto_infra_prefix_list_v4_name_expander"
+                                "method" :"proto_infra_prefix_list_name_expander"
                             }
+                        }
+                    }';
+                }
+                leaf loopback-only {
+                    type rtb-types:boolean-true;
+                    description "Restrict inband-management to loopback logical interfaces";
+                    reference
+                    '{
+                        "attribute-getter" : {
+                            "attribute" : "loopback_only"
                         }
                     }';
                 }

@@ -1,7 +1,7 @@
 module rtbrick-types {
     yang-version 1.1;
     namespace "urn:types:rtbrick";
-    prefix types;
+    prefix rtb-types;
     import ietf-inet-types {
         prefix "inet";
     }
@@ -60,15 +60,25 @@ module rtbrick-types {
         description "Boolean data type - True";
     }
 
+    typedef boolean-false {
+        type enumeration {
+            enum false {
+                value "0";
+                description "False";
+            }
+        }
+        description "Boolean data type - False";
+    }
+
     typedef enable-disable-type {
         type enumeration {
             enum disable {
                 value "0";
-                description "Enable";
+                description "Disable";
             }
             enum enable {
                 value "1";
-                description "Disable";
+                description "Enable";
             }
         }
         description "Boolean enable or disable type";
@@ -92,20 +102,20 @@ module rtbrick-types {
         type enumeration {
             enum ACCESSLEAF {
                 value "0";
-                description "access-leaf";
+                description "Host role access-leaf";
             }
             enum BORDERLEAF {
                 value "1";
-                description "border-leaf";
+                description "Host role border-leaf";
 
             }
             enum SPINE {
                 value "2";
-                description "spine";
+                description "Host role spine";
             }
             enum UNKNOWN {
                 value "3";
-                description "spine";
+                description "Host role unknown";
             }
         }
         description "Rtbrick element roles";
@@ -163,6 +173,10 @@ module rtbrick-types {
             enum vpls {
                 value "6";
                 description "VPLS VPN";
+            }
+            enum evpn-bridge {
+                value "7";
+                description "Virtual private LAN service";
             }
         }
         description "SAFI data type";
@@ -324,7 +338,7 @@ module rtbrick-types {
     }
 
     typedef non-reserved-ipv6-address-no-zone {
-        type types:non-reserved-ipv6-address {
+        type rtb-types:non-reserved-ipv6-address {
             pattern '[0-9a-fA-F:\.]*';
         }
         description
@@ -352,8 +366,9 @@ module rtbrick-types {
           pattern
               'ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
               + '|ifp-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])#([0-3])'
-              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
-              + '|lag-([0-9]|[1-9][0-9])|all';
+              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])|irb-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])'
+              + '|lag-([0-9]|[1-9][0-9])|all'
+              + '|st-([0-9])/([0-9])/([0-9]|[1-9][0-9])|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])';
       }
       description
         "An Interface type";
@@ -383,15 +398,24 @@ module rtbrick-types {
       type string {
           length "1..64";
           pattern
-              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
-	      + '|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
-              + '|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
-              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
-              + '|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|409[0-6])'
-              + '|lag-([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-3][0-9][0-9][0-9]|[4][0][0-8][0-9]|[409][0-6])';
+              'ifl-([0-9])/([0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+	          + '|dpdk-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|memif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|lo-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|irb-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|hostif-([0-9])/([0-9])/([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)'
+              + '|lag-([0-9]|[1-9][0-9])/([0-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1][0-5][0-9][0-9][0-9]|16000)';
       }
       description
         "Logical Interface type";
+    }
+
+    typedef pg-name {
+        type string {
+            length "1..64";
+            pattern '[^.:]*';
+        }
+        description "String with max 64 length, excluding '.' and ':'";
     }
 
     typedef string4096 {
@@ -444,16 +468,32 @@ module rtbrick-types {
     }
 
     typedef mpls-label {
-        type uint32 {
-            range "0 .. 1048575";
-        }
+        type uint32;
         description "Mpls label value should be in the range 0 - 2^20-1";
+    }
+
+    typedef l2-prefix {
+        type string {
+            length "20..128";
+            pattern
+                '([0-9a-fA-F]{2}\.){9}[0-9a-fA-F]{2}' +
+                ':' +
+                '[0-9]+' +
+                '([0-9a-fA-F]{2}(:[0-9a-fA-F]{2}){5})?' +
+                '((([0-9]{1,3}\.){3}[0-9]{1,3})|' +
+                '([0-9a-fA-F:]+))?' +
+                '(/[0-9]+)?';
+        }
+        description
+            "L2 prefix:
+            ESI:TAG[MAC][IP][/LEN]
+            Matches L2VPN RIB display format";
     }
 
     typedef rtb-unicast-mac-type {
         type string {
             length "1..64";
-            pattern "[0-9a:fA-F][02468aAcCeE](:[0-9a:fA-F]{2}){5}";
+            pattern "[0-9a-fA-F][02468aAcCeE](:[0-9a-fA-F]{2}){5}";
         }
         description
             "A unicast destination MAC address. The I/G address bit is
@@ -1016,7 +1056,7 @@ module rtbrick-types {
             }
             enum "manet" {
                 value 138;
-                description "manet";
+                description "Manet";
             }
             enum "hip" {
                 value 139;
@@ -1035,46 +1075,46 @@ module rtbrick-types {
                 description "ROH";
             }
         }
-        description "ip protocol type";
+        description "Ip protocol type";
     }
 
     typedef log-level {
         type enumeration {
             enum emergency {
                 value "0";
-                description "emergency";
+                description "Log level emergency";
             }
             enum alert {
                 value "1";
-                description "alert";
+                description "Log level alert";
             }
             enum critical {
                 value 2;
-                description "critical";
+                description "Log level critical";
             }
             enum error {
                 value 3;
-                description "error";
+                description "Log level error";
             }
             enum warning {
                 value "4";
-                description "warning";
+                description "Log level warning";
             }
             enum notice {
                 value "5";
-                description "notice";
+                description "Log level notice";
             }
             enum info {
                 value "6";
-                description "info";
+                description "Log level info";
             }
             enum debug {
                 value "7";
-                description "debug";
+                description "Log level debug";
             }
             enum none {
                 value "8";
-                description "none";
+                description "Log level none";
             }
 
         }
@@ -1093,6 +1133,29 @@ module rtbrick-types {
             length "1..8192";
         }
         description "String with max 8192 length";
+    }
+
+    typedef vxlan-tunnel-name {
+        type string {
+            length "1..64";
+            pattern '^vxlan_.+' {
+                error-message "VXLAN tunnel name should start with 'vxlan_' and have characters after it.";
+            }
+        }
+    }
+
+    typedef tunnel-name {
+        type union {
+            type vxlan-tunnel-name;
+            /* Type Union for extensibility (MPLS, IP, GRE .etc) */
+        }
+    }
+
+    typedef stitching-connect-name {
+        type union {
+            type logical-interface-type;
+            type tunnel-name;
+        }
     }
 
 }

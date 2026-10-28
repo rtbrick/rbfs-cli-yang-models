@@ -6,7 +6,7 @@ submodule rtbrick-traffic-sampling {
   }
 
   import rtbrick-types {
-    prefix types;
+    prefix rtb-types;
   }
 
   import ietf-inet-types {
@@ -57,7 +57,7 @@ submodule rtbrick-traffic-sampling {
       enum "both" {
         value 3;
         description
-          "both";
+          "Both";
       }
     }
     description
@@ -79,15 +79,14 @@ submodule rtbrick-traffic-sampling {
           '{
                "table-getter": {
                    "table-name" : "global.traffic.sampling.collector.config",
-                   "type"    : "global_traffic_sampling_collector_config",
-                   "default-attribute" : [ { "num_of_samples" : "1" } ]
+                   "type"    : "global_traffic_sampling_collector_config"
                }
            }';
         leaf collector-id {
           description
             "Collector identifier";
           type int8 {
-            range "1 .. 4";
+            range "1";
           }
           reference
             '{
@@ -99,7 +98,7 @@ submodule rtbrick-traffic-sampling {
         leaf instance {
           description
             "Name of the instance from which collector address is reachable";
-          type types:string64;
+          type rtb-types:string64;
           reference
             '{
                  "attribute-getter" : {
@@ -165,7 +164,7 @@ submodule rtbrick-traffic-sampling {
         leaf description {
           description
             "Description of collector";
-          type types:string64;
+          type rtb-types:string64;
           reference
             '{
                  "attribute-getter" : {
@@ -215,7 +214,7 @@ submodule rtbrick-traffic-sampling {
         leaf profile-name {
           description
             "Profile name for traffic sampling";
-          type types:string64;
+          type rtb-types:string64;
           reference
             '{
                  "attribute-getter" : {
@@ -239,7 +238,7 @@ submodule rtbrick-traffic-sampling {
         leaf description {
           description
             "Description of profile";
-          type types:string64;
+          type rtb-types:string64;
           reference
             '{
                  "attribute-getter" : {
